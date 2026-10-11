@@ -1,0 +1,125 @@
+@page "/admin/security"
+@attribute [Authorize(Roles = AuthClaims.AdminRole)]
+@using Wunschkino.Auth
+@using Wunschkino.DatabaseBackup
+@using Wunschkino.Hosting
+@inject SecurityCheckService Checks
+@inject BackupService Backup
+@inject ProxyWarningState ProxyWarning
+@inject ISnackbar Snackbar
+
+<PageTitle>@Texts.Security_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Security_Title</MudText>
+
+<MudText Class="mud-text-secondary mb-6">@Texts.Security_Intro</MudText>
+
+@if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" aria-label="@Texts.Common_Loading" />
+}
+else
+{
+    <MudTable Items="_items" Dense="true" Hover="true" Elevation="1" Class="mb-8" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>@Texts.Security_ColCheck</MudTh>
+            <MudTh>@Texts.Security_ColState</MudTh>
+            <MudTh>@Texts.Security_ColTodo</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@Texts.Security_ColCheck">@context.Title</MudTd>
+            <MudTd DataLabel="@Texts.Security_ColState">
+                <MudChip T="string" Size="Size.Small" Color="@ColorOf(context.Severity)" Icon="@IconOf(context.Severity)">@context.SeverityLabel</MudChip>
+            </MudTd>
+            <MudTd DataLabel="@Texts.Security_ColTodo">
+                @context.Message
+                @if (context.Link is { } link && !link.Contains('#'))
+                {
+                    <MudLink Href="@link" Class="ml-1 touch-target">@Texts.Security_Open</MudLink>
+                }
+                @if (context.Id == SecurityCheckService.ProxyId && context.Severity == CheckSeverity.Critical)
+                {
+                    <MudButton Variant="Variant.Text" Class="ml-1" OnClick="DismissProxyWarningAsync">@Texts.Security_DismissProxy</MudButton>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <div id="sicherung">
+        <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Security_BackupTitle</MudText>
+        <MudSimpleTable Dense="true" Class="mb-4">
+            <tbody>
+                <tr><th scope="row">@Texts.Security_BackupFolder</th><td><code>@_backup!.Directory</code></td></tr>
+                <tr><th scope="row">@Texts.Security_BackupLast</th><td>@if (_backup.LastBackupUtc is { } last) { <LocalTime Utc="last" /> } else { @Texts.Security_BackupNone }</td></tr>
+                <tr><th scope="row">@Texts.Security_BackupCount</th><td>@string.Format(Texts.Culture, _backup.Count == 1 ? Texts.Security_BackupOne : Texts.Security_BackupMany, _backup.Count, FormatSize(_backup.TotalBytes))</td></tr>
+                <tr><th scope="row">@Texts.Security_BackupDrive</th><td>@(_backup.SameMountAsDatabase ? Texts.Security_BackupSameDrive : Texts.Security_BackupOtherDrive)</td></tr>
+            </tbody>
+        </MudSimpleTable>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">
+            @((MarkupString)string.Format(Texts.Culture, Texts.Security_BackupHint, "<code>keys</code>"))
+        </MudText>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="BackupNowAsync" Disabled="_busy">
+            @(_busy ? Texts.Security_BackupRunning : Texts.Security_BackupNow)
+        </MudButton>
+    </div>
+}
+
+@code {
+    private bool _loaded;
+    private bool _busy;
+    private IReadOnlyList<SecurityCheckItem> _items = [];
+    private BackupStatus? _backup;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _items = await Checks.RunAsync();
+        _backup = Backup.GetStatus();
+        _loaded = true;
+    }
+
+    private async Task DismissProxyWarningAsync()
+    {
+        ProxyWarning.Clear();
+        await LoadAsync();
+    }
+
+    private async Task BackupNowAsync()
+    {
+        _busy = true;
+        try
+        {
+            var ok = await Backup.RunNowAsync();
+            Snackbar.Add(ok ? Texts.Security_BackupOk : Texts.Security_BackupFailed, ok ? Severity.Success : Severity.Error);
+            await LoadAsync();
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static Color ColorOf(CheckSeverity severity) => severity switch
+    {
+        CheckSeverity.Ok => Color.Success,
+        CheckSeverity.Info => Color.Info,
+        CheckSeverity.Warning => Color.Warning,
+        _ => Color.Error
+    };
+
+    private static string IconOf(CheckSeverity severity) => severity switch
+    {
+        CheckSeverity.Ok => Icons.Material.Filled.CheckCircle,
+        CheckSeverity.Info => Icons.Material.Filled.Info,
+        CheckSeverity.Warning => Icons.Material.Filled.Warning,
+        _ => Icons.Material.Filled.Error
+    };
+
+    private static string FormatSize(long bytes) => bytes switch
+    {
+        < 1024 => string.Format(Texts.Culture, Texts.Security_SizeBytes, bytes),
+        < 1024 * 1024 => $"{bytes / 1024.0:0.#} KB",
+        _ => $"{bytes / (1024.0 * 1024):0.#} MB"
+    };
+}

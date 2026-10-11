@@ -1,0 +1,190 @@
+@page "/login"
+@page "/login/2fa"
+@attribute [AllowAnonymous]
+@attribute [ExcludeFromInteractiveRouting]
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Wunschkino.Auth
+@inject LoginGuard LoginGuard
+@inject TwoFactorTicket TwoFactorTicket
+@inject NavigationManager Navigation
+
+<PageTitle>@(IsSecondStep ? Texts.Login_TwoFactorTitle : Texts.Login_PageTitle)</PageTitle>
+
+<div class="login-wrapper">
+    <MudPaper Class="pa-8" Elevation="2">
+        @if (IsSecondStep)
+        {
+            <MudText Typo="Typo.h5" HtmlTag="h1" GutterBottom="true">@Texts.Login_TwoFactorTitle</MudText>
+
+            @if (_error is not null)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">@_error</MudAlert>
+            }
+
+            @if (_ticketMissing)
+            {
+                <MudText Typo="Typo.body1">@Texts.Login_TwoFactorExpired</MudText>
+                <a class="login-back" href="@LoginUrl">@Texts.Login_TwoFactorBack</a>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2">@Texts.Login_TwoFactorIntro</MudText>
+                <EditForm Model="CodeInput" FormName="login-2fa" OnValidSubmit="VerifyCodeAsync" method="post">
+                    <DataAnnotationsValidator />
+                    <label class="login-label" for="code">@Texts.Login_TwoFactorCode</label>
+                    <InputText id="code" class="login-input" @bind-Value="CodeInput.Code" autocomplete="one-time-code" autofocus
+                               spellcheck="false" autocapitalize="characters" maxlength="32" />
+                    <ValidationMessage For="() => CodeInput.Code" class="login-validation" />
+
+                    <button type="submit" class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-large mud-width-full mt-4">
+                        <span class="mud-button-label">@Texts.Login_TwoFactorSubmit</span>
+                    </button>
+                </EditForm>
+                <a class="login-back" href="@LoginUrl">@Texts.Login_TwoFactorBack</a>
+            }
+        }
+        else
+        {
+            <MudText Typo="Typo.h5" HtmlTag="h1" GutterBottom="true">@Texts.Login_Title</MudText>
+
+            @if (PasswordChanged)
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-4">@Texts.Login_PasswordChanged</MudAlert>
+            }
+            @if (_error is not null)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">@_error</MudAlert>
+            }
+
+            <EditForm Model="Input" FormName="login" OnValidSubmit="LoginAsync" method="post">
+                <DataAnnotationsValidator />
+                <label class="login-label" for="username">@Texts.Login_Username</label>
+                <InputText id="username" class="login-input" @bind-Value="Input.Username" autocomplete="username" autofocus />
+                <ValidationMessage For="() => Input.Username" class="login-validation" />
+
+                <label class="login-label" for="password">@Texts.Login_Password</label>
+                <InputText id="password" type="password" class="login-input" @bind-Value="Input.Password" autocomplete="current-password" />
+                <ValidationMessage For="() => Input.Password" class="login-validation" />
+
+                <label class="login-remember">
+                    <InputCheckbox @bind-Value="Input.RememberMe" /> @Texts.Login_Remember
+                </label>
+
+                <button type="submit" class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-large mud-width-full mt-4">
+                    <span class="mud-button-label">@Texts.Login_Submit</span>
+                </button>
+            </EditForm>
+        }
+    </MudPaper>
+</div>
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm(FormName = "login")]
+    private LoginInput Input { get; set; } = default!;
+
+    [SupplyParameterFromForm(FormName = "login-2fa")]
+    private CodeInputModel CodeInput { get; set; } = default!;
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery(Name = "passwordChanged")]
+    private bool PasswordChanged { get; set; }
+
+    private string? _error;
+    private bool _ticketMissing;
+
+    private bool IsSecondStep => HttpContext.Request.Path.StartsWithSegments("/login/2fa", StringComparison.OrdinalIgnoreCase);
+
+    private string LoginUrl => ReturnUrl is null ? "/login" : $"/login?ReturnUrl={Uri.EscapeDataString(ReturnUrl)}";
+
+    protected override void OnInitialized()
+    {
+        Input ??= new();
+        CodeInput ??= new();
+        if (IsSecondStep)
+            _ticketMissing = TwoFactorTicket.Read(HttpContext) is null;
+    }
+
+    private async Task LoginAsync()
+    {
+        var result = await LoginGuard.AttemptAsync(
+            Input.Username, Input.Password, HttpContext.Connection.RemoteIpAddress, HttpContext.Connection.LocalIpAddress, HttpContext.RequestAborted);
+        if (result.RequiresSecondFactor)
+        {
+            TwoFactorTicket.Issue(HttpContext, result.Pending!, Input.RememberMe);
+            Navigation.NavigateTo(ReturnUrl is null ? "/login/2fa" : $"/login/2fa?ReturnUrl={Uri.EscapeDataString(ReturnUrl)}");
+            return;
+        }
+        if (!result.Success)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        await SignInAsync(result, Input.RememberMe);
+    }
+
+    private async Task VerifyCodeAsync()
+    {
+        if (TwoFactorTicket.Read(HttpContext) is not { } ticket)
+        {
+            _ticketMissing = true;
+            return;
+        }
+
+        var result = await LoginGuard.AttemptSecondFactorAsync(
+            ticket.Pending, CodeInput.Code, HttpContext.Connection.RemoteIpAddress, HttpContext.Connection.LocalIpAddress, HttpContext.RequestAborted);
+        if (!result.Success)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        TwoFactorTicket.Consume(HttpContext, ticket.Id);
+        await SignInAsync(result, ticket.RememberMe);
+    }
+
+    private async Task SignInAsync(LoginResult result, bool rememberMe)
+    {
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            result.Principal!,
+            new AuthenticationProperties { IsPersistent = rememberMe });
+
+        Navigation.NavigateTo(result.UsedRecoveryCode ? "/account/2fa?recoveryUsed=true" : Auth.ReturnUrl.Sanitize(ReturnUrl));
+    }
+
+    private sealed class LoginInput : IValidatableObject
+    {
+        public string Username { get; set; } = "";
+
+        public string Password { get; set; } = "";
+
+        public bool RememberMe { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(Username))
+                yield return new ValidationResult(Texts.Login_UsernameRequired, [nameof(Username)]);
+            if (string.IsNullOrEmpty(Password))
+                yield return new ValidationResult(Texts.Login_PasswordRequired, [nameof(Password)]);
+        }
+    }
+
+    private sealed class CodeInputModel : IValidatableObject
+    {
+        public string Code { get; set; } = "";
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(Code))
+                yield return new ValidationResult(Texts.Login_TwoFactorCodeRequired, [nameof(Code)]);
+        }
+    }
+}

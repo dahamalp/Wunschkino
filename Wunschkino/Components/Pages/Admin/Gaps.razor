@@ -1,0 +1,211 @@
+@page "/admin/gaps"
+@attribute [Authorize(Roles = AuthClaims.AdminRole)]
+@implements IDisposable
+@using System.Globalization
+@using Microsoft.EntityFrameworkCore
+@using Wunschkino.Auth
+@using Wunschkino.Data
+@using Wunschkino.Gaps
+@using Wunschkino.Library
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject LibraryCache Library
+@inject LibraryRefreshService RefreshService
+@inject SeriesGapProgress Progress
+@inject ISnackbar Snackbar
+
+<PageTitle>@Texts.Gaps_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Gaps_Title</MudText>
+
+@if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" aria-label="@Texts.Common_Loading" />
+}
+else
+{
+    <MudText Class="mud-text-secondary mb-4">
+        @Texts.Gaps_Intro
+        @if (_lastCheckUtc is { } last)
+        {
+            <span> <LocalTime Utc="last" Wrap="@(checkedAt => string.Format(Texts.Culture, Texts.Gaps_LastCheck, checkedAt))" /></span>
+        }
+    </MudText>
+
+    <MudText Class="mb-6">
+        @string.Format(Texts.Culture, _checkedCount < _candidateCount ? Texts.Gaps_CheckedMore : Texts.Gaps_Checked, _checkedCount, _candidateCount)
+    </MudText>
+
+    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4" Wrap="Wrap.Wrap">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ScanAllAsync" Disabled="_progress.Busy">
+            @(_progress.Busy ? Texts.Gaps_Scanning : Texts.Gaps_ScanAll)
+        </MudButton>
+        @if (_progress.Busy)
+        {
+            <MudText Typo="Typo.body2" role="status">@(_progress.Running ? string.Format(Texts.Culture, Texts.Gaps_ScanProgress, _progress.Done, _progress.Total) : Texts.Gaps_ScanWaiting)</MudText>
+        }
+    </MudStack>
+    @if (_progress.Running && _progress.Total > 0)
+    {
+        <MudProgressLinear Value="@(_progress.Done * 100.0 / _progress.Total)" Class="mb-4" aria-label="@Texts.Gaps_ScanProgressLabel" />
+    }
+
+    @if (_checkedCount == 0)
+    {
+        <MudAlert Severity="Severity.Info" Class="mb-4">@Texts.Gaps_NoneChecked</MudAlert>
+    }
+    else if (_missing.Count == 0 && _uncertain.Count == 0)
+    {
+        <MudAlert Severity="Severity.Success" Class="mb-4">@Texts.Gaps_NoneMissing</MudAlert>
+    }
+
+    @if (_missing.Count > 0)
+    {
+        <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@string.Format(Texts.Culture, Texts.Gaps_MissingTitle, _missing.Count)</MudText>
+        @GapTable(_missing)
+    }
+
+    @if (_uncertain.Count > 0)
+    {
+        <MudText Typo="Typo.h6" HtmlTag="h2" Class="mt-6 mb-1">@string.Format(Texts.Culture, Texts.Gaps_UncertainTitle, _uncertain.Count)</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">@Texts.Gaps_UncertainHint</MudText>
+        @GapTable(_uncertain)
+    }
+}
+
+@code {
+    private bool _loaded;
+    private int _checkedCount;
+    private int _candidateCount;
+    private DateTime? _lastCheckUtc;
+    private IReadOnlyList<GapRow> _missing = [];
+    private IReadOnlyList<GapRow> _uncertain = [];
+
+    private sealed record GapRow(string Title, string Summary, IReadOnlyList<string> Details);
+
+    private static readonly TimeSpan PollInterval = TimeSpan.FromMilliseconds(500);
+
+    private readonly CancellationTokenSource _leftPage = new();
+    private SeriesGapProgressSnapshot _progress = new(false, false, 0, 0);
+    private bool _polling;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+        _progress = Progress.Snapshot;
+        if (_progress.Busy)
+            _ = PollAsync();
+    }
+
+    private async Task ScanAllAsync()
+    {
+        Progress.RequestFullScan();
+        RefreshService.RequestRefresh();
+        _progress = Progress.Snapshot;
+        _ = PollAsync();
+        await Task.CompletedTask;
+    }
+
+    /// <summary>Beobachtet den Lauf, bis er fertig ist, und lädt dann die Ergebnisse neu. Der Lauf selbst geschieht im Hintergrunddienst.</summary>
+    private async Task PollAsync()
+    {
+        if (_polling)
+            return;
+
+        _polling = true;
+        var sawRunning = _progress.Running;
+        try
+        {
+            while (true)
+            {
+                await Task.Delay(PollInterval, _leftPage.Token);
+                var snapshot = Progress.Snapshot;
+                sawRunning |= snapshot.Running;
+                var finished = !snapshot.Busy;
+
+                await InvokeAsync(async () =>
+                {
+                    _progress = snapshot;
+                    if (finished)
+                        await LoadAsync();
+                    StateHasChanged();
+                });
+                if (!finished)
+                    continue;
+
+                if (sawRunning)
+                    Snackbar.Add(Texts.Gaps_Done, Severity.Success);
+                else
+                    Snackbar.Add(Texts.Gaps_NoRun, Severity.Warning);
+                return;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Die Seite wurde verlassen: nichts mehr anzeigen.
+        }
+        finally
+        {
+            _polling = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _leftPage.Cancel();
+        _leftPage.Dispose();
+    }
+
+    private async Task LoadAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var results = await db.SeriesGaps.AsNoTracking().Where(gap => gap.HasResult).ToListAsync();
+
+        // Zur Gesamtzahl zählen nur Serien, die sich prüfen lassen (mit gültiger TMDB-ID, wie im Prüf-Dienst).
+        // Das Maximum verhindert „5 von 3“, wenn der Bestand noch nicht geladen ist oder Serien inzwischen fehlen.
+        _checkedCount = results.Count;
+        _candidateCount = Math.Max(_checkedCount, Library.Snapshot.Items.Count(item =>
+            item.Kind == MediaKind.Series && int.TryParse(item.TmdbId, NumberStyles.None, CultureInfo.InvariantCulture, out var tmdbId) && tmdbId > 0));
+        _lastCheckUtc = results.Count == 0 ? null : results.Max(gap => gap.LastAttemptUtc);
+        _missing = Rows(results, GapStatus.Missing);
+        _uncertain = Rows(results, GapStatus.UncertainNumbering);
+        _loaded = true;
+    }
+
+    private static IReadOnlyList<GapRow> Rows(IEnumerable<SeriesGap> results, GapStatus status) => results
+        .Where(gap => gap.Status == status)
+        .OrderBy(gap => gap.Title, NaturalTitleComparer.Instance)
+        .Select(gap => new GapRow(
+            gap.Title,
+            string.Format(Texts.Culture, Texts.Gaps_Summary, gap.PresentCount, gap.ExpectedCount),
+            DetailsOf(gap)))
+        .ToList();
+
+    private static IReadOnlyList<string> DetailsOf(SeriesGap gap)
+    {
+        var details = MissingEpisodesText.DescribeAll(SeriesGapSerializer.Deserialize(gap.MissingJson));
+        return details.Count == 0 && gap.Status == GapStatus.UncertainNumbering
+            ? [Texts.Gaps_Unknown]
+            : details;
+    }
+
+    private RenderFragment GapTable(IReadOnlyList<GapRow> rows) => __builder =>
+    {
+        <MudTable Items="rows" Dense="true" Hover="true" Elevation="1" Breakpoint="Breakpoint.Sm">
+            <HeaderContent>
+                <MudTh>@Texts.Gaps_ColSeries</MudTh>
+                <MudTh>@Texts.Gaps_ColPresent</MudTh>
+                <MudTh>@Texts.Gaps_ColMissing</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@Texts.Gaps_ColSeries">@context.Title</MudTd>
+                <MudTd DataLabel="@Texts.Gaps_ColPresent">@context.Summary</MudTd>
+                <MudTd DataLabel="@Texts.Gaps_ColMissing">
+                    @foreach (var detail in context.Details)
+                    {
+                        <div>@detail</div>
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    };
+}

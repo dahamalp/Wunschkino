@@ -1,0 +1,49 @@
+.wish-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+::deep .wish-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.wish-poster {
+    width: 92px;
+    flex: none;
+    aspect-ratio: 2 / 3;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--mud-default-borderradius);
+    background: var(--mud-palette-background-gray);
+}
+
+.wish-poster-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mud-palette-text-disabled);
+}
+
+/* Die Verwaltungsknöpfe stehen immer in einer eigenen Zeile, damit sie nicht je nach Karte an anderer Stelle umbrechen. */
+.wish-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 0.25rem;
+}
+
+.wish-body {
+    min-width: 0;
+    flex: 1;
+}
+
+@media (max-width: 480px) {
+    .wish-poster {
+        width: 72px;
+    }
+}

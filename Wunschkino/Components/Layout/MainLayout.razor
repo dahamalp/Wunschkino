@@ -1,0 +1,226 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using Wunschkino.Auth
+@using Wunschkino.Components.Theme
+@using Wunschkino.Data
+@using Wunschkino.Hosting
+@inject AppInfo AppInfo
+@inject IJSRuntime JS
+@inject Wunschkino.Localization.UserTimeZone TimeZone
+@inject ThemePreferenceService ThemeService
+@inject Wunschkino.Legal.LegalService Legal
+@inject NavigationManager Navigation
+
+<MudThemeProvider @ref="_themeProvider" Theme="WunschkinoTheme.Instance" IsDarkMode="_isDarkMode" />
+@if (!RendererInfo.IsInteractive && _userId is null)
+{
+    <style>@((MarkupString)WunschkinoTheme.SystemDarkStyle)</style>
+}
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<a class="skip-link" href="#main-content" @onclick="FocusMainAsync" @onclick:preventDefault>@Texts.Layout_SkipToContent</a>
+
+<MudLayout>
+    <MudAppBar Elevation="0" Class="app-bar">
+        <AuthorizeView>
+            <Authorized>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Class="d-md-none mr-1" aria-label="@Texts.Nav_Menu"
+                               aria-expanded="@(_drawerOpen ? "true" : "false")" OnClick="() => _drawerOpen = !_drawerOpen" />
+            </Authorized>
+        </AuthorizeView>
+        <a href="/" class="brand" aria-label="@Texts.App_Name"><MudIcon Icon="@Icons.Material.Filled.Movie" Class="mr-2" /><Wordmark /></a>
+        <AuthorizeView>
+            <Authorized>
+                <nav class="app-nav d-none d-md-flex" aria-label="@Texts.Layout_MainNavigation">
+                    <NavItem Href="/">@Texts.Nav_Library</NavItem>
+                    <NavItem Href="/wishes">@Texts.Nav_Wishes</NavItem>
+                    <NavItem Href="/wishes/new">@Texts.Nav_NewWish</NavItem>
+                    <AuthorizeView Roles="@AuthClaims.AdminRole" Context="adminContext">
+                        <MudMenu Label="@Texts.Nav_Admin" EndIcon="@Icons.Material.Filled.ArrowDropDown" Color="Color.Inherit" Class="nav-menu">
+                            <MudMenuItem Href="/admin/users">@Texts.Nav_Users</MudMenuItem>
+                            <MudMenuItem Href="/admin/gaps">@Texts.Nav_Gaps</MudMenuItem>
+                            <MudMenuItem Href="/admin/blocks">@Texts.Nav_Blocks</MudMenuItem>
+                            <MudMenuItem Href="/admin/audit">@Texts.Nav_Audit</MudMenuItem>
+                            <MudMenuItem Href="/admin/security">@Texts.Nav_Security</MudMenuItem>
+                            <MudMenuItem Href="/admin/settings">@Texts.Nav_Settings</MudMenuItem>
+                        </MudMenu>
+                    </AuthorizeView>
+                </nav>
+                <MudSpacer />
+                <LanguageMenu />
+                <ThemeMenu Value="_preference" ValueChanged="SetPreferenceAsync" />
+                <a href="/account/password" class="account-link d-none d-md-inline-flex" title="@Texts.Nav_Account">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" Class="mr-1" />@context.User.Identity?.Name
+                </a>
+                <form method="post" action="/account/logout" class="d-inline">
+                    <AntiforgeryToken />
+                    <MudIconButton ButtonType="ButtonType.Submit" Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" aria-label="@Texts.Layout_Logout" title="@Texts.Layout_Logout" />
+                </form>
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <AuthorizeView>
+        <Authorized>
+            <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Temporary" Anchor="Anchor.Start" Elevation="2" Class="app-drawer">
+                <MudDrawerHeader><Wordmark /></MudDrawerHeader>
+                <nav class="drawer-nav" aria-label="@Texts.Layout_MainNavigation">
+                    <NavItem Href="/" Clicked="CloseDrawer">@Texts.Nav_Library</NavItem>
+                    <NavItem Href="/wishes" Clicked="CloseDrawer">@Texts.Nav_Wishes</NavItem>
+                    <NavItem Href="/wishes/new" Clicked="CloseDrawer">@Texts.Nav_NewWish</NavItem>
+                    <NavItem Href="/account/password" Clicked="CloseDrawer">@Texts.Nav_Account (@context.User.Identity?.Name)</NavItem>
+                    <AuthorizeView Roles="@AuthClaims.AdminRole" Context="adminContext">
+                        <p class="drawer-heading">@Texts.Nav_Admin</p>
+                        <NavItem Href="/admin/users" Clicked="CloseDrawer">@Texts.Nav_Users</NavItem>
+                        <NavItem Href="/admin/gaps" Clicked="CloseDrawer">@Texts.Nav_Gaps</NavItem>
+                        <NavItem Href="/admin/blocks" Clicked="CloseDrawer">@Texts.Nav_Blocks</NavItem>
+                        <NavItem Href="/admin/audit" Clicked="CloseDrawer">@Texts.Nav_Audit</NavItem>
+                        <NavItem Href="/admin/security" Clicked="CloseDrawer">@Texts.Nav_Security</NavItem>
+                        <NavItem Href="/admin/settings" Clicked="CloseDrawer">@Texts.Nav_Settings</NavItem>
+                    </AuthorizeView>
+                </nav>
+            </MudDrawer>
+        </Authorized>
+    </AuthorizeView>
+    <MudMainContent Class="pt-16 px-4">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-4">
+                <main id="main-content" tabindex="-1" @ref="_mainContent">
+                <AuthorizeView Roles="@AuthClaims.AdminRole" Context="bannerContext">
+                    <SecurityBanner />
+                </AuthorizeView>
+            @Body
+            </main>
+        </MudContainer>
+    </MudMainContent>
+    <footer class="app-footer">
+        <ul class="app-footer-links">
+            <li><a href="@AppInfo.SourceUrl" target="_blank" rel="noopener noreferrer">@Texts.Footer_Source</a></li>
+            <li><a href="/about">@Texts.Footer_About</a></li>
+        <li><a href="/datenschutz">@Texts.Footer_Privacy</a></li>
+        @if (_legal.Imprint is not null)
+        {
+            <li><a href="/impressum">@Texts.Footer_Imprint</a></li>
+        }
+            <AuthorizeView>
+                <Authorized Context="footerContext"><li>@string.Format(Texts.Culture, Texts.Footer_Version, AppInfo.Version)</li></Authorized>
+            </AuthorizeView>
+        </ul>
+        <p class="app-footer-notice" lang="en">@Texts.Footer_TmdbNotice</p>
+    </footer>
+</MudLayout>
+
+<div id="blazor-error-ui" data-nosnippet role="alert">
+    @Texts.Layout_UnexpectedError
+    <a href="." class="reload">@Texts.Layout_Reload</a>
+    <button type="button" class="dismiss" aria-label="@Texts.Layout_Dismiss">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" /></svg>
+    </button>
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private MudThemeProvider? _themeProvider;
+    private ThemePreference _preference;
+    private int? _userId;
+    private bool _systemIsDark;
+    private bool _isDarkMode;
+    private bool _drawerOpen;
+    private ElementReference _mainContent;
+    private Wunschkino.Legal.LegalTexts _legal = Wunschkino.Legal.LegalTexts.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _legal = await Legal.GetAsync();
+        Legal.Changed += OnLegalChanged;
+        if (AuthenticationState is null)
+            return;
+
+        var user = (await AuthenticationState).User;
+        _userId = AuthClaims.GetUserId(user);
+        if (AuthClaims.MustChangePasswordNow(user))
+        {
+            // Navigation innerhalb der Seite läuft nicht über die Middleware; deshalb hier dieselbe Umleitung.
+            _mustChangePassword = true;
+            Navigation.LocationChanged += OnLocationChanged;
+        }
+        if (_userId is { } userId)
+        {
+            _preference = await ThemeService.GetAsync(userId);
+            ApplyPreference();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _themeProvider is null)
+            return;
+
+        _systemIsDark = await _themeProvider.GetSystemDarkModeAsync();
+        await _themeProvider.WatchSystemDarkModeAsync(isDark =>
+        {
+            _systemIsDark = isDark;
+            ApplyPreference();
+            return InvokeAsync(StateHasChanged);
+        });
+        ApplyPreference();
+        StateHasChanged();
+        await DetectTimeZoneAsync();
+    }
+
+    private async Task DetectTimeZoneAsync()
+    {
+        try
+        {
+            await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./timezone.js");
+            TimeZone.TrySet(await module.InvokeAsync<string>("getTimeZone"));
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or InvalidOperationException)
+        {
+            // Ohne Browser-Zeitzone bleibt es bei der Zeitzone des Servers.
+        }
+    }
+
+    private async Task SetPreferenceAsync(ThemePreference preference)
+    {
+        _preference = preference;
+        ApplyPreference();
+        if (_userId is { } userId)
+            await ThemeService.SetAsync(userId, preference);
+    }
+
+    private void ApplyPreference() => _isDarkMode = _preference switch
+    {
+        ThemePreference.Dark => true,
+        ThemePreference.Light => false,
+        _ => _systemIsDark
+    };
+
+    private void CloseDrawer() => _drawerOpen = false;
+
+    private void OnLegalChanged() => InvokeAsync(async () =>
+    {
+        _legal = await Legal.GetAsync();
+        StateHasChanged();
+    });
+
+    private bool _mustChangePassword;
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        if (!new Uri(e.Location).AbsolutePath.StartsWith(PasswordChangeMiddleware.PasswordPath, StringComparison.OrdinalIgnoreCase))
+            Navigation.NavigateTo(PasswordChangeMiddleware.PasswordPath);
+    }
+
+    public void Dispose()
+    {
+        Legal.Changed -= OnLegalChanged;
+        if (_mustChangePassword)
+            Navigation.LocationChanged -= OnLocationChanged;
+    }
+
+    // Blazor fängt Verweise auf Anker der eigenen Seite ab und setzt dabei keinen Fokus; deshalb setzen wir ihn selbst.
+    private async Task FocusMainAsync() => await _mainContent.FocusAsync();
+}

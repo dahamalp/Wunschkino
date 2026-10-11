@@ -1,0 +1,111 @@
+@page "/admin/blocks"
+@attribute [Authorize(Roles = AuthClaims.AdminRole)]
+@using Wunschkino.Auth
+@using Wunschkino.Data
+@inject IpBlockService BlockService
+@inject AdminGuard Guard
+@inject TimeProvider Time
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+
+<PageTitle>@Texts.Blocks_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Blocks_Title</MudText>
+
+<MudText Class="mud-text-secondary mb-2">@Texts.Blocks_Intro</MudText>
+<MudText Class="mud-text-secondary mb-6">
+    @((MarkupString)string.Format(Texts.Culture, Texts.Blocks_IntroConsole,
+        "<code>sudo wunschkino-admin --unblock &lt;Adresse&gt;</code>", "<code>sudo wunschkino-admin --unblock-all</code>"))
+</MudText>
+
+@if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" aria-label="@Texts.Common_Loading" />
+}
+else if (_rows.Count == 0)
+{
+    <MudAlert Severity="Severity.Success">@Texts.Blocks_Empty</MudAlert>
+}
+else
+{
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mb-4" OnClick="UnblockAllAsync">@Texts.Blocks_UnblockAll</MudButton>
+
+    <MudTable Items="_rows" Dense="true" Hover="true" Elevation="1" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>@Texts.Blocks_ColAddress</MudTh>
+            <MudTh>@Texts.Blocks_ColState</MudTh>
+            <MudTh>@Texts.Blocks_ColFailures</MudTh>
+            <MudTh>@Texts.Blocks_ColLast</MudTh>
+            <MudTh><span class="visually-hidden">@Texts.Users_ColActions</span></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@Texts.Blocks_ColAddress">@context.Address</MudTd>
+            <MudTd DataLabel="@Texts.Blocks_ColState">
+                @if (context.IsPermanent)
+                {
+                    @Texts.Blocks_StatePermanent
+                }
+                else if (IsBlockedNow(context))
+                {
+                    <LocalTime Utc="context.BlockedUntilUtc!.Value" Wrap="@(until => string.Format(Texts.Culture, Texts.Blocks_StateUntil, until))" />
+                }
+                else
+                {
+                    @Texts.Blocks_StateNone
+                }
+            </MudTd>
+            <MudTd DataLabel="@Texts.Blocks_ColFailures">@context.Failures</MudTd>
+            <MudTd DataLabel="@Texts.Blocks_ColLast"><LocalTime Utc="context.LastFailureUtc" /></MudTd>
+            <MudTd>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => UnblockAsync(context.Address)" aria-label="@string.Format(Texts.Culture, Texts.Blocks_UnblockLabel, context.Address)">@Texts.Blocks_Unblock</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private bool _loaded;
+    private IReadOnlyList<IpBlock> _rows = [];
+
+    private async Task<string?> ActorNameAsync() => (await AuthState).User.Identity?.Name;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _rows = await BlockService.ListAsync();
+        _loaded = true;
+    }
+
+    private async Task UnblockAsync(string address)
+    {
+        if (!await Guard.IsAdminAsync((await AuthState).User))
+            return;
+
+        await BlockService.UnblockAsync(address, await ActorNameAsync());
+        Snackbar.Add(string.Format(Texts.Culture, Texts.Blocks_Unblocked, address), Severity.Success);
+        await LoadAsync();
+    }
+
+    private async Task UnblockAllAsync()
+    {
+        if (!await Guard.IsAdminAsync((await AuthState).User))
+            return;
+
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            Texts.Blocks_ConfirmTitle, string.Format(Texts.Culture, Texts.Blocks_ConfirmText, _rows.Count),
+            yesText: Texts.Blocks_UnblockAll, cancelText: Texts.WishList_Cancel);
+        if (confirmed != true)
+            return;
+
+        var count = await BlockService.UnblockAllAsync(await ActorNameAsync());
+        Snackbar.Add(count == 1 ? Texts.Blocks_AllOne : string.Format(Texts.Culture, Texts.Blocks_AllMany, count), Severity.Success);
+        await LoadAsync();
+    }
+
+    private bool IsBlockedNow(IpBlock block) =>
+        block.BlockedUntilUtc is { } until && until > Time.GetUtcNow().UtcDateTime;
+}

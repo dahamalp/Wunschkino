@@ -1,0 +1,33 @@
+@implements IDisposable
+@inject NavigationManager Navigation
+
+<a href="@Href" class="nav-item @(IsActive ? "active" : null)" aria-current="@(IsActive ? "page" : null)" @onclick="OnClickAsync">@ChildContent</a>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Href { get; set; } = "/";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Wird nach dem Klick aufgerufen, damit das Handy-Menü sich schließt.</summary>
+    [Parameter]
+    public EventCallback Clicked { get; set; }
+
+    private bool IsActive
+    {
+        get
+        {
+            var current = new Uri(Navigation.Uri).AbsolutePath;
+            return string.Equals(current.TrimEnd('/'), Href.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    protected override void OnInitialized() => Navigation.LocationChanged += OnLocationChanged;
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => InvokeAsync(StateHasChanged);
+
+    private Task OnClickAsync() => Clicked.InvokeAsync();
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
+}

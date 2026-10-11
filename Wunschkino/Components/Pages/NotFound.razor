@@ -1,0 +1,9 @@
+@page "/not-found"
+@attribute [AllowAnonymous]
+@layout MainLayout
+
+<PageTitle>@Texts.NotFound_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.NotFound_Title</MudText>
+<MudText Class="mb-4">@Texts.NotFound_Text</MudText>
+<MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary">@Texts.Error_Home</MudButton>

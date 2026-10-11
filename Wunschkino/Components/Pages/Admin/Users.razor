@@ -1,0 +1,205 @@
+@page "/admin/users"
+@attribute [Authorize(Roles = AuthClaims.AdminRole)]
+@using Wunschkino.Auth
+@using Wunschkino.Data
+@inject UserService UserService
+@inject TwoFactorService TwoFactorService
+@inject ISnackbar Snackbar
+@inject TimeProvider Time
+
+<PageTitle>@Texts.Users_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Users_Title</MudText>
+
+<MudPaper Class="pa-4 mb-6" Elevation="1">
+    <MudTextField @bind-Value="_adminPassword" Label="@Texts.Confirm_Password" InputType="InputType.Password" Variant="Variant.Outlined"
+                  HelperText="@Texts.Users_ConfirmPasswordHint"
+                  UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "current-password" })" />
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-6" Elevation="1">
+    <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Users_NewTitle</MudText>
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+            <MudTextField @bind-Value="_newUsername" Label="@Texts.Users_Username" Variant="Variant.Outlined"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudTextField @bind-Value="_newPassword" Label="@Texts.Users_StartPassword" InputType="InputType.Password" Variant="Variant.Outlined"
+                          HelperText="@string.Format(Texts.Culture, Texts.Password_Min, UserValidation.MinPasswordLength)"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "new-password" })" />
+        </MudItem>
+        <MudItem xs="12" sm="2">
+            <MudSelect T="UserRole" @bind-Value="_newRole" Label="@Texts.Users_Role" Variant="Variant.Outlined">
+                <MudSelectItem Value="UserRole.User">@Texts.Users_RoleUser</MudSelectItem>
+                <MudSelectItem Value="UserRole.Admin">@Texts.Users_RoleAdmin</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="2" Class="d-flex align-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateAsync" Disabled="_busy" FullWidth="true">@Texts.Users_Create</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@if (_resetUser is not null)
+{
+    <MudPaper Class="pa-4 mb-6" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@string.Format(Texts.Culture, Texts.Users_ResetTitle, _resetUser.Username)</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudTextField @bind-Value="_resetPassword" Label="@Texts.Users_NewPassword" InputType="InputType.Password" Variant="Variant.Outlined"
+                          HelperText="@string.Format(Texts.Culture, Texts.Password_Min, UserValidation.MinPasswordLength)"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "new-password" })" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ResetPasswordAsync" Disabled="_busy">@Texts.Users_ResetSet</MudButton>
+            <MudButton Variant="Variant.Text" OnClick="@(() => { _resetUser = null; _resetPassword = ""; })">@Texts.Users_Cancel</MudButton>
+        </MudStack>
+    </MudPaper>
+}
+
+@if (_resetTwoFactorUser is not null)
+{
+    <MudPaper Class="pa-4 mb-6" Elevation="1">
+        <MudText Typo="Typo.body1" Class="mb-2">@string.Format(Texts.Culture, Texts.Users_ResetTwoFactorConfirm, _resetTwoFactorUser.Username)</MudText>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetTwoFactorAsync" Disabled="_busy">@Texts.Users_ResetTwoFactor</MudButton>
+            <MudButton Variant="Variant.Text" OnClick="@(() => _resetTwoFactorUser = null)">@Texts.Users_Cancel</MudButton>
+        </MudStack>
+    </MudPaper>
+}
+
+<MudTable Items="_users" Dense="true" Hover="true" Elevation="1" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>@Texts.Users_Username</MudTh>
+        <MudTh>@Texts.Users_Role</MudTh>
+        <MudTh>@Texts.Users_ColStatus</MudTh>
+        <MudTh>@Texts.Users_ColCreated</MudTh>
+        <MudTh><span class="visually-hidden">@Texts.Users_ColActions</span></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="@Texts.Users_Username">@context.Username</MudTd>
+        <MudTd DataLabel="@Texts.Users_Role">@(context.Role == UserRole.Admin ? Texts.Users_RoleAdmin : Texts.Users_RoleUser)</MudTd>
+        <MudTd DataLabel="@Texts.Users_ColStatus">
+            @if (context.IsDisabled)
+            {
+                <MudChip T="string" Color="Color.Error" Size="Size.Small" Icon="@Icons.Material.Filled.Block">@Texts.Users_StatusDisabled</MudChip>
+            }
+            else if (context.LockedUntilUtc > Time.GetUtcNow().UtcDateTime)
+            {
+                <MudChip T="string" Color="Color.Warning" Size="Size.Small" Icon="@Icons.Material.Filled.Lock">@Texts.Users_StatusLocked</MudChip>
+            }
+            else
+            {
+                <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.CheckCircle">@Texts.Users_StatusActive</MudChip>
+            }
+            @if (context.HasTwoFactor)
+            {
+                <MudChip T="string" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.Filled.VerifiedUser">@Texts.Users_TwoFactorOn</MudChip>
+            }
+        </MudTd>
+        <MudTd DataLabel="@Texts.Users_ColCreated"><LocalTime Utc="context.CreatedAtUtc" Format="d" /></MudTd>
+        <MudTd Style="text-align: right">
+            <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="@($"{Texts.Users_ColActions}: {context.Username}")" Dense="true">
+                <MudMenuItem OnClick="@(() => { _resetUser = context; _resetPassword = ""; })">@Texts.Users_ActionReset</MudMenuItem>
+                <MudMenuItem OnClick="@(() => RunAsync(id => UserService.SetRoleAsync(id, context.Id, context.Role == UserRole.Admin ? UserRole.User : UserRole.Admin), Texts.Users_RoleChanged))">
+                    @(context.Role == UserRole.Admin ? Texts.Users_ActionMakeUser : Texts.Users_ActionMakeAdmin)
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => RunAsync(id => UserService.SetDisabledAsync(id, context.Id, !context.IsDisabled), context.IsDisabled ? Texts.Users_Enabled : Texts.Users_Disabled))">
+                    @(context.IsDisabled ? Texts.Users_ActionEnable : Texts.Users_ActionDisable)
+                </MudMenuItem>
+                @if (context.LockedUntilUtc > Time.GetUtcNow().UtcDateTime)
+                {
+                    <MudMenuItem OnClick="@(() => RunAsync(id => UserService.UnlockAsync(id, context.Id), Texts.Users_Unlocked, confirmPassword: false))">@Texts.Users_ActionUnlock</MudMenuItem>
+                }
+                @if (context.HasTwoFactor)
+                {
+                    <MudMenuItem OnClick="@(() => _resetTwoFactorUser = context)">@Texts.Users_ResetTwoFactor</MudMenuItem>
+                }
+            </MudMenu>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private IReadOnlyList<UserSummary> _users = [];
+    private bool _busy;
+
+    private string _newUsername = "";
+    private string _newPassword = "";
+    private UserRole _newRole = UserRole.User;
+
+    private UserSummary? _resetUser;
+    private string _resetPassword = "";
+    private UserSummary? _resetTwoFactorUser;
+
+    protected override Task OnInitializedAsync() => ReloadAsync();
+
+    private async Task ReloadAsync() => _users = await UserService.ListAsync();
+
+    private async Task CreateAsync()
+    {
+        if (await RunAsync(id => UserService.CreateAsync(id, _newUsername, _newPassword, _newRole), Texts.Users_Created))
+        {
+            _newUsername = _newPassword = "";
+            _newRole = UserRole.User;
+        }
+    }
+
+    private async Task ResetPasswordAsync()
+    {
+        if (_resetUser is null)
+            return;
+        if (await RunAsync(id => UserService.ResetPasswordAsync(id, _resetUser.Id, _resetPassword), Texts.Users_PasswordSet))
+        {
+            _resetUser = null;
+            _resetPassword = "";
+        }
+    }
+
+    private async Task ResetTwoFactorAsync()
+    {
+        if (_resetTwoFactorUser is not { } target)
+            return;
+        if (await RunAsync(id => TwoFactorService.ResetByAdminAsync(id, target.Id), string.Format(Texts.Culture, Texts.Users_TwoFactorReset, target.Username)))
+            _resetTwoFactorUser = null;
+    }
+
+    private string _adminPassword = "";
+
+    // Zugänge, Rechte und Passwörter ändern sich nur mit dem Passwort des Admins: Ein gestohlenes Cookie reicht dafür nicht.
+    private async Task<bool> RunAsync(Func<int, Task<UserOperationResult>> operation, string successMessage, bool confirmPassword = true)
+    {
+        if (AuthClaims.GetUserId((await AuthState).User) is not { } actingUserId)
+            return false;
+
+        _busy = true;
+        try
+        {
+            if (confirmPassword)
+            {
+                var confirmed = await UserService.ConfirmPasswordAsync(actingUserId, _adminPassword);
+                _adminPassword = "";
+                if (!confirmed.Success)
+                {
+                    Snackbar.Add(confirmed.Error ?? Texts.Users_Failed, Severity.Error);
+                    return false;
+                }
+            }
+
+            var result = await operation(actingUserId);
+            if (!result.Success)
+            {
+                Snackbar.Add(result.Error ?? Texts.Users_Failed, Severity.Error);
+                return false;
+            }
+            Snackbar.Add(successMessage, Severity.Success);
+            await ReloadAsync();
+            return true;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

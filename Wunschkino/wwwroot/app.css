@@ -1,0 +1,210 @@
+@font-face {
+    font-family: "Geist";
+    src: url("fonts/Geist-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+html, body {
+    font-family: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1:focus, #main-content:focus {
+    outline: none;
+}
+
+a:focus-visible, button:focus-visible, [tabindex]:not([tabindex="-1"]):focus-visible, .mud-button-root:focus-visible, .mud-icon-button:focus-visible {
+    outline: 3px solid var(--mud-palette-primary) !important;
+    outline-offset: 2px;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 2000;
+    padding: 10px 16px;
+    border-radius: var(--mud-default-borderradius);
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-primary);
+}
+
+    .skip-link:focus {
+        left: 8px;
+    }
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid var(--mud-palette-success);
+}
+
+.invalid {
+    outline: 1px solid var(--mud-palette-error);
+}
+
+.validation-message {
+    color: var(--mud-palette-error);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+.wordmark {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.wordmark b {
+    color: var(--mud-palette-primary);
+    font-weight: inherit;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.app-nav {
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-item, .account-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: var(--mud-default-borderradius);
+    color: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+    .nav-item:hover, .account-link:hover {
+        background: color-mix(in srgb, currentColor 10%, transparent);
+    }
+
+    .nav-item.active {
+        background: color-mix(in srgb, currentColor 14%, transparent);
+        font-weight: 650;
+    }
+
+.nav-menu .mud-button-root {
+    min-height: 44px;
+    padding: 0 14px;
+}
+
+.drawer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+}
+
+    .drawer-nav .nav-item {
+        white-space: normal;
+    }
+
+.drawer-heading {
+    margin: 16px 14px 4px;
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mud-palette-text-secondary);
+}
+
+/* Touch-Ziele: Standardknöpfe mindestens 44 px hoch (kleine Chips und Symbolleisten bleiben dicht). */
+.mud-button-root.mud-button:not(.mud-button-size-small) {
+    min-height: 44px;
+}
+
+.mud-icon-button:not(.mud-icon-button-size-small) {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* Links im Fließtext müssen sich ohne Farbe erkennen lassen (WCAG 1.4.1). */
+a.mud-link.mud-link {
+    text-decoration: underline !important;
+}
+
+.text-link {
+    color: var(--mud-palette-primary);
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+}
+
+/* Das geschlossene Handy-Menü darf weder einen Schatten werfen noch per Tastatur erreichbar sein. */
+.app-drawer.mud-drawer--closed {
+    box-shadow: none;
+    visibility: hidden;
+}
+
+.recovery-codes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 0.5rem 1rem;
+    padding: 0;
+    list-style: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.totp-qr {
+    display: block;
+    background: #fff;
+    padding: 8px;
+    border-radius: var(--mud-default-borderradius);
+}
+
+/* Lange Wörter in Übersetzungen (zum Beispiel niederländisch „Tweestapsverificatie“) dürfen auf kleinen Handys umbrechen,
+   statt die Seite zu verbreitern. */
+h1, h2, h3 {
+    overflow-wrap: anywhere;
+}
+
+.totp-secret code {
+    overflow-wrap: anywhere;
+    font-size: 1rem;
+}
+
+/* Mindestens 44 × 44 Pixel Trefferfläche für Links, die nicht im Fließtext stehen (WCAG 2.5.5). */
+.touch-target {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.account-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+h1, h2, h3 {
+    text-wrap: balance;
+}
+
+a, button, .mud-button-root, .mud-icon-button, .mud-select, .mud-switch {
+    touch-action: manipulation;
+}
+
+.mud-table td, .mud-table th {
+    font-variant-numeric: tabular-nums;
+}

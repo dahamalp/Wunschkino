@@ -1,0 +1,39 @@
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.25rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.library-card {
+    min-width: 0;
+}
+
+.library-poster {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--mud-default-borderradius);
+    display: block;
+    background: var(--mud-palette-background-gray);
+}
+
+.library-poster-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mud-palette-text-disabled);
+}
+
+/* Lange Titel laufen über höchstens drei Zeilen; auf Touch gibt es keinen Tooltip, deshalb bleibt möglichst viel sichtbar. */
+::deep .library-title {
+    margin-top: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+}

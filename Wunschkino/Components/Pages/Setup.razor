@@ -1,0 +1,199 @@
+@page "/setup"
+@attribute [AllowAnonymous]
+@using Wunschkino.Auth
+@using Wunschkino.Services
+@using Wunschkino.Setup
+@inject SetupService SetupService
+@inject SetupState SetupState
+@inject Wunschkino.Library.LibraryRefreshService LibraryRefresh
+@inject JellyfinClient JellyfinClient
+@inject TmdbClient TmdbClient
+@inject NavigationManager Navigation
+
+<PageTitle>@Texts.Setup_PageTitle</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="py-6">
+    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Setup_Title</MudText>
+    <MudText Typo="Typo.body2" Class="mb-4">@string.Format(Texts.Culture, Texts.Setup_StepOf, _step + 1, StepTitles.Length, StepTitles[_step])</MudText>
+    <MudProgressLinear Value="@((_step + 1) * 100.0 / StepTitles.Length)" Class="mb-6" aria-label="@Texts.Setup_Progress" />
+
+    <MudPaper Class="pa-6" Elevation="1">
+        @switch (_step)
+        {
+            case 0:
+                <MudText Class="mb-4">
+                    @((MarkupString)string.Format(Texts.Culture, Texts.Setup_TokenHint, "<code>/var/lib/wunschkino/setup-token</code>"))
+                </MudText>
+                <MudTextField @bind-Value="_token" Label="@Texts.Setup_Token" Variant="Variant.Outlined" Immediate="true" AutoFocus="true"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off", ["spellcheck"] = "false" })" />
+                break;
+
+            case 1:
+                <MudText Class="mb-4">@Texts.Setup_AdminHint</MudText>
+                <MudTextField @bind-Value="_username" Label="@Texts.Setup_Username" Variant="Variant.Outlined" Immediate="true" Class="mb-3"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "username" })" />
+                <MudTextField @bind-Value="_password" Label="@Texts.Setup_Password" InputType="@PasswordInputType" Variant="Variant.Outlined" Immediate="true"
+                              HelperText="@string.Format(Texts.Culture, Texts.Setup_PasswordMin, UserValidation.MinPasswordLength)" Class="mb-3"
+                              Adornment="Adornment.End" AdornmentIcon="@(_showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                              OnAdornmentClick="() => _showPassword = !_showPassword" AdornmentAriaLabel="@(_showPassword ? Texts.Setup_HidePassword : Texts.Setup_ShowPassword)"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "new-password" })" />
+                <MudTextField @bind-Value="_passwordRepeat" Label="@Texts.Setup_PasswordRepeat" InputType="@PasswordInputType" Variant="Variant.Outlined" Immediate="true"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "new-password" })" />
+                break;
+
+            case 2:
+                <MudText Class="mb-4">
+                    @((MarkupString)string.Format(Texts.Culture, Texts.Setup_JellyfinHint, "<em>" + Texts.Setup_JellyfinKeyPath + "</em>"))
+                </MudText>
+                <MudTextField @bind-Value="_jellyfinUrl" Label="@Texts.Setup_JellyfinUrl" Placeholder="http://192.168.1.10:8096" Variant="Variant.Outlined" Immediate="true" Class="mb-3"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+                <MudTextField @bind-Value="_jellyfinApiKey" Label="@Texts.Setup_JellyfinKey" InputType="InputType.Password" Variant="Variant.Outlined" Immediate="true"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+                break;
+
+            case 3:
+                <MudText Class="mb-4">@Texts.Setup_TmdbHint</MudText>
+                <MudTextField @bind-Value="_tmdbApiKey" Label="@Texts.Setup_TmdbKey" InputType="InputType.Password" Variant="Variant.Outlined" Immediate="true" Class="mb-4"
+                              UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+                <MudSwitch T="bool" @bind-Value="_anonymousWishes" Color="Color.Primary" Label="@Texts.Setup_Anonymous" />
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@Texts.Setup_AnonymousHint</MudText>
+                break;
+
+            case 4:
+                <MudAlert Severity="Severity.Success" Class="mb-4">@Texts.Setup_Done</MudAlert>
+                <MudText>@Texts.Setup_DoneHint</MudText>
+                <MudAlert Severity="Severity.Info" Class="mt-4">@Texts.Setup_LegalNote</MudAlert>
+                break;
+        }
+
+        <div aria-live="assertive">
+            @if (_message is not null)
+            {
+                <MudAlert Severity="@(_messageIsError ? Severity.Error : Severity.Success)" Class="mt-4">@_message</MudAlert>
+            }
+        </div>
+
+        <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
+            @if (_step is > 0 and < 4)
+            {
+                <MudButton Variant="Variant.Text" OnClick="Back" Disabled="_busy">@Texts.Setup_Back</MudButton>
+            }
+            else
+            {
+                <span></span>
+            }
+
+            @if (_step < 4)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NextAsync" Disabled="_busy">
+                    @(_busy ? Texts.Setup_Wait : _step == 3 ? Texts.Setup_Finish : Texts.Setup_Next)
+                </MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Navigation.NavigateTo("/", forceLoad: true))">@Texts.Setup_ToStart</MudButton>
+            }
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private static readonly string[] StepTitles =
+        [Texts.Setup_StepToken, Texts.Setup_StepAdmin, Texts.Setup_StepJellyfin, Texts.Setup_StepTmdb, Texts.Setup_StepDone];
+
+    private int _step;
+    private bool _busy;
+    private bool _showPassword;
+    private string? _message;
+    private bool _messageIsError;
+
+    private string _token = "";
+    private string _username = "";
+    private string _password = "";
+    private string _passwordRepeat = "";
+    private string _jellyfinUrl = "";
+    private string _jellyfinApiKey = "";
+    private string _tmdbApiKey = "";
+    private bool _anonymousWishes = true;
+
+    private InputType PasswordInputType => _showPassword ? InputType.Text : InputType.Password;
+
+    protected override void OnInitialized()
+    {
+        // Die Redirect-Middleware sieht nur HTTP-Requests, nicht die Navigation innerhalb einer laufenden Circuit.
+        if (SetupState.IsCompleted)
+            Navigation.NavigateTo("/", forceLoad: true);
+    }
+
+    private void Back()
+    {
+        _message = null;
+        _step--;
+    }
+
+    private async Task NextAsync()
+    {
+        _busy = true;
+        _message = null;
+        try
+        {
+            var error = _step switch
+            {
+                0 => SetupService.IsTokenValid(_token) ? null : Texts.Setup_TokenInvalid,
+                1 => UserValidation.ValidateUsername(_username)
+                     ?? UserValidation.ValidatePassword(_password)
+                     ?? (_password == _passwordRepeat ? null : Texts.Setup_PasswordMismatch),
+                2 => await TestJellyfinAsync(),
+                3 => await FinishAsync(),
+                _ => null
+            };
+
+            if (error is not null)
+            {
+                ShowError(error);
+                return;
+            }
+            _showPassword = false;
+            _step++;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task<string?> TestJellyfinAsync()
+    {
+        if (ConnectionValidation.ValidateJellyfinUrl(_jellyfinUrl) is { } urlError)
+            return urlError;
+        if (string.IsNullOrWhiteSpace(_jellyfinApiKey))
+            return Texts.Setup_JellyfinKeyMissing;
+
+        var result = await JellyfinClient.TestConnectionAsync(ConnectionValidation.NormalizeUrl(_jellyfinUrl), _jellyfinApiKey.Trim());
+        return result.Success ? null : result.Message;
+    }
+
+    private async Task<string?> FinishAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_tmdbApiKey))
+            return Texts.Setup_TmdbKeyMissing;
+
+        var tmdb = await TmdbClient.TestConnectionAsync(_tmdbApiKey);
+        if (!tmdb.Success)
+            return tmdb.Message;
+
+        var result = await SetupService.CompleteAsync(new SetupRequest(_token, _username, _password, _jellyfinUrl, _jellyfinApiKey, _tmdbApiKey, _anonymousWishes));
+        if (!result.Success)
+            return result.Error;
+
+        _password = _passwordRepeat = _jellyfinApiKey = _tmdbApiKey = _token = "";
+        LibraryRefresh.RequestRefresh();
+        return null;
+    }
+
+    private void ShowError(string message)
+    {
+        _message = message;
+        _messageIsError = true;
+    }
+}

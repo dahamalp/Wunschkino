@@ -1,0 +1,14 @@
+
+.about-tmdb {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Das TMDB-Logo muss weniger auffällig sein als das Zeichen der App selbst (Wunschkino steht groß in der Kopfzeile). */
+.about-tmdb-logo {
+    height: 24px;
+    width: auto;
+    display: block;
+}

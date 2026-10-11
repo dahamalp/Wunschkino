@@ -1,0 +1,78 @@
+@page "/datenschutz"
+@attribute [AllowAnonymous]
+@using Wunschkino.Legal
+@inject LegalService Legal
+
+<PageTitle>@Texts.Privacy_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Privacy_Title</MudText>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_ControllerTitle</MudText>
+    @if (_texts.Contact is { } contact)
+    {
+        <LegalText Text="@contact" />
+    }
+    else
+    {
+        <MudText Class="mud-text-secondary">@Texts.Legal_NoContact</MudText>
+    }
+</MudPaper>
+
+@if (_texts.Privacy is { } custom)
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <LegalText Text="@custom" />
+    </MudPaper>
+}
+else
+{
+    <MudText Class="mud-text-secondary mb-4">@Texts.Privacy_Intro</MudText>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_DataTitle</MudText>
+        <ul class="privacy-list">
+            <li>@Texts.Privacy_Data1</li>
+            <li>@Texts.Privacy_Data2</li>
+            <li>@Texts.Privacy_Data3</li>
+            <li>@Texts.Privacy_Data4</li>
+            <li>@Texts.Privacy_Data5</li>
+        </ul>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_PurposeTitle</MudText>
+        <MudText>@Texts.Privacy_Purpose</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_RecipientsTitle</MudText>
+        <MudText>@Texts.Privacy_Recipients</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_CookiesTitle</MudText>
+        <ul class="privacy-list">
+            <li>@Texts.Privacy_Cookie1</li>
+            <li>@Texts.Privacy_Cookie2</li>
+            <li>@Texts.Privacy_Cookie3</li>
+        </ul>
+        <MudText>@Texts.Privacy_CookiesNote</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_StorageTitle</MudText>
+        <MudText>@Texts.Privacy_Storage</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.Privacy_RightsTitle</MudText>
+        <MudText>@Texts.Privacy_Rights</MudText>
+    </MudPaper>
+}
+
+@code {
+    private LegalTexts _texts = LegalTexts.Empty;
+
+    protected override async Task OnInitializedAsync() => _texts = await Legal.GetAsync();
+}

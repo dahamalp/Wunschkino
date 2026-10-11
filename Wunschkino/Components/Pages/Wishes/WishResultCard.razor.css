@@ -1,0 +1,28 @@
+::deep .result-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.result-poster {
+    width: 92px;
+    flex: none;
+    aspect-ratio: 2 / 3;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--mud-default-borderradius);
+    background: var(--mud-palette-background-gray);
+}
+
+.result-poster-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mud-palette-text-disabled);
+}
+
+.result-body {
+    min-width: 0;
+    flex: 1;
+}

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="App_Name" xml:space="preserve"><value>Wunschkino</value></data>
+  <data name="Layout_SkipToContent" xml:space="preserve"><value>Ir al contenido</value></data>
+  <data name="Layout_MainNavigation" xml:space="preserve"><value>Navegación principal</value></data>
+  <data name="Layout_Logout" xml:space="preserve"><value>Cerrar sesión</value></data>
+  <data name="Layout_UnexpectedError" xml:space="preserve"><value>Se ha producido un error inesperado.</value></data>
+  <data name="Layout_Reload" xml:space="preserve"><value>Recargar</value></data>
+  <data name="Layout_Dismiss" xml:space="preserve"><value>Cerrar</value></data>
+
+  <data name="Nav_Library" xml:space="preserve"><value>Biblioteca</value></data>
+  <data name="Nav_Wishes" xml:space="preserve"><value>Deseos</value></data>
+  <data name="Nav_NewWish" xml:space="preserve"><value>Pedir un deseo</value></data>
+  <data name="Nav_Users" xml:space="preserve"><value>Usuarios</value></data>
+  <data name="Nav_Gaps" xml:space="preserve"><value>Episodios que faltan</value></data>
+  <data name="Nav_Blocks" xml:space="preserve"><value>Direcciones bloqueadas</value></data>
+  <data name="Nav_Audit" xml:space="preserve"><value>Registro</value></data>
+  <data name="Nav_Security" xml:space="preserve"><value>Seguridad</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>Ajustes</value></data>
+  <data name="Nav_Admin" xml:space="preserve"><value>Administración</value></data>
+  <data name="Nav_Menu" xml:space="preserve"><value>Menú</value></data>
+  <data name="Nav_Account" xml:space="preserve"><value>Mi cuenta</value></data>
+
+  <data name="Theme_Label" xml:space="preserve"><value>Apariencia</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>Sistema</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Claro</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Oscuro</value></data>
+  <data name="Theme_Active" xml:space="preserve"><value>activo</value></data>
+
+  <data name="Footer_Source" xml:space="preserve"><value>Código fuente (AGPL-3.0)</value></data>
+  <data name="Footer_About" xml:space="preserve"><value>Acerca de Wunschkino</value></data>
+  <data name="Footer_Version" xml:space="preserve"><value>Versión {0}</value></data>
+  <data name="Footer_TmdbNotice" xml:space="preserve"><value>This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</value><comment>Pflichtsatz der TMDB-Bedingungen, bleibt in jeder Sprache Englisch.</comment></data>
+  <data name="Kind_Movie" xml:space="preserve"><value>Película</value></data>
+  <data name="Kind_Series" xml:space="preserve"><value>Serie</value></data>
+  <data name="Home_PageTitle" xml:space="preserve"><value>Biblioteca – Wunschkino</value></data>
+  <data name="Home_Title" xml:space="preserve"><value>Biblioteca</value></data>
+  <data name="Home_Counts" xml:space="preserve"><value>{0} películas · {1} series</value></data>
+  <data name="Home_Updated" xml:space="preserve"><value>Actualizado: {0:g}</value></data>
+  <data name="Home_Refresh" xml:space="preserve"><value>Actualizar ahora</value></data>
+  <data name="Home_Refreshing" xml:space="preserve"><value>Actualizando …</value></data>
+  <data name="Home_ShowingLastGood" xml:space="preserve"><value>Se muestra el último estado cargado correctamente.</value></data>
+  <data name="Home_Search" xml:space="preserve"><value>Buscar por título o año</value></data>
+  <data name="Home_Type" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Home_TypeAll" xml:space="preserve"><value>Todos</value></data>
+  <data name="Home_Movies" xml:space="preserve"><value>Películas</value></data>
+  <data name="Home_SeriesPlural" xml:space="preserve"><value>Series</value></data>
+  <data name="Home_Sort" xml:space="preserve"><value>Ordenar</value></data>
+  <data name="Home_SortTitle" xml:space="preserve"><value>Título</value></data>
+  <data name="Home_SortYear" xml:space="preserve"><value>Año de estreno</value></data>
+  <data name="Home_SortRecent" xml:space="preserve"><value>Añadidos recientemente</value></data>
+  <data name="Home_NoMatches" xml:space="preserve"><value>No hay resultados.</value></data>
+  <data name="Home_ShowMore" xml:space="preserve"><value>Mostrar más ({0} más)</value></data>
+  <data name="Home_Loading" xml:space="preserve"><value>Cargando la biblioteca …</value></data>
+  <data name="NewWish_PageTitle" xml:space="preserve"><value>Pedir un deseo – Wunschkino</value></data>
+  <data name="NewWish_Title" xml:space="preserve"><value>Pedir un deseo</value></data>
+  <data name="NewWish_ModeMedia" xml:space="preserve"><value>Películas y series</value></data>
+  <data name="NewWish_ModeAnime" xml:space="preserve"><value>Anime</value></data>
+  <data name="NewWish_HintAnime" xml:space="preserve"><value>Busca un título de anime, también por su nombre en romaji o japonés. La búsqueda usa AniList y se pide la serie completa.</value></data>
+  <data name="NewWish_HintMedia" xml:space="preserve"><value>Busca un título o escribe un número de IMDb como {0}.</value></data>
+  <data name="NewWish_PrivacyMedia" xml:space="preserve"><value>Tu búsqueda la envía este servidor a TMDB, no tu navegador.</value></data>
+  <data name="NewWish_PrivacyAnime" xml:space="preserve"><value>Tu búsqueda la envía este servidor a AniList, no tu navegador.</value></data>
+  <data name="NewWish_LabelMedia" xml:space="preserve"><value>Título o número de IMDb</value></data>
+  <data name="NewWish_LabelAnime" xml:space="preserve"><value>Título de anime</value></data>
+  <data name="NewWish_Search" xml:space="preserve"><value>Buscar</value></data>
+  <data name="NewWish_Searching" xml:space="preserve"><value>Buscando …</value></data>
+  <data name="NewWish_NothingFound" xml:space="preserve"><value>No se encontró nada.</value></data>
+  <data name="NewWish_ResultsCount" xml:space="preserve"><value>{0} resultados</value></data>
+  <data name="A11y_ActionFor" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="NewWish_InLibrary" xml:space="preserve"><value>Ya está en Jellyfin</value></data>
+  <data name="NewWish_AlreadyWished" xml:space="preserve"><value>Ya pedido · {0} · {1}</value></data>
+  <data name="NewWish_VoteOne" xml:space="preserve"><value>{0} voto</value></data>
+  <data name="NewWish_VotesMany" xml:space="preserve"><value>{0} votos</value></data>
+  <data name="NewWish_YouSupport" xml:space="preserve"><value>Apoyas este deseo.</value></data>
+  <data name="NewWish_Note" xml:space="preserve"><value>Nota (opcional)</value></data>
+  <data name="NewWish_Wish" xml:space="preserve"><value>Pedir</value></data>
+  <data name="NewWish_PlusOne" xml:space="preserve"><value>+1</value></data>
+  <data name="NewWish_SearchFailed" xml:space="preserve"><value>La búsqueda ha fallado. Inténtalo de nuevo más tarde.</value></data>
+  <data name="NewWish_SaveFailed" xml:space="preserve"><value>No se pudo guardar el deseo. Inténtalo de nuevo más tarde.</value></data>
+  <data name="NewWish_ResultsLabel" xml:space="preserve"><value>Resultados de la búsqueda</value></data>
+  <data name="AnimeFormat_Ova" xml:space="preserve"><value>OVA</value></data>
+  <data name="AnimeFormat_Ona" xml:space="preserve"><value>ONA</value></data>
+  <data name="AnimeFormat_Special" xml:space="preserve"><value>Especial</value></data>
+  <data name="AnimeFormat_Music" xml:space="preserve"><value>Música</value></data>
+  <data name="AnimeFormat_Other" xml:space="preserve"><value>Anime</value></data>
+  <data name="Status_Open" xml:space="preserve"><value>Abierto</value></data>
+  <data name="Status_Accepted" xml:space="preserve"><value>Aceptado</value></data>
+  <data name="Status_Rejected" xml:space="preserve"><value>Rechazado</value></data>
+  <data name="Status_Done" xml:space="preserve"><value>Hecho</value></data>
+  <data name="WishList_PageTitle" xml:space="preserve"><value>Deseos – Wunschkino</value></data>
+  <data name="WishList_Title" xml:space="preserve"><value>Deseos</value></data>
+  <data name="WishList_New" xml:space="preserve"><value>Nuevo deseo</value></data>
+  <data name="WishList_Scope" xml:space="preserve"><value>Mostrar</value></data>
+  <data name="WishList_ScopeAll" xml:space="preserve"><value>Todos los deseos</value></data>
+  <data name="WishList_ScopeMine" xml:space="preserve"><value>Mis deseos</value></data>
+  <data name="WishList_Status" xml:space="preserve"><value>Estado</value></data>
+  <data name="WishList_StatusAll" xml:space="preserve"><value>Todos</value></data>
+  <data name="WishList_Sort" xml:space="preserve"><value>Ordenar</value></data>
+  <data name="WishList_SortNewest" xml:space="preserve"><value>Más recientes primero</value></data>
+  <data name="WishList_SortMostVotes" xml:space="preserve"><value>Más votados</value></data>
+  <data name="WishList_None" xml:space="preserve"><value>No se encontraron deseos.</value></data>
+  <data name="WishList_By" xml:space="preserve"><value>de {0}</value></data>
+  <data name="WishList_Automatic" xml:space="preserve"><value>Automático</value></data>
+  <data name="WishList_AutomaticTooltip" xml:space="preserve"><value>Hecho automáticamente: el título se encontró en Jellyfin.</value></data>
+  <data name="WishList_Withdraw" xml:space="preserve"><value>Retirar</value></data>
+  <data name="WishList_WithdrawVote" xml:space="preserve"><value>Retirar mi voto</value></data>
+  <data name="WishList_MarkDone" xml:space="preserve"><value>Marcar como hecho</value></data>
+  <data name="WishList_MarkAccepted" xml:space="preserve"><value>Marcar como aceptado</value></data>
+  <data name="WishList_MarkRejected" xml:space="preserve"><value>Marcar como rechazado</value></data>
+  <data name="WishList_EditComment" xml:space="preserve"><value>Editar comentario</value></data>
+  <data name="WishList_Delete" xml:space="preserve"><value>Eliminar deseo</value></data>
+  <data name="WishList_StatusActive" xml:space="preserve"><value>Está “{0}”: haz clic de nuevo para volver a “Abierto”</value></data>
+  <data name="WishList_StatusSet" xml:space="preserve"><value>Marcar como “{0}”</value></data>
+  <data name="WishList_CommentLabel" xml:space="preserve"><value>Comentario (opcional)</value></data>
+  <data name="WishList_CommentSave" xml:space="preserve"><value>Guardar comentario</value></data>
+  <data name="WishList_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="WishList_DeleteTitle" xml:space="preserve"><value>Eliminar deseo</value></data>
+  <data name="WishList_DeleteMessage" xml:space="preserve"><value>¿Seguro que quieres eliminar “{0}” con todos sus votos?</value></data>
+  <data name="WishList_DeleteYes" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="WishList_LoadFailed" xml:space="preserve"><value>No se pudo cargar la lista de deseos.</value></data>
+  <data name="WishList_ActionFailed" xml:space="preserve"><value>La acción ha fallado. Inténtalo de nuevo más tarde.</value></data>
+  <data name="WishList_ListLabel" xml:space="preserve"><value>Deseos</value></data>
+  <data name="Setup_PageTitle" xml:space="preserve"><value>Configuración – Wunschkino</value></data>
+  <data name="Setup_Title" xml:space="preserve"><value>Configuración</value></data>
+  <data name="Setup_StepOf" xml:space="preserve"><value>Paso {0} de {1}: {2}</value></data>
+  <data name="Setup_Progress" xml:space="preserve"><value>Progreso de la configuración</value></data>
+  <data name="Setup_StepToken" xml:space="preserve"><value>Token de configuración</value></data>
+  <data name="Setup_StepAdmin" xml:space="preserve"><value>Cuenta de administrador</value></data>
+  <data name="Setup_StepJellyfin" xml:space="preserve"><value>Jellyfin</value></data>
+  <data name="Setup_StepTmdb" xml:space="preserve"><value>TMDB</value></data>
+  <data name="Setup_StepDone" xml:space="preserve"><value>Listo</value></data>
+  <data name="Setup_TokenHint" xml:space="preserve"><value>Introduce el token de configuración. Se mostró durante la instalación y está en el servidor en {0}.</value></data>
+  <data name="Setup_Token" xml:space="preserve"><value>Token de configuración</value></data>
+  <data name="Setup_AdminHint" xml:space="preserve"><value>Crea la primera cuenta de administrador.</value></data>
+  <data name="Setup_Username" xml:space="preserve"><value>Nombre de usuario</value></data>
+  <data name="Setup_Password" xml:space="preserve"><value>Contraseña</value></data>
+  <data name="Setup_PasswordRepeat" xml:space="preserve"><value>Repite la contraseña</value></data>
+  <data name="Setup_PasswordMin" xml:space="preserve"><value>Al menos {0} caracteres</value></data>
+  <data name="Setup_ShowPassword" xml:space="preserve"><value>Mostrar contraseña</value></data>
+  <data name="Setup_HidePassword" xml:space="preserve"><value>Ocultar contraseña</value></data>
+  <data name="Setup_JellyfinHint" xml:space="preserve"><value>Conecta Jellyfin. La clave de API la creas en Jellyfin en {0}.</value></data>
+  <data name="Setup_JellyfinKeyPath" xml:space="preserve"><value>Panel de control → Claves de API</value></data>
+  <data name="Setup_JellyfinUrl" xml:space="preserve"><value>Dirección de Jellyfin</value></data>
+  <data name="Setup_JellyfinKey" xml:space="preserve"><value>Clave de API de Jellyfin</value></data>
+  <data name="Setup_TmdbHint" xml:space="preserve"><value>Introduce tu acceso a TMDB (gratis en themoviedb.org → Ajustes → API). Sirven tanto la clave de API como el token de acceso de lectura.</value></data>
+  <data name="Setup_TmdbKey" xml:space="preserve"><value>Clave de API de TMDB</value></data>
+  <data name="Setup_Anonymous" xml:space="preserve"><value>Mostrar los deseos de forma anónima</value></data>
+  <data name="Setup_AnonymousHint" xml:space="preserve"><value>Así los usuarios normales no ven de quién es cada deseo. Los administradores siempre lo ven. Puedes cambiarlo más tarde en Ajustes.</value></data>
+  <data name="Setup_Done" xml:space="preserve"><value>La configuración ha terminado.</value></data>
+  <data name="Setup_DoneHint" xml:space="preserve"><value>El token de configuración ya no es válido. A partir de ahora puedes iniciar sesión con la cuenta de administrador.</value></data>
+  <data name="Setup_Back" xml:space="preserve"><value>Atrás</value></data>
+  <data name="Setup_Next" xml:space="preserve"><value>Siguiente</value></data>
+  <data name="Setup_Finish" xml:space="preserve"><value>Terminar la configuración</value></data>
+  <data name="Setup_Wait" xml:space="preserve"><value>Espera, por favor …</value></data>
+  <data name="Setup_ToStart" xml:space="preserve"><value>Ir a la página de inicio</value></data>
+  <data name="Setup_TokenInvalid" xml:space="preserve"><value>El token de configuración no es válido.</value></data>
+  <data name="Setup_PasswordMismatch" xml:space="preserve"><value>Las contraseñas no coinciden.</value></data>
+  <data name="Setup_JellyfinKeyMissing" xml:space="preserve"><value>Falta la clave de API de Jellyfin.</value></data>
+  <data name="Setup_TmdbKeyMissing" xml:space="preserve"><value>Falta la clave de API de TMDB.</value></data>
+  <data name="Login_PageTitle" xml:space="preserve"><value>Iniciar sesión – Wunschkino</value></data>
+  <data name="Login_Title" xml:space="preserve"><value>Iniciar sesión</value></data>
+  <data name="Login_PasswordChanged" xml:space="preserve"><value>Tu contraseña se ha cambiado. Vuelve a iniciar sesión.</value></data>
+  <data name="Login_Username" xml:space="preserve"><value>Nombre de usuario</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Contraseña</value></data>
+  <data name="Login_Remember" xml:space="preserve"><value>Mantener la sesión iniciada</value></data>
+  <data name="Login_Submit" xml:space="preserve"><value>Iniciar sesión</value></data>
+  <data name="Login_UsernameRequired" xml:space="preserve"><value>Introduce el nombre de usuario.</value></data>
+  <data name="Login_PasswordRequired" xml:space="preserve"><value>Introduce la contraseña.</value></data>
+  <data name="Password_PageTitle" xml:space="preserve"><value>Cambiar contraseña – Wunschkino</value></data>
+  <data name="Password_Title" xml:space="preserve"><value>Cambiar contraseña</value></data>
+  <data name="Password_Current" xml:space="preserve"><value>Contraseña actual</value></data>
+  <data name="Password_New" xml:space="preserve"><value>Nueva contraseña</value></data>
+  <data name="Password_Repeat" xml:space="preserve"><value>Repite la nueva contraseña</value></data>
+  <data name="Password_Min" xml:space="preserve"><value>Al menos {0} caracteres</value></data>
+  <data name="Password_Mismatch" xml:space="preserve"><value>Las nuevas contraseñas no coinciden.</value></data>
+  <data name="Password_Notice" xml:space="preserve"><value>Tras el cambio se cerrará tu sesión en todas partes y tendrás que iniciarla de nuevo.</value></data>
+  <data name="Password_Save" xml:space="preserve"><value>Cambiar contraseña</value></data>
+  <data name="Users_PageTitle" xml:space="preserve"><value>Usuarios – Wunschkino</value></data>
+  <data name="Users_Title" xml:space="preserve"><value>Usuarios</value></data>
+  <data name="Users_NewTitle" xml:space="preserve"><value>Nuevo usuario</value></data>
+  <data name="Users_Username" xml:space="preserve"><value>Nombre de usuario</value></data>
+  <data name="Users_StartPassword" xml:space="preserve"><value>Contraseña inicial</value></data>
+  <data name="Users_Role" xml:space="preserve"><value>Rol</value></data>
+  <data name="Users_RoleUser" xml:space="preserve"><value>Usuario</value></data>
+  <data name="Users_RoleAdmin" xml:space="preserve"><value>Administrador</value></data>
+  <data name="Users_Create" xml:space="preserve"><value>Crear</value></data>
+  <data name="Users_ResetTitle" xml:space="preserve"><value>Nueva contraseña para “{0}”</value></data>
+  <data name="Users_NewPassword" xml:space="preserve"><value>Nueva contraseña</value></data>
+  <data name="Users_ResetSet" xml:space="preserve"><value>Establecer</value></data>
+  <data name="Users_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Users_ColStatus" xml:space="preserve"><value>Estado</value></data>
+  <data name="Users_ColCreated" xml:space="preserve"><value>Creado</value></data>
+  <data name="Users_ColActions" xml:space="preserve"><value>Acciones</value></data>
+  <data name="Users_StatusDisabled" xml:space="preserve"><value>Bloqueado</value></data>
+  <data name="Users_StatusLocked" xml:space="preserve"><value>Inicio de sesión bloqueado</value></data>
+  <data name="Users_StatusActive" xml:space="preserve"><value>Activo</value></data>
+  <data name="Users_ActionReset" xml:space="preserve"><value>Restablecer contraseña</value></data>
+  <data name="Users_ActionMakeUser" xml:space="preserve"><value>Convertir en usuario</value></data>
+  <data name="Users_ActionMakeAdmin" xml:space="preserve"><value>Convertir en administrador</value></data>
+  <data name="Users_ActionEnable" xml:space="preserve"><value>Desbloquear cuenta</value></data>
+  <data name="Users_ActionDisable" xml:space="preserve"><value>Bloquear cuenta</value></data>
+  <data name="Users_ActionUnlock" xml:space="preserve"><value>Quitar bloqueo de inicio de sesión</value></data>
+  <data name="Users_Created" xml:space="preserve"><value>Usuario creado.</value></data>
+  <data name="Users_RoleChanged" xml:space="preserve"><value>Rol cambiado.</value></data>
+  <data name="Users_Enabled" xml:space="preserve"><value>Cuenta desbloqueada.</value></data>
+  <data name="Users_Disabled" xml:space="preserve"><value>Cuenta bloqueada.</value></data>
+  <data name="Users_Unlocked" xml:space="preserve"><value>Bloqueo de inicio de sesión quitado.</value></data>
+  <data name="Users_PasswordSet" xml:space="preserve"><value>Contraseña establecida.</value></data>
+  <data name="Users_Failed" xml:space="preserve"><value>La acción ha fallado.</value></data>
+  <data name="Common_Loading" xml:space="preserve"><value>Cargando …</value></data>
+  <data name="Blocks_PageTitle" xml:space="preserve"><value>Direcciones bloqueadas – Wunschkino</value></data>
+  <data name="Blocks_Title" xml:space="preserve"><value>Direcciones bloqueadas</value></data>
+  <data name="Blocks_Intro" xml:space="preserve"><value>Quien inicia sesión mal varias veces o sobrecarga la aplicación queda bloqueado: tras cada 3 intentos fallidos durante 1 minuto, 5 minutos, 15 minutos, 1 hora y 24 horas, y después de forma permanente hasta que lo desbloquees aquí. El propio servidor y el proxy nunca se bloquean.</value></data>
+  <data name="Blocks_IntroConsole" xml:space="preserve"><value>Si te has quedado bloqueado tú, desbloquea en el servidor con {0} o {1}.</value></data>
+  <data name="Blocks_Empty" xml:space="preserve"><value>Ninguna dirección tiene intentos fallidos ni está bloqueada.</value></data>
+  <data name="Blocks_UnblockAll" xml:space="preserve"><value>Desbloquear todas</value></data>
+  <data name="Blocks_ConfirmTitle" xml:space="preserve"><value>Desbloquear todas las direcciones</value></data>
+  <data name="Blocks_ConfirmText" xml:space="preserve"><value>¿Seguro que quieres desbloquear las {0} direcciones? Las direcciones bloqueadas podrán volver a iniciar sesión de inmediato.</value></data>
+  <data name="Blocks_ColAddress" xml:space="preserve"><value>Dirección</value></data>
+  <data name="Blocks_ColState" xml:space="preserve"><value>Estado</value></data>
+  <data name="Blocks_ColFailures" xml:space="preserve"><value>Intentos fallidos</value></data>
+  <data name="Blocks_ColLast" xml:space="preserve"><value>Último intento fallido</value></data>
+  <data name="Blocks_Unblock" xml:space="preserve"><value>Desbloquear</value></data>
+  <data name="Blocks_UnblockLabel" xml:space="preserve"><value>Desbloquear {0}</value></data>
+  <data name="Blocks_Unblocked" xml:space="preserve"><value>{0} está desbloqueada.</value></data>
+  <data name="Blocks_AllOne" xml:space="preserve"><value>1 dirección desbloqueada.</value></data>
+  <data name="Blocks_AllMany" xml:space="preserve"><value>{0} direcciones desbloqueadas.</value></data>
+  <data name="Blocks_StatePermanent" xml:space="preserve"><value>Bloqueada de forma permanente</value></data>
+  <data name="Blocks_StateUntil" xml:space="preserve"><value>Bloqueada hasta {0}</value></data>
+  <data name="Blocks_StateNone" xml:space="preserve"><value>No bloqueada</value></data>
+  <data name="Audit_PageTitle" xml:space="preserve"><value>Registro – Wunschkino</value></data>
+  <data name="Audit_Title" xml:space="preserve"><value>Registro</value></data>
+  <data name="Audit_Intro" xml:space="preserve"><value>Las últimas {0} acciones relevantes para la seguridad: inicios de sesión, gestión de usuarios, ajustes de conexión y de deseos, bloqueos de direcciones. Las entradas se guardan 365 días y las direcciones IP (en inicios de sesión y direcciones bloqueadas) 90 días. Los inicios de sesión fallidos aparecen en el log del servidor ({1}), no aquí.</value></data>
+  <data name="Audit_HideLogins" xml:space="preserve"><value>Ocultar inicios de sesión</value></data>
+  <data name="Audit_Empty" xml:space="preserve"><value>Todavía no hay entradas.</value></data>
+  <data name="Audit_ColTime" xml:space="preserve"><value>Hora</value></data>
+  <data name="Audit_ColWho" xml:space="preserve"><value>Quién</value></data>
+  <data name="Audit_ColAction" xml:space="preserve"><value>Acción</value></data>
+  <data name="Audit_ColTarget" xml:space="preserve"><value>Objetivo</value></data>
+  <data name="Audit_ColDetails" xml:space="preserve"><value>Detalles</value></data>
+  <data name="Audit_ColAddress" xml:space="preserve"><value>Dirección</value></data>
+  <data name="Audit_System" xml:space="preserve"><value>Sistema</value></data>
+  <data name="Security_PageTitle" xml:space="preserve"><value>Seguridad – Wunschkino</value></data>
+  <data name="Security_Title" xml:space="preserve"><value>Comprobación de seguridad</value></data>
+  <data name="Security_Intro" xml:space="preserve"><value>Comprueba los ajustes y el estado de esta instalación. “Crítico” significa que ya está causando daños o pone datos en peligro. “Advertencia” significa que es inseguro o incompleto, pero todavía no ha pasado nada.</value></data>
+  <data name="Security_ColCheck" xml:space="preserve"><value>Comprobación</value></data>
+  <data name="Security_ColState" xml:space="preserve"><value>Estado</value></data>
+  <data name="Security_ColTodo" xml:space="preserve"><value>Qué hacer</value></data>
+  <data name="Security_Open" xml:space="preserve"><value>Abrir</value></data>
+  <data name="Security_DismissProxy" xml:space="preserve"><value>Descartar aviso</value></data>
+  <data name="Security_BackupTitle" xml:space="preserve"><value>Copia de seguridad</value></data>
+  <data name="Security_BackupFolder" xml:space="preserve"><value>Carpeta</value></data>
+  <data name="Security_BackupLast" xml:space="preserve"><value>Última copia</value></data>
+  <data name="Security_BackupNone" xml:space="preserve"><value>ninguna todavía</value></data>
+  <data name="Security_BackupCount" xml:space="preserve"><value>Cantidad y tamaño</value></data>
+  <data name="Security_BackupOne" xml:space="preserve"><value>{0} copia, {1}</value></data>
+  <data name="Security_BackupMany" xml:space="preserve"><value>{0} copias, {1}</value></data>
+  <data name="Security_BackupDrive" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Security_BackupSameDrive" xml:space="preserve"><value>la misma que la base de datos (no protege ante un fallo del disco)</value></data>
+  <data name="Security_BackupOtherDrive" xml:space="preserve"><value>distinta de la de la base de datos</value></data>
+  <data name="Security_BackupHint" xml:space="preserve"><value>La aplicación hace una copia automática cada día y conserva las últimas. Solo se copia la base de datos, nunca la carpeta de claves {0}; esa la copias por separado (ver README).</value></data>
+  <data name="Security_BackupNow" xml:space="preserve"><value>Hacer copia ahora</value></data>
+  <data name="Security_BackupRunning" xml:space="preserve"><value>Haciendo copia …</value></data>
+  <data name="Security_BackupOk" xml:space="preserve"><value>Se ha hecho la copia de la base de datos.</value></data>
+  <data name="Security_BackupFailed" xml:space="preserve"><value>La copia de seguridad ha fallado. El motivo aparece en la tabla.</value></data>
+  <data name="Security_SizeBytes" xml:space="preserve"><value>{0} bytes</value></data>
+  <data name="Banner_Attention" xml:space="preserve"><value>Atención:</value></data>
+  <data name="Banner_MoreOne" xml:space="preserve"><value>(y 1 punto crítico más)</value></data>
+  <data name="Banner_MoreMany" xml:space="preserve"><value>(y {0} puntos críticos más)</value></data>
+  <data name="Banner_Open" xml:space="preserve"><value>Abrir la comprobación de seguridad</value></data>
+  <data name="Settings_PageTitle" xml:space="preserve"><value>Ajustes – Wunschkino</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Ajustes</value></data>
+  <data name="Settings_Jellyfin" xml:space="preserve"><value>Jellyfin</value></data>
+  <data name="Settings_JellyfinUrl" xml:space="preserve"><value>Dirección de Jellyfin</value></data>
+  <data name="Settings_NewJellyfinKey" xml:space="preserve"><value>Nueva clave de API de Jellyfin</value></data>
+  <data name="Settings_RefreshMinutes" xml:space="preserve"><value>Actualizar la biblioteca cada … minutos</value></data>
+  <data name="Settings_Tmdb" xml:space="preserve"><value>TMDB</value></data>
+  <data name="Settings_NewTmdbKey" xml:space="preserve"><value>Nueva clave de API de TMDB</value></data>
+  <data name="Settings_TestNote" xml:space="preserve"><value>Al guardar se prueban ambas conexiones. Solo se guarda si las dos funcionan.</value></data>
+  <data name="Settings_TestAndSave" xml:space="preserve"><value>Probar y guardar</value></data>
+  <data name="Settings_Testing" xml:space="preserve"><value>Probando conexiones …</value></data>
+  <data name="Settings_Saved" xml:space="preserve"><value>Ajustes guardados.</value></data>
+  <data name="Settings_KeyStored" xml:space="preserve"><value>Hay una clave guardada. Déjalo vacío para conservarla.</value></data>
+  <data name="Settings_KeyMissing" xml:space="preserve"><value>No hay ninguna clave legible guardada.</value></data>
+  <data name="Settings_Wishes" xml:space="preserve"><value>Deseos</value></data>
+  <data name="Settings_Anonymous" xml:space="preserve"><value>Mostrar los deseos de forma anónima</value></data>
+  <data name="Settings_AnonymousHint" xml:space="preserve"><value>Así los usuarios normales no ven de quién es un deseo o una nota; sus propias aportaciones aparecen como “tú”. Los administradores siempre lo ven.</value></data>
+  <data name="Settings_AnonymousOn" xml:space="preserve"><value>Los deseos se muestran de forma anónima.</value></data>
+  <data name="Settings_AnonymousOff" xml:space="preserve"><value>Los deseos se muestran con nombre.</value></data>
+  <data name="Settings_Limits" xml:space="preserve"><value>Límites por usuario</value></data>
+  <data name="Settings_WishesPerDay" xml:space="preserve"><value>Deseos por usuario y día</value></data>
+  <data name="Settings_WishesPerDayHint" xml:space="preserve"><value>Cuenta los deseos nuevos y los “+1” de las últimas 24 horas. 0 significa sin límite. Los administradores no tienen límite.</value></data>
+  <data name="Settings_SearchesPerMinute" xml:space="preserve"><value>Búsquedas en TMDB por usuario y minuto</value></data>
+  <data name="Settings_SearchesHint" xml:space="preserve"><value>Protege TMDB y tu cuota de las búsquedas continuas. 0 significa sin límite.</value></data>
+  <data name="Settings_SaveLimits" xml:space="preserve"><value>Guardar límites</value></data>
+  <data name="Settings_LimitsSaved" xml:space="preserve"><value>Límites guardados.</value></data>
+  <data name="Settings_AnimeTitle" xml:space="preserve"><value>Lista de correspondencias de anime</value></data>
+  <data name="Settings_AnimeStatus" xml:space="preserve"><value>{0} entradas, última comprobación el {1}. La lista se actualiza sola cada día.</value></data>
+  <data name="Settings_AnimeNotLoaded" xml:space="preserve"><value>La lista aún no está cargada. Mientras tanto, la búsqueda de anime solo muestra títulos que ya están en Jellyfin.</value></data>
+  <data name="Settings_AnimeRefresh" xml:space="preserve"><value>Actualizar la lista de anime ahora</value></data>
+  <data name="Settings_AnimeRefreshing" xml:space="preserve"><value>Actualizando …</value></data>
+  <data name="Settings_AnimeSlow" xml:space="preserve"><value>La actualización está tardando más de lo normal. Recarga la página más tarde para ver el estado.</value></data>
+  <data name="Settings_AnimeDone" xml:space="preserve"><value>Lista de anime actualizada.</value></data>
+  <data name="Settings_AnimeFailed" xml:space="preserve"><value>No se pudo cargar la lista. El servicio lo volverá a intentar en una hora (detalles en el log).</value></data>
+  <data name="Gaps_PageTitle" xml:space="preserve"><value>Episodios que faltan – Wunschkino</value></data>
+  <data name="Gaps_Title" xml:space="preserve"><value>Episodios que faltan</value></data>
+  <data name="Gaps_Intro" xml:space="preserve"><value>Compara los episodios de cada serie en Jellyfin con TMDB. No cuentan los especiales ni los episodios emitidos hace muy poco.</value></data>
+  <data name="Gaps_LastCheck" xml:space="preserve"><value>Última comprobación: {0}.</value></data>
+  <data name="Gaps_Checked" xml:space="preserve"><value>{0} de {1} series comprobadas.</value></data>
+  <data name="Gaps_CheckedMore" xml:space="preserve"><value>{0} de {1} series comprobadas: el resto se comprobará en las próximas pasadas.</value></data>
+  <data name="Gaps_ScanAll" xml:space="preserve"><value>Comprobar todas ahora</value></data>
+  <data name="Gaps_Scanning" xml:space="preserve"><value>Comprobando …</value></data>
+  <data name="Gaps_ScanProgress" xml:space="preserve"><value>{0} de {1} series procesadas</value></data>
+  <data name="Gaps_ScanWaiting" xml:space="preserve"><value>Esperando a la próxima pasada …</value></data>
+  <data name="Gaps_ScanProgressLabel" xml:space="preserve"><value>Progreso de la comprobación</value></data>
+  <data name="Gaps_NoneChecked" xml:space="preserve"><value>Todavía no se ha comprobado ninguna serie. Ocurre en segundo plano tras cada actualización de la biblioteca, en cuanto Jellyfin y TMDB estén configurados.</value></data>
+  <data name="Gaps_NoneMissing" xml:space="preserve"><value>No faltan episodios.</value></data>
+  <data name="Gaps_MissingTitle" xml:space="preserve"><value>Episodios que faltan ({0})</value></data>
+  <data name="Gaps_UncertainTitle" xml:space="preserve"><value>Recuento dudoso ({0})</value></data>
+  <data name="Gaps_UncertainHint" xml:space="preserve"><value>En estas series, casi siempre anime, Jellyfin y TMDB cuentan las temporadas o los episodios de forma distinta. Por eso la lista puede incluir episodios que en Jellyfin existen con otro número.</value></data>
+  <data name="Gaps_Done" xml:space="preserve"><value>Comprobación terminada.</value></data>
+  <data name="Gaps_NoRun" xml:space="preserve"><value>No se inició ninguna comprobación. ¿Están Jellyfin y TMDB configurados y accesibles?</value></data>
+  <data name="Gaps_Summary" xml:space="preserve"><value>{0} de {1} episodios disponibles</value></data>
+  <data name="Gaps_Unknown" xml:space="preserve"><value>Con este recuento no se pueden determinar los episodios exactos</value></data>
+  <data name="Gaps_ColSeries" xml:space="preserve"><value>Serie</value></data>
+  <data name="Gaps_ColPresent" xml:space="preserve"><value>Disponibles</value></data>
+  <data name="Gaps_ColMissing" xml:space="preserve"><value>Faltan</value></data>
+  <data name="About_PageTitle" xml:space="preserve"><value>Acerca de Wunschkino</value></data>
+  <data name="About_Title" xml:space="preserve"><value>Acerca de Wunschkino</value></data>
+  <data name="About_Intro" xml:space="preserve"><value>Wunschkino es un portal web para familia y amigos asociado a una instalación de Jellyfin: ves qué películas y series ya están disponibles y puedes pedir otras nuevas.</value></data>
+  <data name="About_LicenseTitle" xml:space="preserve"><value>Licencia y código fuente</value></data>
+  <data name="About_License" xml:space="preserve"><value>Wunschkino es software libre bajo la {0}. Quien ofrezca una versión modificada como servicio debe poner el código fuente a disposición de sus usuarios.</value></data>
+  <data name="About_LicenseName" xml:space="preserve"><value>GNU Affero General Public License, versión 3</value></data>
+  <data name="About_SourceHere" xml:space="preserve"><value>Código fuente de esta instalación: {0}</value></data>
+  <data name="About_ThanksTitle" xml:space="preserve"><value>Agradecimientos</value></data>
+  <data name="About_Sources" xml:space="preserve"><value>Las películas, series, pósteres y descripciones vienen de {0}. La búsqueda de anime usa la interfaz pública de {1} y la correspondencia de los números de anime la aporta la lista de la comunidad {2}.</value></data>
+  <data name="About_Disclaimer" xml:space="preserve"><value>Wunschkino es un proyecto independiente y no tiene relación con Jellyfin, TMDB ni AniList. Los nombres y el logotipo de TMDB pertenecen a sus respectivos titulares y no están bajo la AGPL.</value></data>
+  <data name="About_FontsTitle" xml:space="preserve"><value>Tipografía y componentes</value></data>
+  <data name="About_Fonts" xml:space="preserve"><value>La interfaz usa la tipografía Geist (SIL Open Font License 1.1), que se distribuye con la aplicación, y MudBlazor (MIT). Todos los componentes de terceros con sus licencias figuran en el archivo THIRD-PARTY-NOTICES.md del {0}.</value></data>
+  <data name="About_FontsSource" xml:space="preserve"><value>código fuente</value></data>
+  <data name="About_A11yTitle" xml:space="preserve"><value>Accesibilidad</value></data>
+  <data name="About_A11y" xml:space="preserve"><value>El objetivo de esta interfaz es cumplir WCAG 2.1, nivel AA: uso con teclado, contrastes, campos y controles etiquetados, un enlace para saltar la navegación y respeto por “reducir movimiento”. Las páginas se comprueban automáticamente con axe-core; aún falta una revisión manual completa con lectores de pantalla. Los avisos sobre barreras van a los responsables de esta instalación.</value></data>
+  <data name="About_TmdbAlt" xml:space="preserve"><value>TMDB</value></data>
+  <data name="About_TmdbLabel" xml:space="preserve"><value>The Movie Database (TMDB)</value></data>
+  <data name="Error_PageTitle" xml:space="preserve"><value>Error – Wunschkino</value></data>
+  <data name="Error_Title" xml:space="preserve"><value>Algo ha salido mal</value></data>
+  <data name="Error_Text" xml:space="preserve"><value>Se produjo un error al procesar tu solicitud. Inténtalo de nuevo.</value></data>
+  <data name="Error_RequestId" xml:space="preserve"><value>Código de error para el administrador: {0}</value></data>
+  <data name="Error_Home" xml:space="preserve"><value>Ir a la página de inicio</value></data>
+  <data name="NotFound_PageTitle" xml:space="preserve"><value>No encontrado – Wunschkino</value></data>
+  <data name="NotFound_Title" xml:space="preserve"><value>Página no encontrada</value></data>
+  <data name="NotFound_Text" xml:space="preserve"><value>La página solicitada no existe.</value></data>
+  <data name="Reconnect_First" xml:space="preserve"><value>Restableciendo la conexión con el servidor …</value></data>
+  <data name="Reconnect_RepeatedBefore" xml:space="preserve"><value>No se pudo restablecer la conexión. Nuevo intento en</value></data>
+  <data name="Reconnect_RepeatedAfter" xml:space="preserve"><value>segundos.</value></data>
+  <data name="Reconnect_Failed" xml:space="preserve"><value>No se pudo restablecer la conexión. Inténtalo de nuevo o recarga la página.</value></data>
+  <data name="Reconnect_Retry" xml:space="preserve"><value>Reintentar</value></data>
+  <data name="Reconnect_Paused" xml:space="preserve"><value>El servidor ha pausado la sesión.</value></data>
+  <data name="Reconnect_ResumeFailed" xml:space="preserve"><value>No se pudo continuar la sesión. Inténtalo de nuevo o recarga la página.</value></data>
+  <data name="Reconnect_Resume" xml:space="preserve"><value>Continuar</value></data>
+  <data name="Footer_Privacy" xml:space="preserve"><value>Privacidad</value></data>
+  <data name="Footer_Imprint" xml:space="preserve"><value>Aviso legal</value></data>
+  <data name="Legal_NoContact" xml:space="preserve"><value>El responsable no ha indicado ningún dato de contacto.</value></data>
+  <data name="Imprint_PageTitle" xml:space="preserve"><value>Aviso legal – Wunschkino</value></data>
+  <data name="Imprint_Title" xml:space="preserve"><value>Aviso legal</value></data>
+  <data name="Imprint_None" xml:space="preserve"><value>El responsable de esta instalación no ha publicado ningún aviso legal.</value></data>
+  <data name="Privacy_PageTitle" xml:space="preserve"><value>Privacidad – Wunschkino</value></data>
+  <data name="Privacy_Title" xml:space="preserve"><value>Privacidad</value></data>
+  <data name="Privacy_Intro" xml:space="preserve"><value>Esta información describe qué datos trata el software Wunschkino. El responsable de esta instalación responde de ello y puede publicar su propio texto.</value></data>
+  <data name="Privacy_ControllerTitle" xml:space="preserve"><value>Responsable</value></data>
+  <data name="Privacy_DataTitle" xml:space="preserve"><value>Qué datos se tratan</value></data>
+  <data name="Privacy_Data1" xml:space="preserve"><value>Cuenta: nombre de usuario, contraseña (guardada solo como hash), rol y fecha de creación.</value></data>
+  <data name="Privacy_Data2" xml:space="preserve"><value>Deseos: título pedido, nota opcional, fecha, votos y estado; según el ajuste del responsable, los demás usuarios no ven de quién es un deseo.</value></data>
+  <data name="Privacy_Data3" xml:space="preserve"><value>Registro para administradores: inicios de sesión y acciones de administración durante 365 días; las direcciones IP en ellos y en direcciones bloqueadas, durante 90 días.</value></data>
+  <data name="Privacy_Data4" xml:space="preserve"><value>Protección contra abusos: se cuentan los intentos fallidos de inicio de sesión por dirección IP para bloquearla temporalmente.</value></data>
+  <data name="Privacy_Data5" xml:space="preserve"><value>Log del sistema del servidor y de un proxy previo: hora, dirección IP, dirección solicitada y, en inicios de sesión fallidos, el nombre de usuario introducido. El responsable decide cuánto tiempo se conserva.</value></data>
+  <data name="Privacy_PurposeTitle" xml:space="preserve"><value>Finalidad y base jurídica</value></data>
+  <data name="Privacy_Purpose" xml:space="preserve"><value>Los datos sirven para ofrecer el portal (art. 6, apdo. 1, letra b del RGPD) y para operarlo de forma segura (art. 6, apdo. 1, letra f del RGPD).</value></data>
+  <data name="Privacy_RecipientsTitle" xml:space="preserve"><value>Cesión de datos</value></data>
+  <data name="Privacy_Recipients" xml:space="preserve"><value>El servidor envía los términos de búsqueda y los números de IMDb a TMDB y, en la búsqueda de anime, a AniList. El navegador nunca contacta con terceros: la tipografía, las imágenes y los scripts vienen del propio servidor, y no hay publicidad, analítica web ni contenido incrustado. El catálogo viene del servidor Jellyfin del responsable.</value></data>
+  <data name="Privacy_CookiesTitle" xml:space="preserve"><value>Cookies y almacenamiento del navegador</value></data>
+  <data name="Privacy_Cookie1" xml:space="preserve"><value>Wunschkino.Auth: mantiene la sesión iniciada. Técnicamente necesaria; dura hasta cerrar el navegador o, con “Mantener la sesión iniciada”, hasta 14 días.</value></data>
+  <data name="Privacy_Cookie2" xml:space="preserve"><value>Cookie antifalsificación (su nombre empieza por .AspNetCore.Antiforgery): protege los formularios frente a solicitudes falsificadas. Técnicamente necesaria; dura hasta cerrar el navegador.</value></data>
+  <data name="Privacy_CookiesNote" xml:space="preserve"><value>No se usan otras cookies ni almacenamiento del navegador (localStorage, sessionStorage); por eso no hace falta consentimiento (§ 25, apdo. 2, n.º 2 TDDDG). La apariencia elegida (clara u oscura) se guarda con la cuenta en la base de datos, no en el navegador.</value></data>
+  <data name="Privacy_StorageTitle" xml:space="preserve"><value>Plazo de conservación</value></data>
+  <data name="Privacy_Storage" xml:space="preserve"><value>Las cuentas, los deseos y los votos se conservan hasta que un administrador los elimina. Las entradas del registro se borran automáticamente tras los plazos indicados arriba.</value></data>
+  <data name="Privacy_RightsTitle" xml:space="preserve"><value>Sus derechos</value></data>
+  <data name="Privacy_Rights" xml:space="preserve"><value>Puede solicitar información sobre sus datos, así como su rectificación, supresión, la limitación del tratamiento y oponerse a él, y presentar una reclamación ante una autoridad de protección de datos. Para ello, diríjase al responsable indicado arriba.</value></data>
+  <data name="Settings_LegalTitle" xml:space="preserve"><value>Aspectos legales</value></data>
+  <data name="Settings_LegalHint" xml:space="preserve"><value>Opcional. Los textos aparecen en /impressum y /datenschutz y se pueden ver sin iniciar sesión. Solo texto, sin HTML; las líneas en blanco separan párrafos. Si necesitas un aviso legal lo decides tú como responsable; esto no es asesoramiento jurídico.</value></data>
+  <data name="Settings_LegalContact" xml:space="preserve"><value>Contacto del responsable (nombre, dirección o correo electrónico)</value></data>
+  <data name="Settings_LegalImprint" xml:space="preserve"><value>Aviso legal</value></data>
+  <data name="Settings_LegalImprintHint" xml:space="preserve"><value>Déjalo vacío si no lo necesitas. Así no habrá enlace al aviso legal.</value></data>
+  <data name="Settings_LegalPrivacy" xml:space="preserve"><value>Política de privacidad (sustituye al texto estándar)</value></data>
+  <data name="Settings_LegalPrivacyHint" xml:space="preserve"><value>Déjalo vacío para mostrar el texto estándar, que describe qué trata el software.</value></data>
+  <data name="Settings_LegalSave" xml:space="preserve"><value>Guardar textos legales</value></data>
+  <data name="Settings_LegalSaved" xml:space="preserve"><value>Textos legales guardados.</value></data>
+  <data name="Setup_LegalNote" xml:space="preserve"><value>Comprueba si como responsable necesitas un aviso legal y una política de privacidad. Puedes añadir ambos más tarde en Ajustes → Aspectos legales. Esto no es asesoramiento jurídico.</value></data>
+  <data name="WishList_AnonymousNote" xml:space="preserve"><value>Los deseos se muestran de forma anónima: no ves de quién son y los demás no ven que son tuyos.</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Account_NavLabel" xml:space="preserve"><value>Cuenta</value></data>
+  <data name="Account_NavPassword" xml:space="preserve"><value>Contraseña</value></data>
+  <data name="Account_NavTwoFactor" xml:space="preserve"><value>Verificación en dos pasos</value></data>
+  <data name="Login_TwoFactorTitle" xml:space="preserve"><value>Código de verificación</value></data>
+  <data name="Login_TwoFactorIntro" xml:space="preserve"><value>Introduce el código de seis dígitos de tu app de autenticación. Si no tienes el móvil a mano, usa uno de tus códigos de recuperación.</value></data>
+  <data name="Login_TwoFactorCode" xml:space="preserve"><value>Código</value></data>
+  <data name="Login_TwoFactorSubmit" xml:space="preserve"><value>Confirmar</value></data>
+  <data name="Login_TwoFactorBack" xml:space="preserve"><value>Volver al inicio de sesión</value></data>
+  <data name="Login_TwoFactorExpired" xml:space="preserve"><value>El inicio de sesión ha caducado. Vuelve a iniciar sesión.</value></data>
+  <data name="Login_TwoFactorCodeRequired" xml:space="preserve"><value>Introduce el código.</value></data>
+  <data name="TwoFactor_PageTitle" xml:space="preserve"><value>Verificación en dos pasos – Wunschkino</value></data>
+  <data name="TwoFactor_Title" xml:space="preserve"><value>Verificación en dos pasos</value></data>
+  <data name="TwoFactor_Off" xml:space="preserve"><value>La verificación en dos pasos está desactivada.</value></data>
+  <data name="TwoFactor_On" xml:space="preserve"><value>La verificación en dos pasos está activada. En cada inicio de sesión, Wunschkino te pide además de la contraseña un código de tu app.</value></data>
+  <data name="TwoFactor_Intro" xml:space="preserve"><value>Con una app de autenticación (por ejemplo Aegis, 2FAS, Google Authenticator o la app de tu gestor de contraseñas), un segundo código protege tu cuenta aunque alguien conozca tu contraseña.</value></data>
+  <data name="TwoFactor_Start" xml:space="preserve"><value>Configurar</value></data>
+  <data name="TwoFactor_SetupTitle" xml:space="preserve"><value>Configurar</value></data>
+  <data name="TwoFactor_SetupScan" xml:space="preserve"><value>1. Escanea el código QR con tu app de autenticación.</value></data>
+  <data name="TwoFactor_SetupManual" xml:space="preserve"><value>¿No puedes escanearlo? Introduce esta clave a mano en la app:</value></data>
+  <data name="TwoFactor_QrAlt" xml:space="preserve"><value>Código QR con la clave para la app de autenticación</value></data>
+  <data name="TwoFactor_Code" xml:space="preserve"><value>Código de seis dígitos de la app</value></data>
+  <data name="TwoFactor_CodeOrRecovery" xml:space="preserve"><value>Código de la app o código de recuperación</value></data>
+  <data name="TwoFactor_Enable" xml:space="preserve"><value>2. Comprobar el código y activar</value></data>
+  <data name="TwoFactor_Enabled" xml:space="preserve"><value>La verificación en dos pasos está activada.</value></data>
+  <data name="TwoFactor_RecoveryTitle" xml:space="preserve"><value>Códigos de recuperación</value></data>
+  <data name="TwoFactor_RecoveryIntro" xml:space="preserve"><value>Guarda estos códigos en un lugar seguro, por ejemplo impresos o en tu gestor de contraseñas. Cada código sirve una vez si no tienes acceso a tu app. Solo se muestran ahora.</value></data>
+  <data name="TwoFactor_RecoveryDone" xml:space="preserve"><value>He guardado los códigos</value></data>
+  <data name="TwoFactor_RecoveryLeft" xml:space="preserve"><value>Quedan {0} códigos de recuperación.</value></data>
+  <data name="TwoFactor_RenewTitle" xml:space="preserve"><value>Nuevos códigos de recuperación</value></data>
+  <data name="TwoFactor_RenewIntro" xml:space="preserve"><value>Genera diez códigos nuevos; los anteriores dejan de valer. Confirma con un código de la app.</value></data>
+  <data name="TwoFactor_Renew" xml:space="preserve"><value>Generar códigos nuevos</value></data>
+  <data name="TwoFactor_Renewed" xml:space="preserve"><value>Nuevos códigos de recuperación generados.</value></data>
+  <data name="TwoFactor_DisableTitle" xml:space="preserve"><value>Desactivar</value></data>
+  <data name="TwoFactor_DisableIntro" xml:space="preserve"><value>Confirma con tu contraseña y un código de la app o un código de recuperación.</value></data>
+  <data name="TwoFactor_Disable" xml:space="preserve"><value>Desactivar la verificación en dos pasos</value></data>
+  <data name="TwoFactor_Disabled" xml:space="preserve"><value>La verificación en dos pasos está desactivada.</value></data>
+  <data name="Users_TwoFactorOn" xml:space="preserve"><value>Verificación en dos pasos activada</value></data>
+  <data name="Users_ResetTwoFactor" xml:space="preserve"><value>Restablecer la verificación en dos pasos</value></data>
+  <data name="Users_ResetTwoFactorConfirm" xml:space="preserve"><value>¿Restablecer la verificación en dos pasos de “{0}”? Se cerrará la sesión de la cuenta en todas partes y después iniciará sesión solo con la contraseña.</value></data>
+  <data name="Users_TwoFactorReset" xml:space="preserve"><value>Verificación en dos pasos de “{0}” restablecida.</value></data>
+  <data name="Privacy_Cookie3" xml:space="preserve"><value>Wunschkino.TwoFactor: solo con la verificación en dos pasos activada; recuerda entre la contraseña y el código quién está iniciando sesión. Técnicamente necesaria; dura como máximo 5 minutos y se borra tras iniciar sesión.</value></data>
+  <data name="Msg_Wish_SearchTooLong" xml:space="preserve"><value>La búsqueda puede tener como máximo {0} caracteres.</value></data>
+  <data name="Msg_Wish_TmdbNotConfiguredAdmin" xml:space="preserve"><value>TMDB todavía no está configurado. Un administrador debe introducir la clave de API en “Ajustes”.</value></data>
+  <data name="Msg_Wish_AnimeNoTmdb" xml:space="preserve"><value>Este anime no tiene correspondencia en TMDB, por eso no se puede pedir.</value></data>
+  <data name="Msg_Wish_AlreadyInLibrary" xml:space="preserve"><value>Este título ya está en Jellyfin.</value></data>
+  <data name="Msg_Wish_NoteTooLong" xml:space="preserve"><value>La nota puede tener como máximo {0} caracteres.</value></data>
+  <data name="Msg_Wish_InvalidTitle" xml:space="preserve"><value>Título no válido.</value></data>
+  <data name="Msg_Wish_AccountInactive" xml:space="preserve"><value>Tu cuenta no está activa.</value></data>
+  <data name="Msg_Wish_TmdbNotConfigured" xml:space="preserve"><value>TMDB todavía no está configurado.</value></data>
+  <data name="Msg_Wish_CreatingTooFast" xml:space="preserve"><value>Estás creando deseos demasiado rápido.</value></data>
+  <data name="Msg_Wish_SearchingTooFast" xml:space="preserve"><value>Estás buscando demasiado rápido.</value></data>
+  <data name="Msg_Wish_TooFastWait" xml:space="preserve"><value>{0} Espera {1} segundos.</value></data>
+  <data name="Msg_Wish_NotOnTmdb" xml:space="preserve"><value>Este título no existe en TMDB.</value></data>
+  <data name="Msg_Wish_Created" xml:space="preserve"><value>“{0}” ya está en la lista de deseos.</value></data>
+  <data name="Msg_Wish_Gone" xml:space="preserve"><value>Este deseo ya no existe.</value></data>
+  <data name="Msg_Wish_NotSupporting" xml:space="preserve"><value>No apoyas este deseo.</value></data>
+  <data name="Msg_Wish_CannotWithdraw" xml:space="preserve"><value>Este deseo ya no se puede retirar.</value></data>
+  <data name="Msg_Wish_AcceptedOnlyAdmin" xml:space="preserve"><value>Un deseo aceptado solo lo puede quitar un administrador.</value></data>
+  <data name="Msg_Wish_Withdrawn" xml:space="preserve"><value>Deseo retirado.</value></data>
+  <data name="Msg_Wish_AdminRequired" xml:space="preserve"><value>Para esto hacen falta permisos de administrador.</value></data>
+  <data name="Msg_Wish_Deleted" xml:space="preserve"><value>Deseo eliminado.</value></data>
+  <data name="Msg_Wish_InvalidStatus" xml:space="preserve"><value>Estado no válido.</value></data>
+  <data name="Msg_Wish_CommentTooLong" xml:space="preserve"><value>El comentario puede tener como máximo {0} caracteres.</value></data>
+  <data name="Msg_Wish_StatusSaved" xml:space="preserve"><value>Estado guardado.</value></data>
+  <data name="Msg_Wish_Rejected" xml:space="preserve"><value>Este deseo ha sido rechazado.</value></data>
+  <data name="Msg_Wish_AlreadyDone" xml:space="preserve"><value>Este deseo ya está hecho.</value></data>
+  <data name="Msg_Wish_AlreadySupported" xml:space="preserve"><value>Ya apoyas este deseo.</value></data>
+  <data name="Msg_Wish_VoteFailed" xml:space="preserve"><value>No se pudo guardar el voto. Quizá ya apoyabas el deseo o se ha eliminado.</value></data>
+  <data name="Msg_Wish_Supported" xml:space="preserve"><value>Ahora apoyas “{0}”.</value></data>
+  <data name="Msg_Wish_DailyLimit" xml:space="preserve"><value>En las últimas 24 horas ya has pedido {0} deseos. Inténtalo de nuevo más tarde.</value></data>
+  <data name="Check_SeverityOk" xml:space="preserve"><value>Correcto</value></data>
+  <data name="Check_SeverityInfo" xml:space="preserve"><value>Aviso</value></data>
+  <data name="Check_SeverityWarning" xml:space="preserve"><value>Advertencia</value></data>
+  <data name="Check_SeverityCritical" xml:space="preserve"><value>Crítico</value></data>
+  <data name="Check_ProxyTitle" xml:space="preserve"><value>Proxy inverso</value></data>
+  <data name="Check_ProxyUntrusted" xml:space="preserve"><value>La dirección {0} envía X-Forwarded-For, pero no está registrada como proxy. Todos los usuarios detrás de ella comparten el límite de inicio de sesión y el bloqueo, y un atacante podría bloquearlos a todos a la vez. Registra la dirección al instalar con --proxy. El aviso también puede haberlo provocado un extraño que solo envía la cabecera; en ese caso puedes descartarlo.</value></data>
+  <data name="Check_ProxyListed" xml:space="preserve"><value>Registrados: {0}.</value></data>
+  <data name="Check_ProxyLocal" xml:space="preserve"><value>La aplicación solo escucha en este servidor; el proxy se ejecuta en el mismo servidor.</value></data>
+  <data name="Check_ProxyMissing" xml:space="preserve"><value>No hay ningún proxy registrado y la aplicación es accesible desde la red. Si delante hay un proxy inverso, registra su dirección con --proxy (o instala con --proxy-mode local si se ejecuta en el mismo servidor).</value></data>
+  <data name="Check_DomainTitle" xml:space="preserve"><value>Dominio</value></data>
+  <data name="Check_DomainMissing" xml:space="preserve"><value>Sin un dominio registrado, la aplicación acepta cualquier cabecera Host. Registra tu dominio público con --domain.</value></data>
+  <data name="Check_DomainAllowed" xml:space="preserve"><value>Permitido: {0}.</value></data>
+  <data name="Check_CookiesTitle" xml:space="preserve"><value>Cookies seguras</value></data>
+  <data name="Check_CookiesSecure" xml:space="preserve"><value>La cookie de inicio de sesión solo se envía por HTTPS.</value></data>
+  <data name="Check_CookiesInsecure" xml:space="preserve"><value>Las cookies seguras están desactivadas: la cookie de inicio de sesión también viaja por HTTP sin cifrar. Solo tiene sentido en tu propia red; si no, --secure-cookies true.</value></data>
+  <data name="Check_LimitTitle" xml:space="preserve"><value>Límite de solicitudes</value></data>
+  <data name="Check_LimitOn" xml:space="preserve"><value>Como máximo {0} solicitudes por minuto y dirección.</value></data>
+  <data name="Check_LimitOff" xml:space="preserve"><value>El límite general está desactivado (Wunschkino__RequestLimitPerMinute=0). Solo el límite de inicio de sesión protege aún la aplicación de una sobrecarga.</value></data>
+  <data name="Check_BackupTitle" xml:space="preserve"><value>Copia de seguridad</value></data>
+  <data name="Check_BackupFailed" xml:space="preserve"><value>La última copia de seguridad ha fallado: {0}</value></data>
+  <data name="Check_BackupNone" xml:space="preserve"><value>Todavía no hay ninguna copia. La primera se crea automáticamente poco después del arranque.</value></data>
+  <data name="Check_BackupOverdue" xml:space="preserve"><value>La última copia tiene {0} días (aviso a partir de {1} días). Comprueba que se pueda escribir en la carpeta de copias.</value></data>
+  <data name="Check_BackupReadable" xml:space="preserve"><value>Otros usuarios de este servidor pueden leer la carpeta de copias, y las copias contienen todos los datos. Ajusta los permisos con: chmod 700 {0}</value></data>
+  <data name="Check_BackupSameDrive" xml:space="preserve"><value>Las copias están en la misma unidad que la base de datos y no protegen ante un fallo del disco. Pon Wunschkino:BackupDirectory en otra unidad.</value></data>
+  <data name="Check_BackupOkOne" xml:space="preserve"><value>Última copia el {0}, {1} copia.</value></data>
+  <data name="Check_BackupOkMany" xml:space="preserve"><value>Última copia el {0}, {1} copias.</value></data>
+  <data name="Check_KeysTitle" xml:space="preserve"><value>Carpeta de claves</value></data>
+  <data name="Check_KeysHint" xml:space="preserve"><value>La copia solo contiene la base de datos. Las claves de API que hay en ella no se pueden leer sin la carpeta “keys”: cópiala por separado y no junto con la base de datos (ver README).</value></data>
+  <data name="Check_TwoFactorTitle" xml:space="preserve"><value>Verificación en dos pasos de los administradores</value></data>
+  <data name="Check_TwoFactorAll" xml:space="preserve"><value>Todos los administradores activos inician sesión con un segundo factor.</value></data>
+  <data name="Check_TwoFactorMissing" xml:space="preserve"><value>Sin verificación en dos pasos: {0}. Recomendación: cada administrador la activa en el menú de cuenta, en “Verificación en dos pasos”.</value></data>
+  <data name="Check_BlocksTitle" xml:space="preserve"><value>Direcciones bloqueadas</value></data>
+  <data name="Check_BlocksPermanentOne" xml:space="preserve"><value>{0} dirección está bloqueada de forma permanente hasta que un administrador la desbloquee.</value></data>
+  <data name="Check_BlocksPermanentMany" xml:space="preserve"><value>{0} direcciones están bloqueadas de forma permanente hasta que un administrador las desbloquee.</value></data>
+  <data name="Check_BlocksNone" xml:space="preserve"><value>Ninguna dirección está bloqueada.</value></data>
+  <data name="Check_BlocksActiveOne" xml:space="preserve"><value>{0} dirección está bloqueada ahora mismo.</value></data>
+  <data name="Check_BlocksActiveMany" xml:space="preserve"><value>{0} direcciones están bloqueadas ahora mismo.</value></data>
+  <data name="Audit_Login" xml:space="preserve"><value>Inicio de sesión</value></data>
+  <data name="Audit_SetupCompleted" xml:space="preserve"><value>Configuración terminada</value></data>
+  <data name="Audit_UserCreated" xml:space="preserve"><value>Usuario creado</value></data>
+  <data name="Audit_UserDisabled" xml:space="preserve"><value>Cuenta bloqueada</value></data>
+  <data name="Audit_UserEnabled" xml:space="preserve"><value>Cuenta habilitada</value></data>
+  <data name="Audit_UserRole" xml:space="preserve"><value>Rol cambiado</value></data>
+  <data name="Audit_UserPasswordReset" xml:space="preserve"><value>Contraseña restablecida</value></data>
+  <data name="Audit_UserUnlocked" xml:space="preserve"><value>Cuenta desbloqueada</value></data>
+  <data name="Audit_PasswordChanged" xml:space="preserve"><value>Contraseña propia cambiada</value></data>
+  <data name="Audit_TwoFactorEnabled" xml:space="preserve"><value>Verificación en dos pasos activada</value></data>
+  <data name="Audit_TwoFactorDisabled" xml:space="preserve"><value>Verificación en dos pasos desactivada</value></data>
+  <data name="Audit_RecoveryCodesRenewed" xml:space="preserve"><value>Nuevos códigos de recuperación generados</value></data>
+  <data name="Audit_TwoFactorReset" xml:space="preserve"><value>Verificación en dos pasos restablecida</value></data>
+  <data name="Audit_ConnectionsChanged" xml:space="preserve"><value>Ajustes de conexión cambiados</value></data>
+  <data name="Audit_WishSettingsChanged" xml:space="preserve"><value>Ajustes de deseos cambiados</value></data>
+  <data name="Audit_LegalChanged" xml:space="preserve"><value>Textos legales cambiados</value></data>
+  <data name="Audit_IpBlocked" xml:space="preserve"><value>Dirección bloqueada</value></data>
+  <data name="Audit_IpUnblocked" xml:space="preserve"><value>Dirección desbloqueada</value></data>
+  <data name="Audit_IpUnblockedAll" xml:space="preserve"><value>Todas las direcciones desbloqueadas</value></data>
+  <data name="Msg_User_NotAllowed" xml:space="preserve"><value>No tienes permiso para esto.</value></data>
+  <data name="Msg_User_Unknown" xml:space="preserve"><value>Usuario no encontrado.</value></data>
+  <data name="Msg_User_LastAdmin" xml:space="preserve"><value>Debe quedar al menos un administrador activo.</value></data>
+  <data name="Msg_User_Exists" xml:space="preserve"><value>Ese nombre de usuario ya existe.</value></data>
+  <data name="Msg_User_CannotDisableSelf" xml:space="preserve"><value>No puedes bloquear tu propia cuenta.</value></data>
+  <data name="Msg_TooManyAttempts" xml:space="preserve"><value>Demasiados intentos fallidos. Inténtalo de nuevo más tarde.</value></data>
+  <data name="Msg_User_CurrentPasswordWrong" xml:space="preserve"><value>La contraseña actual no es correcta.</value></data>
+  <data name="Msg_User_UsernameRules" xml:space="preserve"><value>Nombre de usuario: 3–32 caracteres, solo letras, números, punto, guion y guion bajo.</value></data>
+  <data name="Msg_User_PasswordLength" xml:space="preserve"><value>La contraseña debe tener entre {0} y {1} caracteres.</value></data>
+  <data name="Msg_User_PasswordCommon" xml:space="preserve"><value>Esta contraseña está en una lista de contraseñas muy usadas. Elige otra.</value></data>
+  <data name="Msg_Login_BlockedPermanent" xml:space="preserve"><value>Demasiados intentos fallidos. Esta dirección está bloqueada. Contacta con un administrador.</value></data>
+  <data name="Msg_Login_BlockedUntil" xml:space="preserve"><value>Demasiados intentos fallidos. Esta dirección está bloqueada; inténtalo de nuevo {0}.</value></data>
+  <data name="Msg_Wait_OneMinute" xml:space="preserve"><value>dentro de 1 minuto</value></data>
+  <data name="Msg_Wait_Minutes" xml:space="preserve"><value>dentro de {0} minutos</value></data>
+  <data name="Msg_Wait_OneHour" xml:space="preserve"><value>dentro de 1 hora</value></data>
+  <data name="Msg_Wait_Hours" xml:space="preserve"><value>dentro de {0} horas</value></data>
+  <data name="Msg_Login_WrongCode" xml:space="preserve"><value>El código no es correcto o ya se ha usado.</value></data>
+  <data name="Msg_Login_Failed" xml:space="preserve"><value>No se pudo iniciar sesión. El nombre de usuario o la contraseña no son correctos, o la cuenta está bloqueada temporalmente.</value></data>
+  <data name="Msg_TwoFactor_WrongCode" xml:space="preserve"><value>El código no es correcto. Introduce el código actual de la app.</value></data>
+  <data name="Msg_TwoFactor_AlreadyOn" xml:space="preserve"><value>La verificación en dos pasos ya está activada.</value></data>
+  <data name="Msg_TwoFactor_NotOn" xml:space="preserve"><value>La verificación en dos pasos no está activada.</value></data>
+  <data name="Msg_TwoFactor_PasswordWrong" xml:space="preserve"><value>La contraseña no es correcta.</value></data>
+  <data name="Msg_TwoFactor_ResetSelf" xml:space="preserve"><value>Tu propia verificación en dos pasos la desactivas en el menú de cuenta, en “Verificación en dos pasos”.</value></data>
+  <data name="Msg_TwoFactor_ResetNotOn" xml:space="preserve"><value>Esta cuenta no tiene activada la verificación en dos pasos.</value></data>
+  <data name="Msg_Jellyfin_KeyInvalidChars" xml:space="preserve"><value>La clave de API de Jellyfin contiene caracteres no válidos.</value></data>
+  <data name="Msg_Jellyfin_KeyRejected" xml:space="preserve"><value>Jellyfin ha rechazado la clave de API.</value></data>
+  <data name="Msg_Jellyfin_Http" xml:space="preserve"><value>Jellyfin responde con HTTP {0}.</value></data>
+  <data name="Msg_Jellyfin_Connected" xml:space="preserve"><value>Conectado con “{0}” (Jellyfin {1}).</value></data>
+  <data name="Msg_Jellyfin_Unreachable" xml:space="preserve"><value>Jellyfin no es accesible en esta dirección.</value></data>
+  <data name="Msg_Jellyfin_StoredKeyInvalid" xml:space="preserve"><value>La clave de API de Jellyfin guardada contiene caracteres no válidos.</value></data>
+  <data name="Msg_Jellyfin_Empty" xml:space="preserve"><value>Jellyfin ha devuelto una respuesta vacía.</value></data>
+  <data name="Msg_Jellyfin_Broken" xml:space="preserve"><value>Jellyfin no es accesible o devuelve una respuesta inesperada.</value></data>
+  <data name="Msg_Tmdb_KeyInvalidChars" xml:space="preserve"><value>La clave de API de TMDB contiene caracteres no válidos.</value></data>
+  <data name="Msg_Tmdb_KeyRejected" xml:space="preserve"><value>TMDB ha rechazado la clave de API.</value></data>
+  <data name="Msg_Tmdb_KeyValid" xml:space="preserve"><value>La clave de API de TMDB es válida.</value></data>
+  <data name="Msg_Tmdb_Http" xml:space="preserve"><value>TMDB responde con HTTP {0}.</value></data>
+  <data name="Msg_Tmdb_Unreachable" xml:space="preserve"><value>TMDB no es accesible.</value></data>
+  <data name="Msg_Tmdb_StoredKeyInvalid" xml:space="preserve"><value>La clave de API de TMDB guardada contiene caracteres no válidos.</value></data>
+  <data name="Msg_Tmdb_RateLimited" xml:space="preserve"><value>TMDB no admite más solicitudes en este momento. Inténtalo de nuevo enseguida.</value></data>
+  <data name="Msg_Tmdb_Empty" xml:space="preserve"><value>TMDB ha devuelto una respuesta vacía.</value></data>
+  <data name="Msg_Tmdb_Broken" xml:space="preserve"><value>TMDB no es accesible o devuelve una respuesta inesperada.</value></data>
+  <data name="Msg_Tmdb_NotFound" xml:space="preserve"><value>TMDB no conoce esta entrada.</value></data>
+  <data name="Msg_AniList_UserTooFast" xml:space="preserve"><value>Estás buscando muy a menudo. Inténtalo de nuevo en {0} segundos.</value></data>
+  <data name="Msg_AniList_Busy" xml:space="preserve"><value>La búsqueda de anime está saturada ahora mismo. Inténtalo de nuevo en {0} segundos.</value></data>
+  <data name="Msg_AniList_RateLimited" xml:space="preserve"><value>AniList no admite solicitudes en este momento. Inténtalo de nuevo en {0} segundos.</value></data>
+  <data name="Msg_AniList_Http" xml:space="preserve"><value>AniList responde con HTTP {0}.</value></data>
+  <data name="Msg_AniList_Empty" xml:space="preserve"><value>AniList ha devuelto una respuesta vacía.</value></data>
+  <data name="Msg_AniList_Failed" xml:space="preserve"><value>AniList no pudo procesar la búsqueda.</value></data>
+  <data name="Msg_AniList_Broken" xml:space="preserve"><value>AniList no es accesible o devuelve una respuesta inesperada.</value></data>
+  <data name="Msg_AnimeList_Http" xml:space="preserve"><value>No se puede obtener la lista de correspondencias de anime (HTTP {0}).</value></data>
+  <data name="Msg_AnimeList_TooLarge" xml:space="preserve"><value>La lista de correspondencias de anime es inusualmente grande y no se carga.</value></data>
+  <data name="Msg_AnimeList_Unreachable" xml:space="preserve"><value>La lista de correspondencias de anime no es accesible o responde demasiado despacio.</value></data>
+  <data name="Msg_Connection_UrlFormat" xml:space="preserve"><value>Indica una dirección completa con http:// o https://.</value></data>
+  <data name="Msg_Connection_UrlParts" xml:space="preserve"><value>La dirección no puede contener credenciales, parámetros (?…) ni anclas (#…).</value></data>
+  <data name="Msg_Connection_KeyMissing" xml:space="preserve"><value>Falta la clave de API de {0}.</value></data>
+  <data name="Msg_Connection_KeyInvalid" xml:space="preserve"><value>La clave de API de {0} contiene caracteres no válidos.</value></data>
+  <data name="Msg_Connection_Interval" xml:space="preserve"><value>El intervalo de actualización debe estar entre {0} y {1} minutos.</value></data>
+  <data name="Msg_Connection_KeyUnreadable" xml:space="preserve"><value>Falta una clave de API o ya no se puede leer. Vuelve a introducirla.</value></data>
+  <data name="Msg_Library_NotConfigured" xml:space="preserve"><value>Jellyfin todavía no está configurado.</value></data>
+  <data name="Msg_Block_Permanent" xml:space="preserve"><value>Esta dirección está bloqueada. Contacta con un administrador.</value></data>
+  <data name="Msg_Block_Temporary" xml:space="preserve"><value>Demasiados intentos fallidos. Inténtalo de nuevo {0}.</value></data>
+  <data name="Msg_Legal_TextTooLong" xml:space="preserve"><value>Los textos pueden tener como máximo {0} caracteres.</value></data>
+  <data name="Msg_Legal_ContactTooLong" xml:space="preserve"><value>El dato de contacto puede tener como máximo {0} caracteres.</value></data>
+  <data name="Msg_Setup_TokenInvalid" xml:space="preserve"><value>El token de configuración no es válido o la configuración ya se ha terminado.</value></data>
+  <data name="Msg_Setup_AlreadyDone" xml:space="preserve"><value>La configuración ya se ha terminado.</value></data>
+  <data name="Msg_RateLimited" xml:space="preserve"><value>Demasiadas solicitudes. Espera un minuto e inténtalo de nuevo.</value></data>
+  <data name="Msg_LogoutInvalid" xml:space="preserve"><value>Solicitud de cierre de sesión no válida.</value></data>
+  <data name="Routes_NotAuthorized" xml:space="preserve"><value>No tienes permiso para ver esta página.</value></data>
+  <data name="Language_Label" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Language_Automatic" xml:space="preserve"><value>Automático (navegador)</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Settings_DefaultLanguage" xml:space="preserve"><value>Idioma predeterminado</value></data>
+  <data name="Settings_DefaultLanguageHint" xml:space="preserve"><value>Se aplica cuando ni la cuenta ha elegido un idioma ni el navegador indica uno de los idiomas disponibles. Cada usuario puede elegir su idioma en el menú superior.</value></data>
+  <data name="Settings_DefaultLanguageSaved" xml:space="preserve"><value>Idioma predeterminado guardado.</value></data>
+  <data name="Mud_MudInput_Clear" xml:space="preserve"><value>Borrar</value></data>
+  <data name="Mud_MudInput_Increment" xml:space="preserve"><value>Aumentar</value></data>
+  <data name="Mud_MudInput_Decrement" xml:space="preserve"><value>Disminuir</value></data>
+  <data name="Mud_MudSnackbar_Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Mud_MudDialog_Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Mud_MudAlert_Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Mud_MudChip_Close" xml:space="preserve"><value>Quitar</value></data>
+  <data name="Mud_MudFormComponent_Required" xml:space="preserve"><value>Obligatorio</value></data>
+  <data name="Mud_MudTable_Loading" xml:space="preserve"><value>Cargando …</value></data>
+  <data name="Mud_MudSelect_SelectAll" xml:space="preserve"><value>Seleccionar todo</value></data>
+  <data name="Mud_MudStepper_Next" xml:space="preserve"><value>Siguiente</value></data>
+  <data name="Mud_MudStepper_Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Mud_MudStepper_Complete" xml:space="preserve"><value>Terminar</value></data>
+  <data name="Mud_MudStepper_Skip" xml:space="preserve"><value>Omitir</value></data>
+  <data name="Mud_MudStepper_Reset" xml:space="preserve"><value>Restablecer</value></data>
+  <data name="Mud_MudNavGroup_ToggleExpand" xml:space="preserve"><value>Expandir o contraer</value></data>
+  <data name="Mud_MudBaseDatePicker_Open" xml:space="preserve"><value>Abrir calendario</value></data>
+  <data name="Msg_Login_TooManyCodes" xml:space="preserve"><value>Demasiados códigos incorrectos para esta cuenta. Espera un rato (más tiempo si se repiten los fallos) y vuelve a iniciar sesión.</value></data>
+  <data name="TwoFactor_RecoveryUsed" xml:space="preserve"><value>Has iniciado sesión con un código de recuperación. Ya no es válido. Quedan: {0}. Genera códigos nuevos a tiempo.</value></data>
+  <data name="TwoFactor_EnablePassword" xml:space="preserve"><value>Contraseña actual para confirmar</value></data>
+  <data name="Check_ProxyNoForwarding" xml:space="preserve"><value>Llegan solicitudes desde este mismo servidor, pero con otro nombre de host y sin X-Forwarded-For. Si el proxy se ejecuta en el mismo servidor, la aplicación ve a todos los visitantes como locales, y no se aplican ni el bloqueo de direcciones ni el límite de solicitudes. Configura el proxy para que envíe X-Forwarded-For (Nginx Proxy Manager: por defecto; en tu propio archivo de Nginx: proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;). El aviso caduca tras 24 horas sin nuevos hallazgos o con «Descartar aviso».</value></data>
+  <data name="Confirm_Password" xml:space="preserve"><value>Tu contraseña para confirmar</value></data>
+  <data name="Settings_ConfirmPasswordHint" xml:space="preserve"><value>Necesario si cambias la dirección de Jellyfin o una clave.</value></data>
+  <data name="Users_ConfirmPasswordHint" xml:space="preserve"><value>Necesario para crear usuarios, establecer contraseñas, cambiar roles, desactivar, activar y restablecer la 2FA. El campo se vacía después.</value></data>
+  <data name="Msg_Connection_KeyNeededForNewAddress" xml:space="preserve"><value>Para una dirección nueva (otro host, otro protocolo u otro puerto) debes volver a introducir la clave de Jellyfin. La clave guardada nunca se envía a otra dirección.</value></data>
+  <data name="TwoFactor_SignInAgain" xml:space="preserve"><value>Consejo: si sospechas de un acceso ajeno, cierra sesión después de guardar los códigos. Eso termina todas las sesiones de esta cuenta.</value></data>
+  <data name="Password_MustChange" xml:space="preserve"><value>Un administrador estableció tu contraseña. Elige ahora una propia que solo tú conozcas.</value></data>
+</root>

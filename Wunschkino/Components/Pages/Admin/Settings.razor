@@ -1,0 +1,287 @@
+@page "/admin/settings"
+@attribute [Authorize(Roles = AuthClaims.AdminRole)]
+@implements IDisposable
+@using Wunschkino.Auth
+@using Wunschkino.Services
+@using Wunschkino.Library
+@using Wunschkino.Anime
+@using Wunschkino.Legal
+@using Wunschkino.Localization
+@inject ConnectionSettingsService ConnectionSettings
+@inject SettingsService AppSettings
+@inject AuditLog Audit
+@inject AdminGuard Guard
+@inject LibraryRefreshService LibraryRefresh
+@inject AnimeIdMapping AnimeMapping
+@inject AnimeIdMappingUpdater AnimeUpdater
+@inject Wunschkino.Legal.LegalService LegalService
+@inject LanguagePreferenceService Languages
+@inject ISnackbar Snackbar
+
+<PageTitle>@Texts.Settings_PageTitle</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Settings_Title</MudText>
+
+    @if (_loaded)
+    {
+        <MudPaper Class="pa-6" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Settings_Jellyfin</MudText>
+            <MudTextField @bind-Value="_jellyfinUrl" Label="@Texts.Settings_JellyfinUrl" Placeholder="http://192.168.1.10:8096" Variant="Variant.Outlined" Class="mb-3"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+            <MudTextField @bind-Value="_newJellyfinKey" Label="@Texts.Settings_NewJellyfinKey" InputType="InputType.Password" Variant="Variant.Outlined"
+                          HelperText="@KeyHint(_hasJellyfinKey)" Class="mb-3"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+            <MudNumericField HideSpinButtons="true" @bind-Value="_refreshMinutes" Label="@Texts.Settings_RefreshMinutes" Variant="Variant.Outlined"
+                             Min="ConnectionSettingsService.MinRefreshMinutes" Max="ConnectionSettingsService.MaxRefreshMinutes" Class="mb-6" />
+
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Settings_Tmdb</MudText>
+            <MudTextField @bind-Value="_newTmdbKey" Label="@Texts.Settings_NewTmdbKey" InputType="InputType.Password" Variant="Variant.Outlined"
+                          HelperText="@KeyHint(_hasTmdbKey)" Class="mb-6"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "off" })" />
+
+            <MudTextField @bind-Value="_currentPassword" Label="@Texts.Confirm_Password" InputType="InputType.Password" Variant="Variant.Outlined"
+                          HelperText="@Texts.Settings_ConfirmPasswordHint"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "current-password" })" />
+
+            <div aria-live="polite">
+                @foreach (var message in _messages)
+                {
+                    <MudAlert Severity="@(_lastSaveSucceeded ? Severity.Success : Severity.Warning)" Dense="true" Class="mt-3">@message</MudAlert>
+                }
+            </div>
+
+            <MudText Typo="Typo.body2" Class="mt-4">@Texts.Settings_TestNote</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="SaveAsync" Disabled="_busy">
+                @(_busy ? Texts.Settings_Testing : Texts.Settings_TestAndSave)
+            </MudButton>
+        </MudPaper>
+
+        <MudPaper Class="pa-6 mt-4" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Settings_Language</MudText>
+            <MudSelect T="string" Value="_defaultLanguage" ValueChanged="DefaultLanguageChanged" Label="@Texts.Settings_DefaultLanguage" Variant="Variant.Outlined">
+                @foreach (var language in AppLanguages.All)
+                {
+                    <MudSelectItem Value="@language.Code">@language.NativeName</MudSelectItem>
+                }
+            </MudSelect>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mt-2">@Texts.Settings_DefaultLanguageHint</MudText>
+        </MudPaper>
+
+        <MudPaper Class="pa-6 mt-4" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Settings_Wishes</MudText>
+            <MudSwitch T="bool" Value="_anonymousWishes" ValueChanged="AnonymousWishesChanged" Color="Color.Primary" Label="@Texts.Settings_Anonymous" />
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">@Texts.Settings_AnonymousHint</MudText>
+
+            <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="mt-6 mb-2">@Texts.Settings_Limits</MudText>
+            <MudNumericField HideSpinButtons="true" T="int" @bind-Value="_wishesPerDay" Label="@Texts.Settings_WishesPerDay" Variant="Variant.Outlined"
+                             Min="0" Max="UserLimits.MaxWishesPerDay" Class="mb-3" HelperText="@Texts.Settings_WishesPerDayHint" />
+            <MudNumericField HideSpinButtons="true" T="int" @bind-Value="_searchesPerMinute" Label="@Texts.Settings_SearchesPerMinute" Variant="Variant.Outlined"
+                             Min="0" Max="UserLimits.MaxSearchesPerMinute" Class="mb-3" HelperText="@Texts.Settings_SearchesHint" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveLimitsAsync">@Texts.Settings_SaveLimits</MudButton>
+        </MudPaper>
+
+        <MudPaper Class="pa-6 mt-4" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Settings_LegalTitle</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">@Texts.Settings_LegalHint</MudText>
+            <MudTextField @bind-Value="_legalContact" Label="@Texts.Settings_LegalContact" Variant="Variant.Outlined" Lines="3" Sizing="InputSizing.Auto"
+                          MaxLength="LegalService.MaxContactLength" Class="mb-3" />
+            <MudTextField @bind-Value="_legalImprint" Label="@Texts.Settings_LegalImprint" HelperText="@Texts.Settings_LegalImprintHint" Variant="Variant.Outlined"
+                          Lines="6" Sizing="InputSizing.Auto" MaxLength="LegalService.MaxTextLength" Class="mb-3" />
+            <MudTextField @bind-Value="_legalPrivacy" Label="@Texts.Settings_LegalPrivacy" HelperText="@Texts.Settings_LegalPrivacyHint" Variant="Variant.Outlined"
+                          Lines="6" Sizing="InputSizing.Auto" MaxLength="LegalService.MaxTextLength" Class="mb-3" />
+            <div aria-live="polite">
+                @if (_legalError is not null)
+                {
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">@_legalError</MudAlert>
+                }
+            </div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveLegalAsync">@Texts.Settings_LegalSave</MudButton>
+        </MudPaper>
+
+        <MudPaper Class="pa-6 mt-4" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@Texts.Settings_AnimeTitle</MudText>
+            <MudText Typo="Typo.body2" Class="mb-3">
+                @if (AnimeMapping.CheckedUtc is { } checkedUtc && AnimeMapping.Count > 0)
+                {
+                    <LocalTime Utc="checkedUtc" Wrap="@(checkedAt => string.Format(Texts.Culture, Texts.Settings_AnimeStatus, AnimeMapping.Count, checkedAt))" />
+                }
+                else
+                {
+                    @Texts.Settings_AnimeNotLoaded
+                }
+            </MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RefreshAnimeListAsync" Disabled="_animeBusy">
+                @(_animeBusy ? Texts.Settings_AnimeRefreshing : Texts.Settings_AnimeRefresh)
+            </MudButton>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private bool _loaded;
+    private bool _busy;
+    private bool _lastSaveSucceeded;
+    private IReadOnlyList<string> _messages = [];
+
+    private string _jellyfinUrl = "";
+    private string _newJellyfinKey = "";
+    private string _newTmdbKey = "";
+    private string _currentPassword = "";
+    private int _refreshMinutes;
+    private bool _hasJellyfinKey;
+    private bool _hasTmdbKey;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var view = await ConnectionSettings.GetAsync();
+        _jellyfinUrl = view.JellyfinUrl ?? "";
+        _hasJellyfinKey = view.HasJellyfinApiKey;
+        _hasTmdbKey = view.HasTmdbApiKey;
+        _refreshMinutes = view.RefreshMinutes;
+        _anonymousWishes = WishPrivacy.IsAnonymous(await AppSettings.GetAsync(SettingKeys.WishesAnonymous));
+        _defaultLanguage = await Languages.GetDefaultAsync();
+        _wishesPerDay = UserLimits.ParseWishesPerDay(await AppSettings.GetAsync(SettingKeys.WishesPerDay));
+        _searchesPerMinute = UserLimits.ParseSearchesPerMinute(await AppSettings.GetAsync(SettingKeys.TmdbSearchesPerMinute));
+        var legal = await LegalService.GetAsync();
+        (_legalContact, _legalImprint, _legalPrivacy) = (legal.Contact ?? "", legal.Imprint ?? "", legal.Privacy ?? "");
+        _loaded = true;
+    }
+
+    private int _wishesPerDay = UserLimits.DefaultWishesPerDay;
+    private int _searchesPerMinute = UserLimits.DefaultSearchesPerMinute;
+
+    private async Task<bool> IsAdminAsync() => await Guard.IsAdminAsync((await AuthState).User);
+
+    private async Task SaveLimitsAsync()
+    {
+        if (!await IsAdminAsync())
+            return;
+
+        _wishesPerDay = UserLimits.ClampWishesPerDay(_wishesPerDay);
+        _searchesPerMinute = UserLimits.ClampSearchesPerMinute(_searchesPerMinute);
+        await AppSettings.SetAsync(SettingKeys.WishesPerDay, _wishesPerDay.ToString(System.Globalization.CultureInfo.InvariantCulture), isProtected: false);
+        await AppSettings.SetAsync(SettingKeys.TmdbSearchesPerMinute, _searchesPerMinute.ToString(System.Globalization.CultureInfo.InvariantCulture), isProtected: false);
+        await AuditAsync($"Wünsche pro Tag: {_wishesPerDay}, TMDB-Suchen pro Minute: {_searchesPerMinute}");
+        Snackbar.Add(Texts.Settings_LimitsSaved, Severity.Success);
+    }
+
+    // Der Protokolltext ist gespeicherter Inhalt, keine Oberfläche, und bleibt deshalb unabhängig von der Anzeigesprache.
+    private async Task AuditAsync(string detail)
+    {
+        var user = (await AuthState).User;
+        await Audit.WriteAsync(AuditActions.WishSettingsChanged, AuthClaims.GetUserId(user), user.Identity?.Name, detail: detail);
+    }
+
+    private bool _anonymousWishes = true;
+    private string _defaultLanguage = AppLanguages.Default;
+
+    private async Task DefaultLanguageChanged(string language)
+    {
+        if (!await IsAdminAsync())
+            return;
+
+        _defaultLanguage = language;
+        await Languages.SetDefaultAsync(language);
+        await AuditAsync($"Standardsprache: {language}");
+        Snackbar.Add(Texts.Settings_DefaultLanguageSaved, Severity.Success);
+    }
+
+    private async Task AnonymousWishesChanged(bool anonymous)
+    {
+        if (!await IsAdminAsync())
+            return;
+
+        _anonymousWishes = anonymous;
+        await AppSettings.SetAsync(SettingKeys.WishesAnonymous, anonymous ? "true" : "false", isProtected: false);
+        await AuditAsync(anonymous ? "Wünsche werden anonym angezeigt" : "Wünsche werden mit Namen angezeigt");
+        Snackbar.Add(anonymous ? Texts.Settings_AnonymousOn : Texts.Settings_AnonymousOff, Severity.Success);
+    }
+
+    private string _legalContact = "";
+    private string _legalImprint = "";
+    private string _legalPrivacy = "";
+    private string? _legalError;
+
+    private async Task SaveLegalAsync()
+    {
+        if (AuthClaims.GetUserId((await AuthState).User) is not { } actingUserId)
+            return;
+
+        var result = await LegalService.SaveAsync(actingUserId, new LegalTexts(_legalImprint, _legalPrivacy, _legalContact));
+        _legalError = result.Error;
+        if (result.Success)
+            Snackbar.Add(Texts.Settings_LegalSaved, Severity.Success);
+    }
+
+    private bool _animeBusy;
+
+
+    private readonly CancellationTokenSource _leftPage = new();
+
+    public void Dispose()
+    {
+        _leftPage.Cancel();
+        _leftPage.Dispose();
+    }
+
+    private async Task RefreshAnimeListAsync()
+    {
+        _animeBusy = true;
+        try
+        {
+            var runsBefore = AnimeUpdater.RunsCompleted;
+            AnimeUpdater.RequestRefresh(acceptShrink: true);
+
+            // Der Lauf passiert im Hintergrunddienst (Download von rund 6 MB); ein abgeschlossener Lauf zeigt, dass er fertig ist.
+            for (var i = 0; i < 120 && AnimeUpdater.RunsCompleted == runsBefore; i++)
+                await Task.Delay(500, _leftPage.Token);
+
+            if (AnimeUpdater.RunsCompleted == runsBefore)
+                Snackbar.Add(Texts.Settings_AnimeSlow, Severity.Info);
+            else if (AnimeUpdater.LastRunSucceeded)
+                Snackbar.Add(Texts.Settings_AnimeDone, Severity.Success);
+            else
+                Snackbar.Add(Texts.Settings_AnimeFailed, Severity.Warning);
+        }
+        catch (OperationCanceledException)
+        {
+            // Die Seite wurde verlassen: nichts mehr anzeigen.
+        }
+        finally
+        {
+            _animeBusy = false;
+        }
+    }
+
+    private static string KeyHint(bool hasKey) => hasKey ? Texts.Settings_KeyStored : Texts.Settings_KeyMissing;
+
+    private async Task SaveAsync()
+    {
+        if (AuthClaims.GetUserId((await AuthState).User) is not { } actingUserId)
+            return;
+
+        _busy = true;
+        try
+        {
+            var result = await ConnectionSettings.SaveAsync(actingUserId,
+                new ConnectionSettingsUpdate(_jellyfinUrl, _newJellyfinKey, _newTmdbKey, _refreshMinutes, _currentPassword));
+            _lastSaveSucceeded = result.Success;
+            _messages = result.Messages;
+            if (!result.Success)
+                return;
+
+            Snackbar.Add(Texts.Settings_Saved, Severity.Success);
+            LibraryRefresh.RequestRefresh();
+            _newJellyfinKey = _newTmdbKey = _currentPassword = "";
+            _hasJellyfinKey = _hasTmdbKey = true;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

@@ -1,0 +1,5 @@
+.legal-paragraph {
+    margin: 0 0 1rem;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}

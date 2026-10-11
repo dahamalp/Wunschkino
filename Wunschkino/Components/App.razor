@@ -1,0 +1,47 @@
+@using Wunschkino.Hosting
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Wunschkino – a wish portal for Jellyfin: Wunschportal für eine Jellyfin-Mediathek." />
+    <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)" />
+    <base href="/" />
+    <link rel="icon" type="image/svg+xml" href="@Assets["favicon.svg"]" />
+    <ResourcePreloader />
+    <link rel="preload" href="@Assets["fonts/Geist-Variable.woff2"]" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["Wunschkino.styles.css"]" />
+    <ImportMap AdditionalAttributes="ImportMapAttributes" />
+    <HeadOutlet @rendermode="PageRenderMode" />
+</head>
+
+<body>
+    <Routes @rendermode="PageRenderMode" />
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
+</body>
+
+</html>
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    // Die Import-Map ist ein Inline-Skript. Die Content-Security-Policy erlaubt es nur mit dem Nonce dieser Anfrage.
+    private Dictionary<string, object> ImportMapAttributes =>
+        SecurityHeadersMiddleware.GetNonce(HttpContext) is { } nonce ? new() { ["nonce"] = nonce } : [];
+
+    // Seiten mit [ExcludeFromInteractiveRouting] (Login) laufen statisch, weil nur dort Cookies gesetzt werden können.
+    // Auch für Besucher ohne Anmeldung (Impressum, Datenschutz, Fehlerseiten) bleibt es statisch: Jede interaktive Seite hält eine
+    // Verbindung samt Speicher auf dem Server offen, und das soll Fremden nicht möglich sein. Nur der Einrichtungsassistent braucht sie.
+    private IComponentRenderMode? PageRenderMode =>
+        HttpContext.AcceptsInteractiveRouting()
+        && (HttpContext.User.Identity?.IsAuthenticated == true || HttpContext.Request.Path.StartsWithSegments("/setup", StringComparison.OrdinalIgnoreCase))
+            ? InteractiveServer
+            : null;
+}

@@ -1,0 +1,196 @@
+@page "/"
+@implements IDisposable
+@using Wunschkino.Auth
+@using Wunschkino.Library
+@using Wunschkino.Services
+@inject NavigationManager Navigation
+@inject LibraryCache Cache
+@inject LibraryRefreshService RefreshService
+@inject Wunschkino.Localization.UserTimeZone TimeZone
+
+<PageTitle>@Texts.Home_PageTitle</PageTitle>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-2" Wrap="Wrap.Wrap">
+    <div>
+        <MudText Typo="Typo.h4" HtmlTag="h1">@Texts.Home_Title</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">
+            @string.Format(Texts.Culture, Texts.Home_Counts, _snapshot.Items.Count(i => i.Kind == MediaKind.Movie), _snapshot.Items.Count(i => i.Kind == MediaKind.Series))
+            @if (_snapshot.UpdatedUtc is { } updated)
+            {
+                <span> · @string.Format(Texts.Culture, Texts.Home_Updated, TimeZone.ToLocal(updated))</span>
+            }
+        </MudText>
+    </div>
+    <AuthorizeView Roles="@AuthClaims.AdminRole">
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" OnClick="RefreshNow" Disabled="_refreshRequested">
+            @(_refreshRequested ? Texts.Home_Refreshing : Texts.Home_Refresh)
+        </MudButton>
+    </AuthorizeView>
+</MudStack>
+
+@if (_snapshot.Error is { } error)
+{
+    <MudAlert Severity="@(_snapshot.Items.Count == 0 ? Severity.Warning : Severity.Info)" Class="mb-4">
+        @error
+        @if (_snapshot.Items.Count > 0)
+        {
+            <span> @Texts.Home_ShowingLastGood</span>
+        }
+    </MudAlert>
+}
+
+<MudGrid Class="mb-4" Spacing="2">
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_search" Label="@Texts.Home_Search" Variant="Variant.Outlined" Immediate="true" DebounceInterval="250" MaxLength="@UrlFilter.MaxTextLength"
+                      OnDebounceIntervalElapsed="SearchChanged" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Clearable="true" />
+    </MudItem>
+    <MudItem xs="12" sm="3">
+        <MudSelect T="MediaKind?" Value="_kind" ValueChanged="KindChanged" Label="@Texts.Home_Type" Variant="Variant.Outlined">
+            <MudSelectItem T="MediaKind?" Value="null">@Texts.Home_TypeAll</MudSelectItem>
+            <MudSelectItem T="MediaKind?" Value="MediaKind.Movie">@Texts.Home_Movies</MudSelectItem>
+            <MudSelectItem T="MediaKind?" Value="MediaKind.Series">@Texts.Home_SeriesPlural</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="3">
+        <MudSelect T="LibrarySort" Value="_sort" ValueChanged="SortChanged" Label="@Texts.Home_Sort" Variant="Variant.Outlined">
+            <MudSelectItem Value="LibrarySort.Title">@Texts.Home_SortTitle</MudSelectItem>
+            <MudSelectItem Value="LibrarySort.YearDescending">@Texts.Home_SortYear</MudSelectItem>
+            <MudSelectItem Value="LibrarySort.RecentlyAdded">@Texts.Home_SortRecent</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@{
+    var matches = LibraryQuery.Apply(_snapshot.Items, _search, _kind, _sort).ToList();
+    var loading = _snapshot.UpdatedUtc is null && _snapshot.Error is null;
+}
+
+@if (loading)
+{
+    <div role="status" aria-label="@Texts.Home_Loading">
+        <div class="library-grid" aria-hidden="true">
+            @for (var i = 0; i < 12; i++)
+            {
+                <div class="library-card">
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="library-poster" Height="auto" />
+                    <MudSkeleton Width="70%" />
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (matches.Count == 0 && _snapshot.Items.Count > 0)
+{
+    <MudText Class="mud-text-secondary" role="status">@Texts.Home_NoMatches</MudText>
+}
+
+<ul class="library-grid" role="list">
+    @foreach (var item in matches.Take(_visibleCount))
+    {
+        <li class="library-card" @key="item.JellyfinId">
+            @if (item.HasPoster)
+            {
+                <img src="/posters/@item.JellyfinId?w=300" alt="" width="300" height="450" loading="lazy" decoding="async" class="library-poster" />
+            }
+            else
+            {
+                <div class="library-poster library-poster-placeholder" aria-hidden="true">
+                    <MudIcon Icon="@(item.Kind == MediaKind.Movie ? Icons.Material.Filled.Movie : Icons.Material.Filled.Tv)" Size="Size.Large" />
+                </div>
+            }
+            <MudText Typo="Typo.body2" Class="library-title" title="@item.Title">@item.Title</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">
+                @(item.Kind == MediaKind.Movie ? Texts.Kind_Movie : Texts.Kind_Series)@(item.Year is { } year ? $" · {year}" : "")
+            </MudText>
+        </li>
+    }
+</ul>
+
+@if (matches.Count > _visibleCount)
+{
+    <MudStack AlignItems="AlignItems.Center" Class="my-6">
+        <MudButton Variant="Variant.Text" OnClick="@(() => _visibleCount += PageSize)">
+            @string.Format(Texts.Culture, Texts.Home_ShowMore, matches.Count - _visibleCount)
+        </MudButton>
+    </MudStack>
+}
+
+@code {
+    private const int PageSize = 60;
+
+    private LibrarySnapshot _snapshot = LibrarySnapshot.Empty;
+    private string? _search;
+    private MediaKind? _kind;
+    private LibrarySort _sort = LibrarySort.Title;
+    private int _visibleCount = PageSize;
+    private bool _refreshRequested;
+
+    [SupplyParameterFromQuery(Name = "q")]
+    private string? SearchQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "type")]
+    private string? TypeQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "sort")]
+    private string? SortQuery { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _search = UrlFilter.Text(SearchQuery);
+        _kind = UrlFilter.ParseEnum<MediaKind>(TypeQuery);
+        _sort = UrlFilter.ParseEnum<LibrarySort>(SortQuery) ?? LibrarySort.Title;
+        _snapshot = Cache.Snapshot;
+        Cache.Changed += OnCacheChanged;
+        TimeZone.Changed += OnTimeZoneChanged;
+    }
+
+    private void OnTimeZoneChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnCacheChanged() => InvokeAsync(() =>
+    {
+        _snapshot = Cache.Snapshot;
+        _refreshRequested = false;
+        StateHasChanged();
+    });
+
+    private void RefreshNow()
+    {
+        _refreshRequested = true;
+        RefreshService.RequestRefresh();
+    }
+
+    private void ResetPaging() => _visibleCount = PageSize;
+
+    private void SearchChanged()
+    {
+        ResetPaging();
+        WriteFiltersToUrl();
+    }
+
+    private void KindChanged(MediaKind? kind)
+    {
+        _kind = kind;
+        ResetPaging();
+        WriteFiltersToUrl();
+    }
+
+    private void SortChanged(LibrarySort sort)
+    {
+        _sort = sort;
+        ResetPaging();
+        WriteFiltersToUrl();
+    }
+
+    private void WriteFiltersToUrl() => UrlFilter.Replace(Navigation, new Dictionary<string, object?>
+    {
+        ["q"] = UrlFilter.Text(_search),
+        ["type"] = UrlFilter.Write(_kind),
+        ["sort"] = UrlFilter.Write<LibrarySort>(_sort, LibrarySort.Title),
+    });
+
+    public void Dispose()
+    {
+        Cache.Changed -= OnCacheChanged;
+        TimeZone.Changed -= OnTimeZoneChanged;
+    }
+}

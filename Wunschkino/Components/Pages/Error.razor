@@ -1,0 +1,26 @@
+@page "/Error"
+@attribute [AllowAnonymous]
+@using System.Diagnostics
+
+<PageTitle>@Texts.Error_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Error_Title</MudText>
+<MudText Class="mb-2">@Texts.Error_Text</MudText>
+
+@if (ShowRequestId)
+{
+    <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)string.Format(Texts.Culture, Texts.Error_RequestId, "<code>" + System.Net.WebUtility.HtmlEncode(RequestId) + "</code>"))</MudText>
+}
+
+<MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary" Class="mt-2">@Texts.Error_Home</MudButton>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}

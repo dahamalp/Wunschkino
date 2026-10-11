@@ -1,0 +1,81 @@
+@using Wunschkino.Data
+@using Wunschkino.Library
+@using Wunschkino.Wishes
+
+<MudPaper Class="result-card pa-3" Elevation="1">
+    @if (PosterUrl is not null)
+    {
+        <img src="@PosterUrl" alt="" width="92" height="138" loading="lazy" decoding="async" class="result-poster" />
+    }
+    else
+    {
+        <div class="result-poster result-poster-placeholder" aria-hidden="true">
+            <MudIcon Icon="@(Kind == MediaKind.Movie ? Icons.Material.Filled.Movie : Icons.Material.Filled.Tv)" Size="Size.Large" />
+        </div>
+    }
+    <div class="result-body">
+        <MudText Typo="Typo.h6" HtmlTag="h2">@Title</MudText>
+        @if (Subtitle is not null)
+        {
+            <MudText Typo="Typo.caption" Class="d-block mud-text-secondary">@Subtitle</MudText>
+        }
+        <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">@Meta</MudText>
+
+        @switch (Availability)
+        {
+            case WishAvailability.InLibrary:
+                <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.Check">@Texts.NewWish_InLibrary</MudChip>
+                break;
+            case WishAvailability.Wished:
+                <MudChip T="string" Color="@StatusDisplay.Color(Status!.Value)" Size="Size.Small">
+                    @string.Format(Texts.Culture, Texts.NewWish_AlreadyWished, StatusDisplay.Label(Status!.Value),
+                        string.Format(Texts.Culture, Votes == 1 ? Texts.NewWish_VoteOne : Texts.NewWish_VotesMany, Votes))
+                </MudChip>
+                @if (VotedByMe)
+                {
+                    <MudText Typo="Typo.caption" Class="d-block mt-1">@Texts.NewWish_YouSupport</MudText>
+                }
+                else if (Status is WishStatus.Open or WishStatus.Accepted)
+                {
+                    @Actions
+                }
+                break;
+            default:
+                @Actions
+                break;
+        }
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public string Meta { get; set; } = "";
+
+    [Parameter]
+    public string? PosterUrl { get; set; }
+
+    [Parameter]
+    public MediaKind Kind { get; set; }
+
+    [Parameter]
+    public WishAvailability Availability { get; set; }
+
+    [Parameter]
+    public WishStatus? Status { get; set; }
+
+    [Parameter]
+    public int Votes { get; set; }
+
+    [Parameter]
+    public bool VotedByMe { get; set; }
+
+    /// <summary>Notizfeld und Wunsch-Knopf; erscheint nur, wenn der Titel gewünscht oder unterstützt werden kann.</summary>
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+}

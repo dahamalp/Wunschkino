@@ -1,0 +1,260 @@
+@page "/wishes/new"
+@using Wunschkino.Anime
+@using Wunschkino.Auth
+@using Wunschkino.Data
+@using Wunschkino.Library
+@using Wunschkino.Services
+@using Wunschkino.Wishes
+@inject WishService WishService
+@inject ISnackbar Snackbar
+@inject ILogger<NewWish> Logger
+
+<PageTitle>@Texts.NewWish_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.NewWish_Title</MudText>
+<MudToggleGroup T="SearchMode" Value="_mode" ValueChanged="ModeChanged" Color="Color.Primary" CheckMark="true" Class="mb-4">
+    <MudToggleItem Value="@SearchMode.Media" Text="@Texts.NewWish_ModeMedia" />
+    <MudToggleItem Value="@SearchMode.Anime" Text="@Texts.NewWish_ModeAnime" />
+</MudToggleGroup>
+
+<MudText Class="mud-text-secondary mb-1">
+    @if (_mode == SearchMode.Anime)
+    {
+        <span>@Texts.NewWish_HintAnime</span>
+    }
+    else
+    {
+        <span>@((MarkupString)string.Format(Texts.Culture, Texts.NewWish_HintMedia, "<code>tt0133093</code>"))</span>
+    }
+</MudText>
+<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@(_mode == SearchMode.Anime ? Texts.NewWish_PrivacyAnime : Texts.NewWish_PrivacyMedia)</MudText>
+
+<div role="search" class="search-row mb-4">
+    <MudTextField @bind-Value="_query" Label="@(_mode == SearchMode.Anime ? Texts.NewWish_LabelAnime : Texts.NewWish_LabelMedia)" Variant="Variant.Outlined" Clearable="true" Immediate="true"
+                  MaxLength="@WishValidation.MaxQueryLength" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                  OnKeyDown="OnSearchKeyDown" Class="search-field" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchAsync" Disabled="_searching" Class="search-button">
+        @Texts.NewWish_Search
+    </MudButton>
+</div>
+
+@if (_searching)
+{
+    <MudProgressLinear Indeterminate="true" Class="mb-4" aria-label="@Texts.NewWish_Searching" />
+}
+
+<div aria-live="polite">
+    @if (_error is not null)
+    {
+        <MudAlert Severity="Severity.Warning" Class="mb-4">@_error</MudAlert>
+    }
+    else if (_searched && !_searching && _results.Count == 0 && _animeResults.Count == 0)
+    {
+        <MudText Class="mud-text-secondary">@Texts.NewWish_NothingFound</MudText>
+    }
+    else if (_searched && !_searching)
+    {
+        <MudText Class="mud-text-secondary mb-2">@string.Format(Texts.Culture, Texts.NewWish_ResultsCount, _results.Count + _animeResults.Count)</MudText>
+    }
+</div>
+
+<div class="result-list" role="list" aria-label="@Texts.NewWish_ResultsLabel">
+    @foreach (var result in _results)
+    {
+        var title = result.Title;
+        var key = (title.TmdbId, title.Kind);
+        <div role="listitem" @key="key">
+            <WishResultCard Title="@title.Title" Kind="title.Kind" PosterUrl="@TmdbPosters.ProxyUrl(title.PosterPath, 185)"
+                            Meta="@($"{KindLabel(title.Kind)}{(title.Year is { } year ? $" · {year}" : "")}")"
+                            Availability="result.Availability" Status="result.Status" Votes="result.Votes" VotedByMe="result.VotedByMe">
+                <Actions>
+                    <MudTextField T="string" Value="@_notes.GetValueOrDefault(key)" ValueChanged="@(value => _notes[key] = value)"
+                                  Label="@Texts.NewWish_Note" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="@WishValidation.MaxNoteLength" Class="mb-2"
+                                  UserAttributes="@NoteAttributes(title.Title)" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="@(() => WishAsync(result))"
+                               aria-label="@ActionFor(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish, title.Title)">
+                        @(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish)
+                    </MudButton>
+                </Actions>
+            </WishResultCard>
+        </div>
+    }
+    @foreach (var result in _animeResults)
+    {
+        var anime = result.Anime;
+        <div role="listitem" @key="anime.Id">
+            <WishResultCard Title="@anime.DisplayTitle" Kind="MediaKind.Series" PosterUrl="@AniListCovers.ProxyUrl(anime.CoverPath)"
+                            Subtitle="@(anime.English is not null && !string.Equals(anime.English, anime.Romaji, StringComparison.OrdinalIgnoreCase) ? anime.Romaji : null)"
+                            Meta="@($"{AnimeFormatLabel(anime.Format)}{(anime.Year is { } animeYear ? $" · {animeYear}" : "")}")"
+                            Availability="result.Availability" Status="result.Status" Votes="result.Votes" VotedByMe="result.VotedByMe">
+                <Actions>
+                    <MudTextField T="string" Value="@_animeNotes.GetValueOrDefault(anime.Id)" ValueChanged="@(value => _animeNotes[anime.Id] = value)"
+                                  Label="@Texts.NewWish_Note" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="@WishValidation.MaxNoteLength" Class="mb-2"
+                                  UserAttributes="@NoteAttributes(anime.DisplayTitle)" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="@(() => WishAnimeAsync(result))"
+                               aria-label="@ActionFor(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish, anime.DisplayTitle)">
+                        @(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish)
+                    </MudButton>
+                </Actions>
+            </WishResultCard>
+        </div>
+    }
+</div>
+
+@code {
+    private enum SearchMode
+    {
+        Media,
+        Anime
+    }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private readonly Dictionary<(int, MediaKind), string?> _notes = [];
+    private readonly Dictionary<int, string?> _animeNotes = [];
+    private IReadOnlyList<AnimeSearchResult> _animeResults = [];
+    private SearchMode _mode = SearchMode.Media;
+    private IReadOnlyList<WishSearchResult> _results = [];
+    private string? _query;
+    private string? _error;
+    private bool _searching;
+    private bool _searched;
+    private bool _busy;
+
+    // Jede Karte hat ein gleich beschriftetes Notizfeld und einen gleich beschrifteten Knopf; der Titel macht sie für Screenreader unterscheidbar.
+    private static string ActionFor(string action, string title) => string.Format(Texts.Culture, Texts.A11y_ActionFor, action, title);
+
+    private static Dictionary<string, object?> NoteAttributes(string title) =>
+        new() { ["aria-label"] = ActionFor(Texts.NewWish_Note, title) };
+
+    private static string KindLabel(MediaKind kind) => kind == MediaKind.Movie ? Texts.Kind_Movie : Texts.Kind_Series;
+
+    private static string AnimeFormatLabel(string? format) => format switch
+    {
+        "TV" or "TV_SHORT" => Texts.Kind_Series,
+        "MOVIE" => Texts.Kind_Movie,
+        "OVA" => Texts.AnimeFormat_Ova,
+        "ONA" => Texts.AnimeFormat_Ona,
+        "SPECIAL" => Texts.AnimeFormat_Special,
+        "MUSIC" => Texts.AnimeFormat_Music,
+        _ => Texts.AnimeFormat_Other
+    };
+
+    private async Task ModeChanged(SearchMode mode)
+    {
+        _mode = mode;
+        _results = [];
+        _animeResults = [];
+        _error = null;
+        _searched = false;
+        if (!string.IsNullOrWhiteSpace(_query))
+            await SearchAsync();
+    }
+
+    private async Task OnSearchKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+            await SearchAsync();
+    }
+
+    private async Task SearchAsync()
+    {
+        // Mehrfaches Enter oder Klicken würde sonst parallele Suchen starten, deren Ergebnisse sich überholen.
+        if (_searching || await CurrentUserIdAsync() is not { } userId)
+            return;
+
+        _searching = true;
+        _error = null;
+        var searchedMode = _mode;
+        try
+        {
+            if (searchedMode == SearchMode.Anime)
+            {
+                var animeOutcome = await WishService.SearchAnimeAsync(userId, _query);
+                if (searchedMode == _mode)
+                {
+                    _animeResults = animeOutcome.Results;
+                    _error = animeOutcome.Error;
+                }
+            }
+            else
+            {
+                var outcome = await WishService.SearchAsync(userId, _query);
+                if (searchedMode == _mode)
+                {
+                    _results = outcome.Results;
+                    _error = outcome.Error;
+                }
+            }
+            _searched = !string.IsNullOrWhiteSpace(_query);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Logger.LogError(ex, "Wunschsuche fehlgeschlagen.");
+            _error = Texts.NewWish_SearchFailed;
+        }
+        finally
+        {
+            _searching = false;
+        }
+
+        // Der Modus wurde während der Suche gewechselt: ModeChanged konnte nicht suchen (es lief ja schon eine), also jetzt nachholen.
+        if (searchedMode != _mode && !string.IsNullOrWhiteSpace(_query))
+            await SearchAsync();
+    }
+
+    private async Task WishAsync(WishSearchResult result)
+    {
+        if (_busy || await CurrentUserIdAsync() is not { } userId)
+            return;
+
+        _busy = true;
+        try
+        {
+            var key = (result.Title.TmdbId, result.Title.Kind);
+            var outcome = await WishService.CreateOrJoinAsync(userId, result.Title.TmdbId, result.Title.Kind, _notes.GetValueOrDefault(key));
+            Snackbar.Add(outcome.Message, outcome.Success ? Severity.Success : Severity.Error);
+            if (outcome.Success)
+                _notes.Remove(key);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Logger.LogError(ex, "Wunsch konnte nicht gespeichert werden.");
+            Snackbar.Add(Texts.NewWish_SaveFailed, Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+        await SearchAsync();
+    }
+
+    private async Task WishAnimeAsync(AnimeSearchResult result)
+    {
+        if (_busy || await CurrentUserIdAsync() is not { } userId)
+            return;
+
+        _busy = true;
+        try
+        {
+            var id = result.Anime.Id;
+            var outcome = await WishService.CreateOrJoinAnimeAsync(userId, id, _animeNotes.GetValueOrDefault(id));
+            Snackbar.Add(outcome.Message, outcome.Success ? Severity.Success : Severity.Error);
+            if (outcome.Success)
+                _animeNotes.Remove(id);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Logger.LogError(ex, "Anime-Wunsch konnte nicht gespeichert werden.");
+            Snackbar.Add(Texts.NewWish_SaveFailed, Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+        await SearchAsync();
+    }
+
+    private async Task<int?> CurrentUserIdAsync() => AuthClaims.GetUserId((await AuthState).User);
+}

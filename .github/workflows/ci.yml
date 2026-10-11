@@ -1,0 +1,72 @@
+name: CI
+
+# Läuft bei jedem Push auf den Hauptzweig und bei jedem Pull Request: Unit-Tests und die Browser-Tests
+# (keine Drittanbieter-Anfragen, Barrierefreiheit mit axe-core, Struktur und Navigation).
+# Die Aktionen sind wie im Release-Workflow auf Commit-SHAs festgelegt.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: 10.0.x
+      - name: Unit-Tests
+        run: dotnet test --configuration Release
+      # Bekannte Sicherheitslücken in direkten und indirekten NuGet-Paketen (auch der Browser-Tests) lassen den Lauf fehlschlagen.
+      - name: Pakete auf Sicherheitslücken prüfen
+        run: |
+          for project in Wunschkino.slnx tests/Wunschkino.E2E/Wunschkino.E2E.csproj; do
+            dotnet list "$project" package --vulnerable --include-transitive --format json > vulnerable.json
+            if grep -q '"vulnerabilities"' vulnerable.json; then
+              cat vulnerable.json
+              echo "::error::$project nutzt mindestens ein Paket mit einer bekannten Sicherheitslücke."
+              exit 1
+            fi
+          done
+
+  # Prüft deploy/install.sh in echten Debian- und Ubuntu-Containern (Erstinstallation, Update, Rollback, Downgrade-Schutz,
+  # Deinstallation). Dauert einige Minuten und läuft deshalb nur bei Pushes auf den Hauptzweig, nicht bei jedem Pull Request.
+  installer:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: 10.0.x
+      - name: Installer-Tests in Containern
+        run: bash deploy/test/run-container-tests.sh
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: 10.0.x
+      - name: Browser-Tests bauen
+        run: dotnet build tests/Wunschkino.E2E --configuration Release
+      - name: Chromium für Playwright installieren
+        run: pwsh tests/Wunschkino.E2E/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+      - name: Browser-Tests
+        run: dotnet test tests/Wunschkino.E2E --configuration Release --no-build

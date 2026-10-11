@@ -1,0 +1,42 @@
+@using Wunschkino.Auth
+@using Wunschkino.Localization
+@inject LanguagePreferenceService Languages
+@inject NavigationManager Navigation
+
+<MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" AriaLabel="@Texts.Language_Label" Class="language-menu"
+         UserAttributes="@(new Dictionary<string, object?> { ["title"] = Texts.Language_Label })"
+         AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    <MudMenuItem OnClick="() => SelectAsync(null)" Icon="@(_selected is null ? Icons.Material.Filled.Check : null)">
+        @Texts.Language_Automatic@if (_selected is null) { <span class="visually-hidden"> (@Texts.Theme_Active)</span> }
+    </MudMenuItem>
+    @foreach (var language in AppLanguages.All)
+    {
+        <MudMenuItem OnClick="() => SelectAsync(language.Code)" Icon="@(_selected == language.Code ? Icons.Material.Filled.Check : null)">
+            <span lang="@language.Code">@language.NativeName</span>@if (_selected == language.Code) { <span class="visually-hidden"> (@Texts.Theme_Active)</span> }
+        </MudMenuItem>
+    }
+</MudMenu>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private int? _userId;
+    private string? _selected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _userId = AuthClaims.GetUserId((await AuthState).User);
+        if (_userId is { } userId)
+            _selected = await Languages.GetAsync(userId);
+    }
+
+    // Die Sprache gilt für die ganze Verbindung; ein Neuladen baut sie mit der neuen Sprache auf.
+    private async Task SelectAsync(string? language)
+    {
+        if (_userId is not { } userId)
+            return;
+        await Languages.SetAsync(userId, language);
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+}

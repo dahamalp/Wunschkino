@@ -1,0 +1,68 @@
+@page "/admin/audit"
+@attribute [Authorize(Roles = AuthClaims.AdminRole)]
+@using Wunschkino.Auth
+@using Wunschkino.Data
+@inject AuditLog AuditLog
+
+<PageTitle>@Texts.Audit_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Audit_Title</MudText>
+
+<MudText Class="mud-text-secondary mb-6">
+    @((MarkupString)string.Format(Texts.Culture, Texts.Audit_Intro, AuditLog.MaxListed, "<code>journalctl -u wunschkino</code>"))
+</MudText>
+
+<MudSwitch T="bool" Value="_hideLogins" ValueChanged="SetHideLoginsAsync" Color="Color.Primary" Label="@Texts.Audit_HideLogins" Class="mb-2" />
+
+@if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" aria-label="@Texts.Common_Loading" />
+}
+else if (_entries.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@Texts.Audit_Empty</MudAlert>
+}
+else
+{
+    <MudTable Items="_entries" Dense="true" Hover="true" Elevation="1" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>@Texts.Audit_ColTime</MudTh>
+            <MudTh>@Texts.Audit_ColWho</MudTh>
+            <MudTh>@Texts.Audit_ColAction</MudTh>
+            <MudTh>@Texts.Audit_ColTarget</MudTh>
+            <MudTh>@Texts.Audit_ColDetails</MudTh>
+            <MudTh>@Texts.Audit_ColAddress</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@Texts.Audit_ColTime"><LocalTime Utc="context.TimeUtc" Format="G" /></MudTd>
+            <MudTd DataLabel="@Texts.Audit_ColWho">@(context.ActorName ?? Texts.Audit_System)</MudTd>
+            <MudTd DataLabel="@Texts.Audit_ColAction">@AuditActions.Label(context.Action)</MudTd>
+            <MudTd DataLabel="@Texts.Audit_ColTarget">@context.Target</MudTd>
+            <MudTd DataLabel="@Texts.Audit_ColDetails">@context.Detail</MudTd>
+            <MudTd DataLabel="@Texts.Audit_ColAddress">@context.Ip</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    private bool _loaded;
+    private bool _hideLogins;
+    private IReadOnlyList<AuditEntry> _entries = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        _entries = await AuditLog.ListAsync(includeLogins: !_hideLogins);
+        _loaded = true;
+    }
+
+    private async Task SetHideLoginsAsync(bool hide)
+    {
+        _hideLogins = hide;
+        await LoadAsync();
+    }
+}

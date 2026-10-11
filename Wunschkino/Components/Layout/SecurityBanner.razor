@@ -1,0 +1,24 @@
+@using Wunschkino.Hosting
+@inject SecurityCheckService Checks
+
+@if (_critical.Count > 0)
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" role="alert">
+        <strong>@Texts.Banner_Attention</strong> @_critical[0].Message
+        @if (_critical.Count > 1)
+        {
+            <span> @(_critical.Count == 2 ? Texts.Banner_MoreOne : string.Format(Texts.Culture, Texts.Banner_MoreMany, _critical.Count - 1))</span>
+        }
+        <MudLink Href="/admin/security" Class="ml-2">@Texts.Banner_Open</MudLink>
+    </MudAlert>
+}
+
+@code {
+    private IReadOnlyList<SecurityCheckItem> _critical = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var items = await Checks.RunAsync(includeBlocks: false);
+        _critical = items.Where(item => item.Severity == CheckSeverity.Critical).ToList();
+    }
+}

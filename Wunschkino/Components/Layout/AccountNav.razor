@@ -1,0 +1,21 @@
+@* Unternavigation der Kontoseiten: Passwort und Zwei-Faktor-Anmeldung. *@
+<nav class="account-nav mb-4" aria-label="@Texts.Account_NavLabel">
+    @foreach (var (href, label) in Links)
+    {
+        var current = string.Equals(href, Current, StringComparison.OrdinalIgnoreCase);
+        <MudButton Href="@href" Variant="@(current ? Variant.Filled : Variant.Text)" Color="Color.Primary" Size="Size.Small"
+                   UserAttributes="@(current ? new Dictionary<string, object?> { ["aria-current"] = "page" } : null)">@label</MudButton>
+    }
+</nav>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Current { get; set; } = "";
+
+    // Pro Aufruf gelesen, damit die Beschriftung der Sprache des Nutzers folgt.
+    private static (string Href, string Label)[] Links =>
+    [
+        ("/account/password", Texts.Account_NavPassword),
+        ("/account/2fa", Texts.Account_NavTwoFactor)
+    ];
+}

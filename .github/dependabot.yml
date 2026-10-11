@@ -1,0 +1,12 @@
+# Hält die GitHub-Actions (im Release-Workflow) und die NuGet-Pakete aktuell. Die Aktionen sind auf Commit-SHAs festgelegt
+# (mit der Version im Kommentar); Dependabot schlägt neue SHAs samt Version als Pull Request vor. Prüfen, bevor man sie übernimmt.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly

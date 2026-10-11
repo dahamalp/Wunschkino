@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="App_Name" xml:space="preserve"><value>Wunschkino</value></data>
+  <data name="Layout_SkipToContent" xml:space="preserve"><value>Naar de inhoud</value></data>
+  <data name="Layout_MainNavigation" xml:space="preserve"><value>Hoofdnavigatie</value></data>
+  <data name="Layout_Logout" xml:space="preserve"><value>Afmelden</value></data>
+  <data name="Layout_UnexpectedError" xml:space="preserve"><value>Er is een onverwachte fout opgetreden.</value></data>
+  <data name="Layout_Reload" xml:space="preserve"><value>Opnieuw laden</value></data>
+  <data name="Layout_Dismiss" xml:space="preserve"><value>Sluiten</value></data>
+
+  <data name="Nav_Library" xml:space="preserve"><value>Bibliotheek</value></data>
+  <data name="Nav_Wishes" xml:space="preserve"><value>Wensen</value></data>
+  <data name="Nav_NewWish" xml:space="preserve"><value>Wens doen</value></data>
+  <data name="Nav_Users" xml:space="preserve"><value>Gebruikers</value></data>
+  <data name="Nav_Gaps" xml:space="preserve"><value>Ontbrekende afleveringen</value></data>
+  <data name="Nav_Blocks" xml:space="preserve"><value>Geblokkeerde adressen</value></data>
+  <data name="Nav_Audit" xml:space="preserve"><value>Logboek</value></data>
+  <data name="Nav_Security" xml:space="preserve"><value>Beveiliging</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>Instellingen</value></data>
+  <data name="Nav_Admin" xml:space="preserve"><value>Beheer</value></data>
+  <data name="Nav_Menu" xml:space="preserve"><value>Menu</value></data>
+  <data name="Nav_Account" xml:space="preserve"><value>Mijn account</value></data>
+
+  <data name="Theme_Label" xml:space="preserve"><value>Weergave</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>Systeem</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Licht</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Donker</value></data>
+  <data name="Theme_Active" xml:space="preserve"><value>actief</value></data>
+
+  <data name="Footer_Source" xml:space="preserve"><value>Broncode (AGPL-3.0)</value></data>
+  <data name="Footer_About" xml:space="preserve"><value>Over Wunschkino</value></data>
+  <data name="Footer_Version" xml:space="preserve"><value>Versie {0}</value></data>
+  <data name="Footer_TmdbNotice" xml:space="preserve"><value>This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</value><comment>Pflichtsatz der TMDB-Bedingungen, bleibt in jeder Sprache Englisch.</comment></data>
+  <data name="Kind_Movie" xml:space="preserve"><value>Film</value></data>
+  <data name="Kind_Series" xml:space="preserve"><value>Serie</value></data>
+  <data name="Home_PageTitle" xml:space="preserve"><value>Bibliotheek – Wunschkino</value></data>
+  <data name="Home_Title" xml:space="preserve"><value>Bibliotheek</value></data>
+  <data name="Home_Counts" xml:space="preserve"><value>{0} films · {1} series</value></data>
+  <data name="Home_Updated" xml:space="preserve"><value>Stand {0:g}</value></data>
+  <data name="Home_Refresh" xml:space="preserve"><value>Nu bijwerken</value></data>
+  <data name="Home_Refreshing" xml:space="preserve"><value>Wordt bijgewerkt …</value></data>
+  <data name="Home_ShowingLastGood" xml:space="preserve"><value>Je ziet de laatst succesvol geladen stand.</value></data>
+  <data name="Home_Search" xml:space="preserve"><value>Zoeken op titel of jaar</value></data>
+  <data name="Home_Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Home_TypeAll" xml:space="preserve"><value>Alle</value></data>
+  <data name="Home_Movies" xml:space="preserve"><value>Films</value></data>
+  <data name="Home_SeriesPlural" xml:space="preserve"><value>Series</value></data>
+  <data name="Home_Sort" xml:space="preserve"><value>Sortering</value></data>
+  <data name="Home_SortTitle" xml:space="preserve"><value>Titel</value></data>
+  <data name="Home_SortYear" xml:space="preserve"><value>Jaar van uitgave</value></data>
+  <data name="Home_SortRecent" xml:space="preserve"><value>Recent toegevoegd</value></data>
+  <data name="Home_NoMatches" xml:space="preserve"><value>Geen resultaten.</value></data>
+  <data name="Home_ShowMore" xml:space="preserve"><value>Meer tonen ({0} meer)</value></data>
+  <data name="Home_Loading" xml:space="preserve"><value>Bibliotheek wordt geladen …</value></data>
+  <data name="NewWish_PageTitle" xml:space="preserve"><value>Wens doen – Wunschkino</value></data>
+  <data name="NewWish_Title" xml:space="preserve"><value>Wens doen</value></data>
+  <data name="NewWish_ModeMedia" xml:space="preserve"><value>Films &amp; series</value></data>
+  <data name="NewWish_ModeAnime" xml:space="preserve"><value>Anime</value></data>
+  <data name="NewWish_HintAnime" xml:space="preserve"><value>Zoek naar een animetitel, ook met de romaji- of Japanse naam. De zoekopdracht loopt via AniList, je wenst de hele serie.</value></data>
+  <data name="NewWish_HintMedia" xml:space="preserve"><value>Zoek naar een titel of voer een IMDb-nummer in, zoals {0}.</value></data>
+  <data name="NewWish_PrivacyMedia" xml:space="preserve"><value>Je zoekterm wordt door deze server naar TMDB gestuurd, niet door je browser.</value></data>
+  <data name="NewWish_PrivacyAnime" xml:space="preserve"><value>Je zoekterm wordt door deze server naar AniList gestuurd, niet door je browser.</value></data>
+  <data name="NewWish_LabelMedia" xml:space="preserve"><value>Titel of IMDb-nummer</value></data>
+  <data name="NewWish_LabelAnime" xml:space="preserve"><value>Animetitel</value></data>
+  <data name="NewWish_Search" xml:space="preserve"><value>Zoeken</value></data>
+  <data name="NewWish_Searching" xml:space="preserve"><value>Bezig met zoeken …</value></data>
+  <data name="NewWish_NothingFound" xml:space="preserve"><value>Niets gevonden.</value></data>
+  <data name="NewWish_ResultsCount" xml:space="preserve"><value>{0} resultaten</value></data>
+  <data name="A11y_ActionFor" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="NewWish_InLibrary" xml:space="preserve"><value>Al in Jellyfin</value></data>
+  <data name="NewWish_AlreadyWished" xml:space="preserve"><value>Al gewenst · {0} · {1}</value></data>
+  <data name="NewWish_VoteOne" xml:space="preserve"><value>{0} stem</value></data>
+  <data name="NewWish_VotesMany" xml:space="preserve"><value>{0} stemmen</value></data>
+  <data name="NewWish_YouSupport" xml:space="preserve"><value>Je steunt deze wens.</value></data>
+  <data name="NewWish_Note" xml:space="preserve"><value>Notitie (optioneel)</value></data>
+  <data name="NewWish_Wish" xml:space="preserve"><value>Wensen</value></data>
+  <data name="NewWish_PlusOne" xml:space="preserve"><value>+1</value></data>
+  <data name="NewWish_SearchFailed" xml:space="preserve"><value>Het zoeken is mislukt. Probeer het later nog eens.</value></data>
+  <data name="NewWish_SaveFailed" xml:space="preserve"><value>De wens kon niet worden opgeslagen. Probeer het later nog eens.</value></data>
+  <data name="NewWish_ResultsLabel" xml:space="preserve"><value>Zoekresultaten</value></data>
+  <data name="AnimeFormat_Ova" xml:space="preserve"><value>OVA</value></data>
+  <data name="AnimeFormat_Ona" xml:space="preserve"><value>ONA</value></data>
+  <data name="AnimeFormat_Special" xml:space="preserve"><value>Special</value></data>
+  <data name="AnimeFormat_Music" xml:space="preserve"><value>Muziek</value></data>
+  <data name="AnimeFormat_Other" xml:space="preserve"><value>Anime</value></data>
+  <data name="Status_Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Status_Accepted" xml:space="preserve"><value>Aangenomen</value></data>
+  <data name="Status_Rejected" xml:space="preserve"><value>Afgewezen</value></data>
+  <data name="Status_Done" xml:space="preserve"><value>Afgerond</value></data>
+  <data name="WishList_PageTitle" xml:space="preserve"><value>Wensen – Wunschkino</value></data>
+  <data name="WishList_Title" xml:space="preserve"><value>Wensen</value></data>
+  <data name="WishList_New" xml:space="preserve"><value>Nieuwe wens</value></data>
+  <data name="WishList_Scope" xml:space="preserve"><value>Tonen</value></data>
+  <data name="WishList_ScopeAll" xml:space="preserve"><value>Alle wensen</value></data>
+  <data name="WishList_ScopeMine" xml:space="preserve"><value>Mijn wensen</value></data>
+  <data name="WishList_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="WishList_StatusAll" xml:space="preserve"><value>Alle</value></data>
+  <data name="WishList_Sort" xml:space="preserve"><value>Sortering</value></data>
+  <data name="WishList_SortNewest" xml:space="preserve"><value>Nieuwste eerst</value></data>
+  <data name="WishList_SortMostVotes" xml:space="preserve"><value>Meeste stemmen</value></data>
+  <data name="WishList_None" xml:space="preserve"><value>Geen wensen gevonden.</value></data>
+  <data name="WishList_By" xml:space="preserve"><value>van {0}</value></data>
+  <data name="WishList_Automatic" xml:space="preserve"><value>Automatisch</value></data>
+  <data name="WishList_AutomaticTooltip" xml:space="preserve"><value>Automatisch afgerond: de titel is in Jellyfin gevonden.</value></data>
+  <data name="WishList_Withdraw" xml:space="preserve"><value>Intrekken</value></data>
+  <data name="WishList_WithdrawVote" xml:space="preserve"><value>Mijn stem intrekken</value></data>
+  <data name="WishList_MarkDone" xml:space="preserve"><value>Als afgerond markeren</value></data>
+  <data name="WishList_MarkAccepted" xml:space="preserve"><value>Als aangenomen markeren</value></data>
+  <data name="WishList_MarkRejected" xml:space="preserve"><value>Als afgewezen markeren</value></data>
+  <data name="WishList_EditComment" xml:space="preserve"><value>Opmerking bewerken</value></data>
+  <data name="WishList_Delete" xml:space="preserve"><value>Wens verwijderen</value></data>
+  <data name="WishList_StatusActive" xml:space="preserve"><value>Is „{0}” – nogmaals klikken zet terug op „Open”</value></data>
+  <data name="WishList_StatusSet" xml:space="preserve"><value>Als „{0}” markeren</value></data>
+  <data name="WishList_CommentLabel" xml:space="preserve"><value>Opmerking (optioneel)</value></data>
+  <data name="WishList_CommentSave" xml:space="preserve"><value>Opmerking opslaan</value></data>
+  <data name="WishList_Cancel" xml:space="preserve"><value>Annuleren</value></data>
+  <data name="WishList_DeleteTitle" xml:space="preserve"><value>Wens verwijderen</value></data>
+  <data name="WishList_DeleteMessage" xml:space="preserve"><value>„{0}” met alle stemmen echt verwijderen?</value></data>
+  <data name="WishList_DeleteYes" xml:space="preserve"><value>Verwijderen</value></data>
+  <data name="WishList_LoadFailed" xml:space="preserve"><value>De wensenlijst kon niet worden geladen.</value></data>
+  <data name="WishList_ActionFailed" xml:space="preserve"><value>De actie is mislukt. Probeer het later nog eens.</value></data>
+  <data name="WishList_ListLabel" xml:space="preserve"><value>Wensen</value></data>
+  <data name="Setup_PageTitle" xml:space="preserve"><value>Installatie – Wunschkino</value></data>
+  <data name="Setup_Title" xml:space="preserve"><value>Installatie</value></data>
+  <data name="Setup_StepOf" xml:space="preserve"><value>Stap {0} van {1}: {2}</value></data>
+  <data name="Setup_Progress" xml:space="preserve"><value>Voortgang van de installatie</value></data>
+  <data name="Setup_StepToken" xml:space="preserve"><value>Setup-token</value></data>
+  <data name="Setup_StepAdmin" xml:space="preserve"><value>Beheerdersaccount</value></data>
+  <data name="Setup_StepJellyfin" xml:space="preserve"><value>Jellyfin</value></data>
+  <data name="Setup_StepTmdb" xml:space="preserve"><value>TMDB</value></data>
+  <data name="Setup_StepDone" xml:space="preserve"><value>Klaar</value></data>
+  <data name="Setup_TokenHint" xml:space="preserve"><value>Voer het setup-token in. Het werd bij de installatie getoond en staat op de server in {0}.</value></data>
+  <data name="Setup_Token" xml:space="preserve"><value>Setup-token</value></data>
+  <data name="Setup_AdminHint" xml:space="preserve"><value>Maak het eerste beheerdersaccount aan.</value></data>
+  <data name="Setup_Username" xml:space="preserve"><value>Gebruikersnaam</value></data>
+  <data name="Setup_Password" xml:space="preserve"><value>Wachtwoord</value></data>
+  <data name="Setup_PasswordRepeat" xml:space="preserve"><value>Wachtwoord herhalen</value></data>
+  <data name="Setup_PasswordMin" xml:space="preserve"><value>Minstens {0} tekens</value></data>
+  <data name="Setup_ShowPassword" xml:space="preserve"><value>Wachtwoord tonen</value></data>
+  <data name="Setup_HidePassword" xml:space="preserve"><value>Wachtwoord verbergen</value></data>
+  <data name="Setup_JellyfinHint" xml:space="preserve"><value>Verbind Jellyfin. De API-sleutel maak je in Jellyfin aan onder {0}.</value></data>
+  <data name="Setup_JellyfinKeyPath" xml:space="preserve"><value>Dashboard → API-sleutels</value></data>
+  <data name="Setup_JellyfinUrl" xml:space="preserve"><value>Jellyfin-adres</value></data>
+  <data name="Setup_JellyfinKey" xml:space="preserve"><value>Jellyfin-API-sleutel</value></data>
+  <data name="Setup_TmdbHint" xml:space="preserve"><value>Voer je TMDB-toegang in (gratis via themoviedb.org → Instellingen → API). Zowel de API-sleutel als het leestoegangstoken werkt.</value></data>
+  <data name="Setup_TmdbKey" xml:space="preserve"><value>TMDB-API-sleutel</value></data>
+  <data name="Setup_Anonymous" xml:space="preserve"><value>Wensen anoniem tonen</value></data>
+  <data name="Setup_AnonymousHint" xml:space="preserve"><value>Gewone gebruikers zien dan niet van wie een wens komt. Beheerders zien het altijd. Je kunt dit later bij Instellingen wijzigen.</value></data>
+  <data name="Setup_Done" xml:space="preserve"><value>De installatie is voltooid.</value></data>
+  <data name="Setup_DoneHint" xml:space="preserve"><value>Het setup-token is nu ongeldig. Je kunt je vanaf nu met het beheerdersaccount aanmelden.</value></data>
+  <data name="Setup_Back" xml:space="preserve"><value>Terug</value></data>
+  <data name="Setup_Next" xml:space="preserve"><value>Verder</value></data>
+  <data name="Setup_Finish" xml:space="preserve"><value>Installatie afronden</value></data>
+  <data name="Setup_Wait" xml:space="preserve"><value>Even geduld …</value></data>
+  <data name="Setup_ToStart" xml:space="preserve"><value>Naar de startpagina</value></data>
+  <data name="Setup_TokenInvalid" xml:space="preserve"><value>Het setup-token is ongeldig.</value></data>
+  <data name="Setup_PasswordMismatch" xml:space="preserve"><value>De wachtwoorden komen niet overeen.</value></data>
+  <data name="Setup_JellyfinKeyMissing" xml:space="preserve"><value>De Jellyfin-API-sleutel ontbreekt.</value></data>
+  <data name="Setup_TmdbKeyMissing" xml:space="preserve"><value>De TMDB-API-sleutel ontbreekt.</value></data>
+  <data name="Login_PageTitle" xml:space="preserve"><value>Aanmelden – Wunschkino</value></data>
+  <data name="Login_Title" xml:space="preserve"><value>Aanmelden</value></data>
+  <data name="Login_PasswordChanged" xml:space="preserve"><value>Je wachtwoord is gewijzigd. Meld je opnieuw aan.</value></data>
+  <data name="Login_Username" xml:space="preserve"><value>Gebruikersnaam</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Wachtwoord</value></data>
+  <data name="Login_Remember" xml:space="preserve"><value>Aangemeld blijven</value></data>
+  <data name="Login_Submit" xml:space="preserve"><value>Aanmelden</value></data>
+  <data name="Login_UsernameRequired" xml:space="preserve"><value>Voer je gebruikersnaam in.</value></data>
+  <data name="Login_PasswordRequired" xml:space="preserve"><value>Voer je wachtwoord in.</value></data>
+  <data name="Password_PageTitle" xml:space="preserve"><value>Wachtwoord wijzigen – Wunschkino</value></data>
+  <data name="Password_Title" xml:space="preserve"><value>Wachtwoord wijzigen</value></data>
+  <data name="Password_Current" xml:space="preserve"><value>Huidig wachtwoord</value></data>
+  <data name="Password_New" xml:space="preserve"><value>Nieuw wachtwoord</value></data>
+  <data name="Password_Repeat" xml:space="preserve"><value>Nieuw wachtwoord herhalen</value></data>
+  <data name="Password_Min" xml:space="preserve"><value>Minstens {0} tekens</value></data>
+  <data name="Password_Mismatch" xml:space="preserve"><value>De nieuwe wachtwoorden komen niet overeen.</value></data>
+  <data name="Password_Notice" xml:space="preserve"><value>Na de wijziging word je overal afgemeld en meld je je opnieuw aan.</value></data>
+  <data name="Password_Save" xml:space="preserve"><value>Wachtwoord wijzigen</value></data>
+  <data name="Users_PageTitle" xml:space="preserve"><value>Gebruikers – Wunschkino</value></data>
+  <data name="Users_Title" xml:space="preserve"><value>Gebruikers</value></data>
+  <data name="Users_NewTitle" xml:space="preserve"><value>Nieuwe gebruiker</value></data>
+  <data name="Users_Username" xml:space="preserve"><value>Gebruikersnaam</value></data>
+  <data name="Users_StartPassword" xml:space="preserve"><value>Startwachtwoord</value></data>
+  <data name="Users_Role" xml:space="preserve"><value>Rol</value></data>
+  <data name="Users_RoleUser" xml:space="preserve"><value>Gebruiker</value></data>
+  <data name="Users_RoleAdmin" xml:space="preserve"><value>Beheerder</value></data>
+  <data name="Users_Create" xml:space="preserve"><value>Aanmaken</value></data>
+  <data name="Users_ResetTitle" xml:space="preserve"><value>Nieuw wachtwoord voor „{0}”</value></data>
+  <data name="Users_NewPassword" xml:space="preserve"><value>Nieuw wachtwoord</value></data>
+  <data name="Users_ResetSet" xml:space="preserve"><value>Instellen</value></data>
+  <data name="Users_Cancel" xml:space="preserve"><value>Annuleren</value></data>
+  <data name="Users_ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Users_ColCreated" xml:space="preserve"><value>Aangemaakt</value></data>
+  <data name="Users_ColActions" xml:space="preserve"><value>Acties</value></data>
+  <data name="Users_StatusDisabled" xml:space="preserve"><value>Geblokkeerd</value></data>
+  <data name="Users_StatusLocked" xml:space="preserve"><value>Aanmeldblokkade</value></data>
+  <data name="Users_StatusActive" xml:space="preserve"><value>Actief</value></data>
+  <data name="Users_ActionReset" xml:space="preserve"><value>Wachtwoord resetten</value></data>
+  <data name="Users_ActionMakeUser" xml:space="preserve"><value>Gebruiker maken</value></data>
+  <data name="Users_ActionMakeAdmin" xml:space="preserve"><value>Beheerder maken</value></data>
+  <data name="Users_ActionEnable" xml:space="preserve"><value>Account deblokkeren</value></data>
+  <data name="Users_ActionDisable" xml:space="preserve"><value>Account blokkeren</value></data>
+  <data name="Users_ActionUnlock" xml:space="preserve"><value>Aanmeldblokkade opheffen</value></data>
+  <data name="Users_Created" xml:space="preserve"><value>Gebruiker aangemaakt.</value></data>
+  <data name="Users_RoleChanged" xml:space="preserve"><value>Rol gewijzigd.</value></data>
+  <data name="Users_Enabled" xml:space="preserve"><value>Account gedeblokkeerd.</value></data>
+  <data name="Users_Disabled" xml:space="preserve"><value>Account geblokkeerd.</value></data>
+  <data name="Users_Unlocked" xml:space="preserve"><value>Aanmeldblokkade opgeheven.</value></data>
+  <data name="Users_PasswordSet" xml:space="preserve"><value>Wachtwoord ingesteld.</value></data>
+  <data name="Users_Failed" xml:space="preserve"><value>De actie is mislukt.</value></data>
+  <data name="Common_Loading" xml:space="preserve"><value>Wordt geladen …</value></data>
+  <data name="Blocks_PageTitle" xml:space="preserve"><value>Geblokkeerde adressen – Wunschkino</value></data>
+  <data name="Blocks_Title" xml:space="preserve"><value>Geblokkeerde adressen</value></data>
+  <data name="Blocks_Intro" xml:space="preserve"><value>Wie zich herhaaldelijk verkeerd aanmeldt of de app overbelast, wordt geblokkeerd: na telkens 3 mislukte pogingen voor 1 minuut, 5 minuten, 15 minuten, 1 uur en 24 uur, daarna permanent, tot je het hier deblokkeert. De server zelf en de proxy worden nooit geblokkeerd.</value></data>
+  <data name="Blocks_IntroConsole" xml:space="preserve"><value>Ben je zelf buitengesloten, dan deblokkeer je op de server met {0} of {1}.</value></data>
+  <data name="Blocks_Empty" xml:space="preserve"><value>Geen enkel adres heeft mislukte pogingen of is geblokkeerd.</value></data>
+  <data name="Blocks_UnblockAll" xml:space="preserve"><value>Alle deblokkeren</value></data>
+  <data name="Blocks_ConfirmTitle" xml:space="preserve"><value>Alle adressen deblokkeren</value></data>
+  <data name="Blocks_ConfirmText" xml:space="preserve"><value>Echt alle {0} adressen deblokkeren? Geblokkeerde adressen kunnen zich daarna meteen weer aanmelden.</value></data>
+  <data name="Blocks_ColAddress" xml:space="preserve"><value>Adres</value></data>
+  <data name="Blocks_ColState" xml:space="preserve"><value>Toestand</value></data>
+  <data name="Blocks_ColFailures" xml:space="preserve"><value>Mislukte pogingen</value></data>
+  <data name="Blocks_ColLast" xml:space="preserve"><value>Laatste mislukte poging</value></data>
+  <data name="Blocks_Unblock" xml:space="preserve"><value>Deblokkeren</value></data>
+  <data name="Blocks_UnblockLabel" xml:space="preserve"><value>{0} deblokkeren</value></data>
+  <data name="Blocks_Unblocked" xml:space="preserve"><value>{0} is gedeblokkeerd.</value></data>
+  <data name="Blocks_AllOne" xml:space="preserve"><value>1 adres gedeblokkeerd.</value></data>
+  <data name="Blocks_AllMany" xml:space="preserve"><value>{0} adressen gedeblokkeerd.</value></data>
+  <data name="Blocks_StatePermanent" xml:space="preserve"><value>Permanent geblokkeerd</value></data>
+  <data name="Blocks_StateUntil" xml:space="preserve"><value>Geblokkeerd tot {0}</value></data>
+  <data name="Blocks_StateNone" xml:space="preserve"><value>Niet geblokkeerd</value></data>
+  <data name="Audit_PageTitle" xml:space="preserve"><value>Logboek – Wunschkino</value></data>
+  <data name="Audit_Title" xml:space="preserve"><value>Logboek</value></data>
+  <data name="Audit_Intro" xml:space="preserve"><value>De laatste {0} beveiligingsrelevante acties: aanmeldingen, gebruikersbeheer, verbindings- en wensinstellingen, blokkades van adressen. Vermeldingen blijven 365 dagen bewaard, IP-adressen (bij aanmeldingen en geblokkeerde adressen) 90 dagen. Mislukte aanmeldingen staan in het log van de server ({1}), niet hier.</value></data>
+  <data name="Audit_HideLogins" xml:space="preserve"><value>Aanmeldingen verbergen</value></data>
+  <data name="Audit_Empty" xml:space="preserve"><value>Er zijn nog geen vermeldingen.</value></data>
+  <data name="Audit_ColTime" xml:space="preserve"><value>Tijd</value></data>
+  <data name="Audit_ColWho" xml:space="preserve"><value>Wie</value></data>
+  <data name="Audit_ColAction" xml:space="preserve"><value>Actie</value></data>
+  <data name="Audit_ColTarget" xml:space="preserve"><value>Doel</value></data>
+  <data name="Audit_ColDetails" xml:space="preserve"><value>Details</value></data>
+  <data name="Audit_ColAddress" xml:space="preserve"><value>Adres</value></data>
+  <data name="Audit_System" xml:space="preserve"><value>Systeem</value></data>
+  <data name="Security_PageTitle" xml:space="preserve"><value>Beveiliging – Wunschkino</value></data>
+  <data name="Security_Title" xml:space="preserve"><value>Beveiligingscontrole</value></data>
+  <data name="Security_Intro" xml:space="preserve"><value>Controleert de instellingen en de toestand van deze installatie. „Kritiek” betekent: het richt nu al schade aan of brengt gegevens in gevaar. „Waarschuwing” betekent: het is onveilig of onvolledig, maar er is nog niets gebeurd.</value></data>
+  <data name="Security_ColCheck" xml:space="preserve"><value>Controle</value></data>
+  <data name="Security_ColState" xml:space="preserve"><value>Toestand</value></data>
+  <data name="Security_ColTodo" xml:space="preserve"><value>Wat te doen</value></data>
+  <data name="Security_Open" xml:space="preserve"><value>Openen</value></data>
+  <data name="Security_DismissProxy" xml:space="preserve"><value>Melding negeren</value></data>
+  <data name="Security_BackupTitle" xml:space="preserve"><value>Back-up</value></data>
+  <data name="Security_BackupFolder" xml:space="preserve"><value>Map</value></data>
+  <data name="Security_BackupLast" xml:space="preserve"><value>Laatste back-up</value></data>
+  <data name="Security_BackupNone" xml:space="preserve"><value>nog geen</value></data>
+  <data name="Security_BackupCount" xml:space="preserve"><value>Aantal en grootte</value></data>
+  <data name="Security_BackupOne" xml:space="preserve"><value>{0} back-up, {1}</value></data>
+  <data name="Security_BackupMany" xml:space="preserve"><value>{0} back-ups, {1}</value></data>
+  <data name="Security_BackupDrive" xml:space="preserve"><value>Schijf</value></data>
+  <data name="Security_BackupSameDrive" xml:space="preserve"><value>dezelfde als de database (beschermt niet tegen een schijfdefect)</value></data>
+  <data name="Security_BackupOtherDrive" xml:space="preserve"><value>een andere dan de database</value></data>
+  <data name="Security_BackupHint" xml:space="preserve"><value>De app maakt dagelijks automatisch een back-up en bewaart de laatste back-ups. Alleen de database wordt geback-upt, nooit de sleutelmap {0}; die back-up je apart (zie README).</value></data>
+  <data name="Security_BackupNow" xml:space="preserve"><value>Nu back-up maken</value></data>
+  <data name="Security_BackupRunning" xml:space="preserve"><value>Back-up wordt gemaakt …</value></data>
+  <data name="Security_BackupOk" xml:space="preserve"><value>Er is een back-up van de database gemaakt.</value></data>
+  <data name="Security_BackupFailed" xml:space="preserve"><value>De back-up is mislukt. De reden staat in de tabel.</value></data>
+  <data name="Security_SizeBytes" xml:space="preserve"><value>{0} byte</value></data>
+  <data name="Banner_Attention" xml:space="preserve"><value>Let op:</value></data>
+  <data name="Banner_MoreOne" xml:space="preserve"><value>(en nog 1 kritiek punt)</value></data>
+  <data name="Banner_MoreMany" xml:space="preserve"><value>(en nog {0} kritieke punten)</value></data>
+  <data name="Banner_Open" xml:space="preserve"><value>Beveiligingscontrole openen</value></data>
+  <data name="Settings_PageTitle" xml:space="preserve"><value>Instellingen – Wunschkino</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Instellingen</value></data>
+  <data name="Settings_Jellyfin" xml:space="preserve"><value>Jellyfin</value></data>
+  <data name="Settings_JellyfinUrl" xml:space="preserve"><value>Jellyfin-adres</value></data>
+  <data name="Settings_NewJellyfinKey" xml:space="preserve"><value>Nieuwe Jellyfin-API-sleutel</value></data>
+  <data name="Settings_RefreshMinutes" xml:space="preserve"><value>Bibliotheek bijwerken elke … minuten</value></data>
+  <data name="Settings_Tmdb" xml:space="preserve"><value>TMDB</value></data>
+  <data name="Settings_NewTmdbKey" xml:space="preserve"><value>Nieuwe TMDB-API-sleutel</value></data>
+  <data name="Settings_TestNote" xml:space="preserve"><value>Bij het opslaan worden beide verbindingen getest. Er wordt alleen opgeslagen als beide werken.</value></data>
+  <data name="Settings_TestAndSave" xml:space="preserve"><value>Testen en opslaan</value></data>
+  <data name="Settings_Testing" xml:space="preserve"><value>Verbindingen worden getest …</value></data>
+  <data name="Settings_Saved" xml:space="preserve"><value>Instellingen opgeslagen.</value></data>
+  <data name="Settings_KeyStored" xml:space="preserve"><value>Er is een sleutel opgeslagen. Laat leeg om die te behouden.</value></data>
+  <data name="Settings_KeyMissing" xml:space="preserve"><value>Er is geen leesbare sleutel opgeslagen.</value></data>
+  <data name="Settings_Wishes" xml:space="preserve"><value>Wensen</value></data>
+  <data name="Settings_Anonymous" xml:space="preserve"><value>Wensen anoniem tonen</value></data>
+  <data name="Settings_AnonymousHint" xml:space="preserve"><value>Gewone gebruikers zien dan niet van wie een wens of notitie komt; eigen bijdragen verschijnen als „jij”. Beheerders zien het altijd.</value></data>
+  <data name="Settings_AnonymousOn" xml:space="preserve"><value>Wensen worden anoniem getoond.</value></data>
+  <data name="Settings_AnonymousOff" xml:space="preserve"><value>Wensen worden met naam getoond.</value></data>
+  <data name="Settings_Limits" xml:space="preserve"><value>Limieten per gebruiker</value></data>
+  <data name="Settings_WishesPerDay" xml:space="preserve"><value>Wensen per gebruiker per dag</value></data>
+  <data name="Settings_WishesPerDayHint" xml:space="preserve"><value>Telt nieuwe wensen en „+1” van de laatste 24 uur. 0 betekent: geen limiet. Beheerders zijn uitgezonderd.</value></data>
+  <data name="Settings_SearchesPerMinute" xml:space="preserve"><value>TMDB-zoekopdrachten per gebruiker per minuut</value></data>
+  <data name="Settings_SearchesHint" xml:space="preserve"><value>Beschermt TMDB en je quotum tegen aanhoudend zoeken. 0 betekent: geen limiet.</value></data>
+  <data name="Settings_SaveLimits" xml:space="preserve"><value>Limieten opslaan</value></data>
+  <data name="Settings_LimitsSaved" xml:space="preserve"><value>Limieten opgeslagen.</value></data>
+  <data name="Settings_AnimeTitle" xml:space="preserve"><value>Anime-koppellijst</value></data>
+  <data name="Settings_AnimeStatus" xml:space="preserve"><value>{0} vermeldingen, laatst gecontroleerd op {1}. De lijst werkt zichzelf dagelijks bij.</value></data>
+  <data name="Settings_AnimeNotLoaded" xml:space="preserve"><value>De lijst is nog niet geladen. Tot die tijd toont het zoeken naar anime alleen titels die al in Jellyfin staan.</value></data>
+  <data name="Settings_AnimeRefresh" xml:space="preserve"><value>Animelijst nu bijwerken</value></data>
+  <data name="Settings_AnimeRefreshing" xml:space="preserve"><value>Wordt bijgewerkt …</value></data>
+  <data name="Settings_AnimeSlow" xml:space="preserve"><value>Het bijwerken duurt ongewoon lang. Laad de pagina later opnieuw om de stand te zien.</value></data>
+  <data name="Settings_AnimeDone" xml:space="preserve"><value>Animelijst bijgewerkt.</value></data>
+  <data name="Settings_AnimeFailed" xml:space="preserve"><value>De lijst kon niet worden geladen. De dienst probeert het over een uur opnieuw (details in het log).</value></data>
+  <data name="Gaps_PageTitle" xml:space="preserve"><value>Ontbrekende afleveringen – Wunschkino</value></data>
+  <data name="Gaps_Title" xml:space="preserve"><value>Ontbrekende afleveringen</value></data>
+  <data name="Gaps_Intro" xml:space="preserve"><value>Vergelijkt de afleveringen van elke serie in Jellyfin met TMDB. Specials en afleveringen die pas kort geleden zijn uitgezonden, tellen niet mee.</value></data>
+  <data name="Gaps_LastCheck" xml:space="preserve"><value>Laatste controle: {0}.</value></data>
+  <data name="Gaps_Checked" xml:space="preserve"><value>{0} van {1} series gecontroleerd.</value></data>
+  <data name="Gaps_CheckedMore" xml:space="preserve"><value>{0} van {1} series gecontroleerd – de rest volgt in de volgende rondes.</value></data>
+  <data name="Gaps_ScanAll" xml:space="preserve"><value>Alles nu controleren</value></data>
+  <data name="Gaps_Scanning" xml:space="preserve"><value>Wordt gecontroleerd …</value></data>
+  <data name="Gaps_ScanProgress" xml:space="preserve"><value>{0} van {1} series verwerkt</value></data>
+  <data name="Gaps_ScanWaiting" xml:space="preserve"><value>Wacht op de volgende ronde …</value></data>
+  <data name="Gaps_ScanProgressLabel" xml:space="preserve"><value>Voortgang van de controle</value></data>
+  <data name="Gaps_NoneChecked" xml:space="preserve"><value>Er is nog geen serie gecontroleerd. Dat gebeurt op de achtergrond na elke update van de bibliotheek, zodra Jellyfin en TMDB zijn ingesteld.</value></data>
+  <data name="Gaps_NoneMissing" xml:space="preserve"><value>Geen ontbrekende afleveringen gevonden.</value></data>
+  <data name="Gaps_MissingTitle" xml:space="preserve"><value>Ontbrekende afleveringen ({0})</value></data>
+  <data name="Gaps_UncertainTitle" xml:space="preserve"><value>Telling onzeker ({0})</value></data>
+  <data name="Gaps_UncertainHint" xml:space="preserve"><value>Bij deze series, meestal anime, tellen Jellyfin en TMDB seizoenen of afleveringen verschillend. De lijst kan daarom afleveringen bevatten die in Jellyfin onder een ander nummer aanwezig zijn.</value></data>
+  <data name="Gaps_Done" xml:space="preserve"><value>Controle afgerond.</value></data>
+  <data name="Gaps_NoRun" xml:space="preserve"><value>Er is geen controle gestart. Zijn Jellyfin en TMDB ingesteld en bereikbaar?</value></data>
+  <data name="Gaps_Summary" xml:space="preserve"><value>{0} van {1} afleveringen aanwezig</value></data>
+  <data name="Gaps_Unknown" xml:space="preserve"><value>Bij deze telling zijn de precieze afleveringen niet te bepalen</value></data>
+  <data name="Gaps_ColSeries" xml:space="preserve"><value>Serie</value></data>
+  <data name="Gaps_ColPresent" xml:space="preserve"><value>Aanwezig</value></data>
+  <data name="Gaps_ColMissing" xml:space="preserve"><value>Ontbreekt</value></data>
+  <data name="About_PageTitle" xml:space="preserve"><value>Over Wunschkino</value></data>
+  <data name="About_Title" xml:space="preserve"><value>Over Wunschkino</value></data>
+  <data name="About_Intro" xml:space="preserve"><value>Wunschkino is een webportaal voor familie en vrienden bij een Jellyfin-installatie: je ziet welke films en series er al zijn, en je kunt nieuwe wensen doen.</value></data>
+  <data name="About_LicenseTitle" xml:space="preserve"><value>Licentie en broncode</value></data>
+  <data name="About_License" xml:space="preserve"><value>Wunschkino is vrije software onder de {0}. Wie een gewijzigde versie als dienst aanbiedt, moet zijn gebruikers de broncode aanbieden.</value></data>
+  <data name="About_LicenseName" xml:space="preserve"><value>GNU Affero General Public License, versie 3</value></data>
+  <data name="About_SourceHere" xml:space="preserve"><value>Broncode van deze installatie: {0}</value></data>
+  <data name="About_ThanksTitle" xml:space="preserve"><value>Dankwoord</value></data>
+  <data name="About_Sources" xml:space="preserve"><value>Films, series, posters en beschrijvingen komen van {0}. Het zoeken naar anime gebruikt de openbare interface van {1}, de koppeling van de animenummers levert de communitylijst {2}.</value></data>
+  <data name="About_Disclaimer" xml:space="preserve"><value>Wunschkino is een onafhankelijk project en heeft geen enkele band met Jellyfin, TMDB of AniList. De namen en het TMDB-logo zijn eigendom van de respectieve houders en vallen niet onder de AGPL.</value></data>
+  <data name="About_FontsTitle" xml:space="preserve"><value>Lettertype en componenten</value></data>
+  <data name="About_Fonts" xml:space="preserve"><value>De interface gebruikt het lettertype Geist (SIL Open Font License 1.1), dat met de applicatie wordt meegeleverd, en MudBlazor (MIT). Alle componenten van derden met hun licenties staan in het bestand THIRD-PARTY-NOTICES.md in de {0}.</value></data>
+  <data name="About_FontsSource" xml:space="preserve"><value>broncode</value></data>
+  <data name="About_A11yTitle" xml:space="preserve"><value>Toegankelijkheid</value></data>
+  <data name="About_A11y" xml:space="preserve"><value>Doel van deze interface is conformiteit met WCAG 2.1, niveau AA: bediening met het toetsenbord, contrasten, gelabelde velden en bedieningselementen, een link om de navigatie over te slaan en respect voor „beweging beperken”. De pagina's worden automatisch met axe-core gecontroleerd; een volledige handmatige controle met schermlezers staat nog open. Meldingen over obstakels gaan naar de beheerders van deze installatie.</value></data>
+  <data name="About_TmdbAlt" xml:space="preserve"><value>TMDB</value></data>
+  <data name="About_TmdbLabel" xml:space="preserve"><value>The Movie Database (TMDB)</value></data>
+  <data name="Error_PageTitle" xml:space="preserve"><value>Fout – Wunschkino</value></data>
+  <data name="Error_Title" xml:space="preserve"><value>Er is iets misgegaan</value></data>
+  <data name="Error_Text" xml:space="preserve"><value>Bij het verwerken van je verzoek is een fout opgetreden. Probeer het opnieuw.</value></data>
+  <data name="Error_RequestId" xml:space="preserve"><value>Foutcode voor de beheerder: {0}</value></data>
+  <data name="Error_Home" xml:space="preserve"><value>Naar de startpagina</value></data>
+  <data name="NotFound_PageTitle" xml:space="preserve"><value>Niet gevonden – Wunschkino</value></data>
+  <data name="NotFound_Title" xml:space="preserve"><value>Pagina niet gevonden</value></data>
+  <data name="NotFound_Text" xml:space="preserve"><value>De opgevraagde pagina bestaat niet.</value></data>
+  <data name="Reconnect_First" xml:space="preserve"><value>Verbinding met de server wordt hersteld …</value></data>
+  <data name="Reconnect_RepeatedBefore" xml:space="preserve"><value>De verbinding kon niet worden hersteld. Nieuwe poging over</value></data>
+  <data name="Reconnect_RepeatedAfter" xml:space="preserve"><value>seconden.</value></data>
+  <data name="Reconnect_Failed" xml:space="preserve"><value>De verbinding kon niet worden hersteld. Probeer het opnieuw of laad de pagina opnieuw.</value></data>
+  <data name="Reconnect_Retry" xml:space="preserve"><value>Opnieuw proberen</value></data>
+  <data name="Reconnect_Paused" xml:space="preserve"><value>De server heeft de sessie gepauzeerd.</value></data>
+  <data name="Reconnect_ResumeFailed" xml:space="preserve"><value>De sessie kon niet worden voortgezet. Probeer het opnieuw of laad de pagina opnieuw.</value></data>
+  <data name="Reconnect_Resume" xml:space="preserve"><value>Doorgaan</value></data>
+  <data name="Footer_Privacy" xml:space="preserve"><value>Privacy</value></data>
+  <data name="Footer_Imprint" xml:space="preserve"><value>Colofon</value></data>
+  <data name="Legal_NoContact" xml:space="preserve"><value>De beheerder heeft geen contactgegevens opgegeven.</value></data>
+  <data name="Imprint_PageTitle" xml:space="preserve"><value>Colofon – Wunschkino</value></data>
+  <data name="Imprint_Title" xml:space="preserve"><value>Colofon</value></data>
+  <data name="Imprint_None" xml:space="preserve"><value>De beheerder van deze installatie heeft geen colofon opgegeven.</value></data>
+  <data name="Privacy_PageTitle" xml:space="preserve"><value>Privacy – Wunschkino</value></data>
+  <data name="Privacy_Title" xml:space="preserve"><value>Privacy</value></data>
+  <data name="Privacy_Intro" xml:space="preserve"><value>Deze informatie beschrijft wat de software Wunschkino verwerkt. De beheerder van deze installatie is daarvoor verantwoordelijk en kan eigen informatie toevoegen.</value></data>
+  <data name="Privacy_ControllerTitle" xml:space="preserve"><value>Verantwoordelijke</value></data>
+  <data name="Privacy_DataTitle" xml:space="preserve"><value>Welke gegevens worden verwerkt</value></data>
+  <data name="Privacy_Data1" xml:space="preserve"><value>Account: gebruikersnaam, wachtwoord (alleen als hash opgeslagen), rol en aanmaakdatum.</value></data>
+  <data name="Privacy_Data2" xml:space="preserve"><value>Wensen: gewenste titel, optionele notitie, tijdstip, stemmen en status; afhankelijk van de instelling van de beheerder zien andere gebruikers niet van wie een wens komt.</value></data>
+  <data name="Privacy_Data3" xml:space="preserve"><value>Logboek voor beheerders: aanmeldingen en beheeracties gedurende 365 dagen, de IP-adressen daarbij en bij geblokkeerde adressen gedurende 90 dagen.</value></data>
+  <data name="Privacy_Data4" xml:space="preserve"><value>Bescherming tegen misbruik: het IP-adres wordt bij mislukte aanmeldpogingen geteld om het tijdelijk te blokkeren.</value></data>
+  <data name="Privacy_Data5" xml:space="preserve"><value>Systeemlog van de server en van een eventuele proxy ervoor: tijdstip, IP-adres, opgevraagd adres en bij mislukte aanmeldingen de ingevoerde gebruikersnaam. De bewaartermijn stelt de beheerder in.</value></data>
+  <data name="Privacy_PurposeTitle" xml:space="preserve"><value>Doel en rechtsgrond</value></data>
+  <data name="Privacy_Purpose" xml:space="preserve"><value>De gegevens dienen om het portaal aan te bieden (art. 6 lid 1 onder b AVG) en het veilig te laten werken (art. 6 lid 1 onder f AVG).</value></data>
+  <data name="Privacy_RecipientsTitle" xml:space="preserve"><value>Doorgifte</value></data>
+  <data name="Privacy_Recipients" xml:space="preserve"><value>Zoektermen en IMDb-nummers stuurt de server naar TMDB, bij het zoeken naar anime naar AniList. De browser neemt nooit contact op met derden: lettertype, afbeeldingen en scripts komen van de eigen server, er is geen reclame, geen webanalyse en geen ingesloten inhoud. Het aanbod komt van de Jellyfin-server van de beheerder.</value></data>
+  <data name="Privacy_CookiesTitle" xml:space="preserve"><value>Cookies en browseropslag</value></data>
+  <data name="Privacy_Cookie1" xml:space="preserve"><value>Wunschkino.Auth: houdt de aanmelding vast. Technisch noodzakelijk, geldig tot de browser wordt gesloten, bij „Aangemeld blijven” tot 14 dagen.</value></data>
+  <data name="Privacy_Cookie2" xml:space="preserve"><value>Antiforgery-cookie (naam begint met .AspNetCore.Antiforgery): beschermt formulieren tegen vervalste verzoeken. Technisch noodzakelijk, geldig tot de browser wordt gesloten.</value></data>
+  <data name="Privacy_CookiesNote" xml:space="preserve"><value>Andere cookies of browseropslag (localStorage, sessionStorage) worden niet gebruikt; toestemming is daarom niet nodig (§ 25 lid 2 nr. 2 TDDDG, de Duitse uitvoering van de ePrivacy-richtlijn). De gekozen weergave (licht of donker) staat bij het account in de database, niet in de browser.</value></data>
+  <data name="Privacy_StorageTitle" xml:space="preserve"><value>Bewaartermijn</value></data>
+  <data name="Privacy_Storage" xml:space="preserve"><value>Accounts, wensen en stemmen blijven bewaard tot een beheerder ze verwijdert. Logboekvermeldingen worden na de hierboven genoemde termijnen automatisch verwijderd.</value></data>
+  <data name="Privacy_RightsTitle" xml:space="preserve"><value>Uw rechten</value></data>
+  <data name="Privacy_Rights" xml:space="preserve"><value>U kunt inzage in uw gegevens vragen, en rectificatie, wissing, beperking van de verwerking en bezwaar, en u kunt een klacht indienen bij een toezichthoudende autoriteit voor gegevensbescherming. Neem daarvoor contact op met de hierboven genoemde verantwoordelijke.</value></data>
+  <data name="Settings_LegalTitle" xml:space="preserve"><value>Juridisch</value></data>
+  <data name="Settings_LegalHint" xml:space="preserve"><value>Optioneel. Teksten verschijnen onder /impressum en /datenschutz en zijn zonder aanmelding bereikbaar. Alleen tekst, geen HTML; lege regels scheiden alinea's. Of je een colofon nodig hebt, beslis je als beheerder; dit is geen juridisch advies.</value></data>
+  <data name="Settings_LegalContact" xml:space="preserve"><value>Contact van de verantwoordelijke (naam, adres of e-mail)</value></data>
+  <data name="Settings_LegalImprint" xml:space="preserve"><value>Colofon</value></data>
+  <data name="Settings_LegalImprintHint" xml:space="preserve"><value>Laat leeg als je er geen nodig hebt. Dan is er geen colofonlink.</value></data>
+  <data name="Settings_LegalPrivacy" xml:space="preserve"><value>Privacyverklaring (vervangt de standaardtekst)</value></data>
+  <data name="Settings_LegalPrivacyHint" xml:space="preserve"><value>Laat leeg om de standaardtekst te tonen, die beschrijft wat de software verwerkt.</value></data>
+  <data name="Settings_LegalSave" xml:space="preserve"><value>Juridische teksten opslaan</value></data>
+  <data name="Settings_LegalSaved" xml:space="preserve"><value>Juridische teksten opgeslagen.</value></data>
+  <data name="Setup_LegalNote" xml:space="preserve"><value>Controleer of je als beheerder een colofon en een privacyverklaring nodig hebt. Beide kun je later bij Instellingen → Juridisch toevoegen. Dit is geen juridisch advies.</value></data>
+  <data name="WishList_AnonymousNote" xml:space="preserve"><value>Wensen worden anoniem getoond: je ziet niet van wie ze komen, en anderen zien niet dat ze van jou zijn.</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Annuleren</value></data>
+  <data name="Account_NavLabel" xml:space="preserve"><value>Account</value></data>
+  <data name="Account_NavPassword" xml:space="preserve"><value>Wachtwoord</value></data>
+  <data name="Account_NavTwoFactor" xml:space="preserve"><value>Tweestapsverificatie</value></data>
+  <data name="Login_TwoFactorTitle" xml:space="preserve"><value>Bevestigingscode</value></data>
+  <data name="Login_TwoFactorIntro" xml:space="preserve"><value>Voer de zescijferige code uit je authenticator-app in. Heb je je telefoon niet bij de hand, gebruik dan een van je herstelcodes.</value></data>
+  <data name="Login_TwoFactorCode" xml:space="preserve"><value>Code</value></data>
+  <data name="Login_TwoFactorSubmit" xml:space="preserve"><value>Bevestigen</value></data>
+  <data name="Login_TwoFactorBack" xml:space="preserve"><value>Terug naar aanmelden</value></data>
+  <data name="Login_TwoFactorExpired" xml:space="preserve"><value>De aanmelding is verlopen. Meld je opnieuw aan.</value></data>
+  <data name="Login_TwoFactorCodeRequired" xml:space="preserve"><value>Voer de code in.</value></data>
+  <data name="TwoFactor_PageTitle" xml:space="preserve"><value>Tweestapsverificatie – Wunschkino</value></data>
+  <data name="TwoFactor_Title" xml:space="preserve"><value>Tweestapsverificatie</value></data>
+  <data name="TwoFactor_Off" xml:space="preserve"><value>Tweestapsverificatie staat uit.</value></data>
+  <data name="TwoFactor_On" xml:space="preserve"><value>Tweestapsverificatie staat aan. Bij elke aanmelding vraagt Wunschkino na het wachtwoord ook om een code uit je app.</value></data>
+  <data name="TwoFactor_Intro" xml:space="preserve"><value>Met een authenticator-app (bijvoorbeeld Aegis, 2FAS, Google Authenticator of de app van je wachtwoordmanager) beschermt een tweede code je account, ook als iemand je wachtwoord kent.</value></data>
+  <data name="TwoFactor_Start" xml:space="preserve"><value>Instellen</value></data>
+  <data name="TwoFactor_SetupTitle" xml:space="preserve"><value>Instellen</value></data>
+  <data name="TwoFactor_SetupScan" xml:space="preserve"><value>1. Scan de QR-code met je authenticator-app.</value></data>
+  <data name="TwoFactor_SetupManual" xml:space="preserve"><value>Scannen lukt niet? Voer deze sleutel handmatig in de app in:</value></data>
+  <data name="TwoFactor_QrAlt" xml:space="preserve"><value>QR-code met de sleutel voor de authenticator-app</value></data>
+  <data name="TwoFactor_Code" xml:space="preserve"><value>Zescijferige code uit de app</value></data>
+  <data name="TwoFactor_CodeOrRecovery" xml:space="preserve"><value>Code uit de app of herstelcode</value></data>
+  <data name="TwoFactor_Enable" xml:space="preserve"><value>2. Code controleren en inschakelen</value></data>
+  <data name="TwoFactor_Enabled" xml:space="preserve"><value>Tweestapsverificatie staat aan.</value></data>
+  <data name="TwoFactor_RecoveryTitle" xml:space="preserve"><value>Herstelcodes</value></data>
+  <data name="TwoFactor_RecoveryIntro" xml:space="preserve"><value>Bewaar deze codes veilig, bijvoorbeeld uitgeprint of in je wachtwoordmanager. Elke code werkt één keer als je geen toegang tot je app hebt. Ze worden alleen nu getoond.</value></data>
+  <data name="TwoFactor_RecoveryDone" xml:space="preserve"><value>Ik heb de codes bewaard</value></data>
+  <data name="TwoFactor_RecoveryLeft" xml:space="preserve"><value>Nog {0} herstelcodes over.</value></data>
+  <data name="TwoFactor_RenewTitle" xml:space="preserve"><value>Nieuwe herstelcodes</value></data>
+  <data name="TwoFactor_RenewIntro" xml:space="preserve"><value>Maakt tien nieuwe codes; de oude gelden dan niet meer. Bevestig met een code uit de app.</value></data>
+  <data name="TwoFactor_Renew" xml:space="preserve"><value>Nieuwe codes maken</value></data>
+  <data name="TwoFactor_Renewed" xml:space="preserve"><value>Nieuwe herstelcodes gemaakt.</value></data>
+  <data name="TwoFactor_DisableTitle" xml:space="preserve"><value>Uitschakelen</value></data>
+  <data name="TwoFactor_DisableIntro" xml:space="preserve"><value>Bevestig met je wachtwoord en een code uit de app of een herstelcode.</value></data>
+  <data name="TwoFactor_Disable" xml:space="preserve"><value>Tweestapsverificatie uitschakelen</value></data>
+  <data name="TwoFactor_Disabled" xml:space="preserve"><value>Tweestapsverificatie staat uit.</value></data>
+  <data name="Users_TwoFactorOn" xml:space="preserve"><value>Tweestapsverificatie aan</value></data>
+  <data name="Users_ResetTwoFactor" xml:space="preserve"><value>Tweestapsverificatie resetten</value></data>
+  <data name="Users_ResetTwoFactorConfirm" xml:space="preserve"><value>Tweestapsverificatie voor „{0}” resetten? Het account wordt overal afgemeld en meldt zich daarna alleen met het wachtwoord aan.</value></data>
+  <data name="Users_TwoFactorReset" xml:space="preserve"><value>Tweestapsverificatie voor „{0}” gereset.</value></data>
+  <data name="Privacy_Cookie3" xml:space="preserve"><value>Wunschkino.TwoFactor: alleen bij ingeschakelde tweestapsverificatie; onthoudt tussen wachtwoord en code wie zich aanmeldt. Technisch noodzakelijk, geldig hoogstens 5 minuten en wordt na de aanmelding verwijderd.</value></data>
+  <data name="Msg_Wish_SearchTooLong" xml:space="preserve"><value>De zoekopdracht mag hoogstens {0} tekens lang zijn.</value></data>
+  <data name="Msg_Wish_TmdbNotConfiguredAdmin" xml:space="preserve"><value>TMDB is nog niet ingesteld. Een beheerder moet de API-sleutel bij „Instellingen” invoeren.</value></data>
+  <data name="Msg_Wish_AnimeNoTmdb" xml:space="preserve"><value>Voor deze anime is er geen koppeling met TMDB, daarom kan hij niet worden gewenst.</value></data>
+  <data name="Msg_Wish_AlreadyInLibrary" xml:space="preserve"><value>Deze titel staat al in Jellyfin.</value></data>
+  <data name="Msg_Wish_NoteTooLong" xml:space="preserve"><value>De notitie mag hoogstens {0} tekens lang zijn.</value></data>
+  <data name="Msg_Wish_InvalidTitle" xml:space="preserve"><value>Ongeldige titel.</value></data>
+  <data name="Msg_Wish_AccountInactive" xml:space="preserve"><value>Je account is niet actief.</value></data>
+  <data name="Msg_Wish_TmdbNotConfigured" xml:space="preserve"><value>TMDB is nog niet ingesteld.</value></data>
+  <data name="Msg_Wish_CreatingTooFast" xml:space="preserve"><value>Je maakt te snel nieuwe wensen aan.</value></data>
+  <data name="Msg_Wish_SearchingTooFast" xml:space="preserve"><value>Je zoekt te snel.</value></data>
+  <data name="Msg_Wish_TooFastWait" xml:space="preserve"><value>{0} Wacht {1} seconden.</value></data>
+  <data name="Msg_Wish_NotOnTmdb" xml:space="preserve"><value>Deze titel bestaat niet bij TMDB.</value></data>
+  <data name="Msg_Wish_Created" xml:space="preserve"><value>„{0}” staat nu op de wensenlijst.</value></data>
+  <data name="Msg_Wish_Gone" xml:space="preserve"><value>Deze wens bestaat niet meer.</value></data>
+  <data name="Msg_Wish_NotSupporting" xml:space="preserve"><value>Je steunt deze wens niet.</value></data>
+  <data name="Msg_Wish_CannotWithdraw" xml:space="preserve"><value>Deze wens kan niet meer worden ingetrokken.</value></data>
+  <data name="Msg_Wish_AcceptedOnlyAdmin" xml:space="preserve"><value>Een aangenomen wens kan alleen door een beheerder worden verwijderd.</value></data>
+  <data name="Msg_Wish_Withdrawn" xml:space="preserve"><value>Wens ingetrokken.</value></data>
+  <data name="Msg_Wish_AdminRequired" xml:space="preserve"><value>Daarvoor zijn beheerdersrechten nodig.</value></data>
+  <data name="Msg_Wish_Deleted" xml:space="preserve"><value>Wens verwijderd.</value></data>
+  <data name="Msg_Wish_InvalidStatus" xml:space="preserve"><value>Ongeldige status.</value></data>
+  <data name="Msg_Wish_CommentTooLong" xml:space="preserve"><value>De opmerking mag hoogstens {0} tekens lang zijn.</value></data>
+  <data name="Msg_Wish_StatusSaved" xml:space="preserve"><value>Status opgeslagen.</value></data>
+  <data name="Msg_Wish_Rejected" xml:space="preserve"><value>Deze wens is afgewezen.</value></data>
+  <data name="Msg_Wish_AlreadyDone" xml:space="preserve"><value>Deze wens is al afgerond.</value></data>
+  <data name="Msg_Wish_AlreadySupported" xml:space="preserve"><value>Je steunt deze wens al.</value></data>
+  <data name="Msg_Wish_VoteFailed" xml:space="preserve"><value>De stem kon niet worden opgeslagen. Misschien steun je de wens al of is hij verwijderd.</value></data>
+  <data name="Msg_Wish_Supported" xml:space="preserve"><value>Je steunt nu „{0}”.</value></data>
+  <data name="Msg_Wish_DailyLimit" xml:space="preserve"><value>Je hebt de afgelopen 24 uur al {0} wensen gedaan. Probeer het later nog eens.</value></data>
+  <data name="Check_SeverityOk" xml:space="preserve"><value>In orde</value></data>
+  <data name="Check_SeverityInfo" xml:space="preserve"><value>Opmerking</value></data>
+  <data name="Check_SeverityWarning" xml:space="preserve"><value>Waarschuwing</value></data>
+  <data name="Check_SeverityCritical" xml:space="preserve"><value>Kritiek</value></data>
+  <data name="Check_ProxyTitle" xml:space="preserve"><value>Reverse proxy</value></data>
+  <data name="Check_ProxyUntrusted" xml:space="preserve"><value>Het adres {0} stuurt X-Forwarded-For, maar is niet als proxy ingevoerd. Alle gebruikers erachter delen de aanmeldlimiet en de blokkade, en een aanvaller zou ze samen kunnen laten blokkeren. Voer het adres bij de installatie in met --proxy. De melding kan ook zijn veroorzaakt door een buitenstaander die de header alleen meestuurt; dan kun je haar negeren.</value></data>
+  <data name="Check_ProxyListed" xml:space="preserve"><value>Ingevoerd: {0}.</value></data>
+  <data name="Check_ProxyLocal" xml:space="preserve"><value>De app luistert alleen op deze server; de proxy draait op dezelfde server.</value></data>
+  <data name="Check_ProxyMissing" xml:space="preserve"><value>Er is geen proxy ingevoerd en de app is in het netwerk bereikbaar. Staat er een reverse proxy voor, voer dan het adres ervan in met --proxy (of installeer met --proxy-mode local als die op dezelfde server draait).</value></data>
+  <data name="Check_DomainTitle" xml:space="preserve"><value>Domein</value></data>
+  <data name="Check_DomainMissing" xml:space="preserve"><value>Zonder ingevoerd domein accepteert de app elke Host-header. Voer je openbare domein in met --domain.</value></data>
+  <data name="Check_DomainAllowed" xml:space="preserve"><value>Toegestaan: {0}.</value></data>
+  <data name="Check_CookiesTitle" xml:space="preserve"><value>Veilige cookies</value></data>
+  <data name="Check_CookiesSecure" xml:space="preserve"><value>De aanmeldcookie wordt alleen via HTTPS verstuurd.</value></data>
+  <data name="Check_CookiesInsecure" xml:space="preserve"><value>Veilige cookies staan uit: de aanmeldcookie gaat ook via onversleuteld HTTP. Alleen zinvol in het eigen netwerk; anders --secure-cookies true.</value></data>
+  <data name="Check_LimitTitle" xml:space="preserve"><value>Verzoeklimiet</value></data>
+  <data name="Check_LimitOn" xml:space="preserve"><value>Hoogstens {0} verzoeken per minuut per adres.</value></data>
+  <data name="Check_LimitOff" xml:space="preserve"><value>De algemene limiet staat uit (Wunschkino__RequestLimitPerMinute=0). Alleen de aanmeldlimiet beschermt de app nog tegen overbelasting.</value></data>
+  <data name="Check_BackupTitle" xml:space="preserve"><value>Back-up</value></data>
+  <data name="Check_BackupFailed" xml:space="preserve"><value>De laatste back-up is mislukt: {0}</value></data>
+  <data name="Check_BackupNone" xml:space="preserve"><value>Er is nog geen back-up. De eerste ontstaat automatisch kort na de start.</value></data>
+  <data name="Check_BackupOverdue" xml:space="preserve"><value>De laatste back-up is {0} dagen oud (waarschuwing vanaf {1} dagen). Controleer of de back-upmap beschrijfbaar is.</value></data>
+  <data name="Check_BackupReadable" xml:space="preserve"><value>De back-upmap is leesbaar voor andere gebruikers van deze server, en de back-ups bevatten alle gegevens. Stel de rechten in met: chmod 700 {0}</value></data>
+  <data name="Check_BackupSameDrive" xml:space="preserve"><value>De back-ups staan op dezelfde schijf als de database en beschermen niet tegen een schijfdefect. Zet Wunschkino:BackupDirectory op een andere schijf.</value></data>
+  <data name="Check_BackupOkOne" xml:space="preserve"><value>Laatste back-up op {0}, {1} back-up.</value></data>
+  <data name="Check_BackupOkMany" xml:space="preserve"><value>Laatste back-up op {0}, {1} back-ups.</value></data>
+  <data name="Check_KeysTitle" xml:space="preserve"><value>Sleutelmap</value></data>
+  <data name="Check_KeysHint" xml:space="preserve"><value>De back-up bevat alleen de database. De API-sleutels daarin zijn zonder de map „keys” niet leesbaar: back-up die apart en niet samen met de database (zie README).</value></data>
+  <data name="Check_TwoFactorTitle" xml:space="preserve"><value>Tweestapsverificatie van de beheerders</value></data>
+  <data name="Check_TwoFactorAll" xml:space="preserve"><value>Alle actieve beheerders melden zich aan met een tweede factor.</value></data>
+  <data name="Check_TwoFactorMissing" xml:space="preserve"><value>Zonder tweestapsverificatie: {0}. Advies: elke beheerder schakelt die in via het accountmenu onder „Tweestapsverificatie”.</value></data>
+  <data name="Check_BlocksTitle" xml:space="preserve"><value>Geblokkeerde adressen</value></data>
+  <data name="Check_BlocksPermanentOne" xml:space="preserve"><value>{0} adres is permanent geblokkeerd tot een beheerder het deblokkeert.</value></data>
+  <data name="Check_BlocksPermanentMany" xml:space="preserve"><value>{0} adressen zijn permanent geblokkeerd tot een beheerder ze deblokkeert.</value></data>
+  <data name="Check_BlocksNone" xml:space="preserve"><value>Geen enkel adres is geblokkeerd.</value></data>
+  <data name="Check_BlocksActiveOne" xml:space="preserve"><value>{0} adres is op dit moment geblokkeerd.</value></data>
+  <data name="Check_BlocksActiveMany" xml:space="preserve"><value>{0} adressen zijn op dit moment geblokkeerd.</value></data>
+  <data name="Audit_Login" xml:space="preserve"><value>Aangemeld</value></data>
+  <data name="Audit_SetupCompleted" xml:space="preserve"><value>Installatie afgerond</value></data>
+  <data name="Audit_UserCreated" xml:space="preserve"><value>Gebruiker aangemaakt</value></data>
+  <data name="Audit_UserDisabled" xml:space="preserve"><value>Account geblokkeerd</value></data>
+  <data name="Audit_UserEnabled" xml:space="preserve"><value>Account vrijgegeven</value></data>
+  <data name="Audit_UserRole" xml:space="preserve"><value>Rol gewijzigd</value></data>
+  <data name="Audit_UserPasswordReset" xml:space="preserve"><value>Wachtwoord gereset</value></data>
+  <data name="Audit_UserUnlocked" xml:space="preserve"><value>Account gedeblokkeerd</value></data>
+  <data name="Audit_PasswordChanged" xml:space="preserve"><value>Eigen wachtwoord gewijzigd</value></data>
+  <data name="Audit_TwoFactorEnabled" xml:space="preserve"><value>Tweestapsverificatie ingeschakeld</value></data>
+  <data name="Audit_TwoFactorDisabled" xml:space="preserve"><value>Tweestapsverificatie uitgeschakeld</value></data>
+  <data name="Audit_RecoveryCodesRenewed" xml:space="preserve"><value>Nieuwe herstelcodes gemaakt</value></data>
+  <data name="Audit_TwoFactorReset" xml:space="preserve"><value>Tweestapsverificatie gereset</value></data>
+  <data name="Audit_ConnectionsChanged" xml:space="preserve"><value>Verbindingsinstellingen gewijzigd</value></data>
+  <data name="Audit_WishSettingsChanged" xml:space="preserve"><value>Wensinstellingen gewijzigd</value></data>
+  <data name="Audit_LegalChanged" xml:space="preserve"><value>Juridische teksten gewijzigd</value></data>
+  <data name="Audit_IpBlocked" xml:space="preserve"><value>Adres geblokkeerd</value></data>
+  <data name="Audit_IpUnblocked" xml:space="preserve"><value>Adres gedeblokkeerd</value></data>
+  <data name="Audit_IpUnblockedAll" xml:space="preserve"><value>Alle adressen gedeblokkeerd</value></data>
+  <data name="Msg_User_NotAllowed" xml:space="preserve"><value>Daarvoor ontbreekt de bevoegdheid.</value></data>
+  <data name="Msg_User_Unknown" xml:space="preserve"><value>Gebruiker niet gevonden.</value></data>
+  <data name="Msg_User_LastAdmin" xml:space="preserve"><value>Er moet minstens één actieve beheerder overblijven.</value></data>
+  <data name="Msg_User_Exists" xml:space="preserve"><value>Deze gebruikersnaam bestaat al.</value></data>
+  <data name="Msg_User_CannotDisableSelf" xml:space="preserve"><value>Je eigen account kan niet worden geblokkeerd.</value></data>
+  <data name="Msg_TooManyAttempts" xml:space="preserve"><value>Te veel mislukte pogingen. Probeer het later opnieuw.</value></data>
+  <data name="Msg_User_CurrentPasswordWrong" xml:space="preserve"><value>Het huidige wachtwoord klopt niet.</value></data>
+  <data name="Msg_User_UsernameRules" xml:space="preserve"><value>Gebruikersnaam: 3–32 tekens, alleen letters, cijfers, punt, koppelteken en liggend streepje.</value></data>
+  <data name="Msg_User_PasswordLength" xml:space="preserve"><value>Het wachtwoord moet {0} tot {1} tekens lang zijn.</value></data>
+  <data name="Msg_User_PasswordCommon" xml:space="preserve"><value>Dit wachtwoord staat op een lijst met veelgebruikte wachtwoorden. Kies een ander.</value></data>
+  <data name="Msg_Login_BlockedPermanent" xml:space="preserve"><value>Te veel mislukte pogingen. Dit adres is geblokkeerd. Neem contact op met een beheerder.</value></data>
+  <data name="Msg_Login_BlockedUntil" xml:space="preserve"><value>Te veel mislukte pogingen. Dit adres is geblokkeerd, probeer het {0} opnieuw.</value></data>
+  <data name="Msg_Wait_OneMinute" xml:space="preserve"><value>over 1 minuut</value></data>
+  <data name="Msg_Wait_Minutes" xml:space="preserve"><value>over {0} minuten</value></data>
+  <data name="Msg_Wait_OneHour" xml:space="preserve"><value>over 1 uur</value></data>
+  <data name="Msg_Wait_Hours" xml:space="preserve"><value>over {0} uur</value></data>
+  <data name="Msg_Login_WrongCode" xml:space="preserve"><value>De code klopt niet of is al gebruikt.</value></data>
+  <data name="Msg_Login_Failed" xml:space="preserve"><value>Aanmelden mislukt. Gebruikersnaam of wachtwoord klopt niet, of het account is tijdelijk geblokkeerd.</value></data>
+  <data name="Msg_TwoFactor_WrongCode" xml:space="preserve"><value>De code klopt niet. Voer de huidige code uit de app in.</value></data>
+  <data name="Msg_TwoFactor_AlreadyOn" xml:space="preserve"><value>Tweestapsverificatie staat al aan.</value></data>
+  <data name="Msg_TwoFactor_NotOn" xml:space="preserve"><value>Tweestapsverificatie staat niet aan.</value></data>
+  <data name="Msg_TwoFactor_PasswordWrong" xml:space="preserve"><value>Het wachtwoord klopt niet.</value></data>
+  <data name="Msg_TwoFactor_ResetSelf" xml:space="preserve"><value>Je eigen tweestapsverificatie schakel je uit via het accountmenu onder „Tweestapsverificatie”.</value></data>
+  <data name="Msg_TwoFactor_ResetNotOn" xml:space="preserve"><value>Voor dit account staat geen tweestapsverificatie aan.</value></data>
+  <data name="Msg_Jellyfin_KeyInvalidChars" xml:space="preserve"><value>De Jellyfin-API-sleutel bevat ongeldige tekens.</value></data>
+  <data name="Msg_Jellyfin_KeyRejected" xml:space="preserve"><value>Jellyfin heeft de API-sleutel geweigerd.</value></data>
+  <data name="Msg_Jellyfin_Http" xml:space="preserve"><value>Jellyfin antwoordt met HTTP {0}.</value></data>
+  <data name="Msg_Jellyfin_Connected" xml:space="preserve"><value>Verbonden met „{0}” (Jellyfin {1}).</value></data>
+  <data name="Msg_Jellyfin_Unreachable" xml:space="preserve"><value>Jellyfin is op dit adres niet bereikbaar.</value></data>
+  <data name="Msg_Jellyfin_StoredKeyInvalid" xml:space="preserve"><value>De opgeslagen Jellyfin-API-sleutel bevat ongeldige tekens.</value></data>
+  <data name="Msg_Jellyfin_Empty" xml:space="preserve"><value>Jellyfin heeft een leeg antwoord gegeven.</value></data>
+  <data name="Msg_Jellyfin_Broken" xml:space="preserve"><value>Jellyfin is niet bereikbaar of geeft een onverwacht antwoord.</value></data>
+  <data name="Msg_Tmdb_KeyInvalidChars" xml:space="preserve"><value>De TMDB-API-sleutel bevat ongeldige tekens.</value></data>
+  <data name="Msg_Tmdb_KeyRejected" xml:space="preserve"><value>TMDB heeft de API-sleutel geweigerd.</value></data>
+  <data name="Msg_Tmdb_KeyValid" xml:space="preserve"><value>TMDB-API-sleutel is geldig.</value></data>
+  <data name="Msg_Tmdb_Http" xml:space="preserve"><value>TMDB antwoordt met HTTP {0}.</value></data>
+  <data name="Msg_Tmdb_Unreachable" xml:space="preserve"><value>TMDB is niet bereikbaar.</value></data>
+  <data name="Msg_Tmdb_StoredKeyInvalid" xml:space="preserve"><value>De opgeslagen TMDB-API-sleutel bevat ongeldige tekens.</value></data>
+  <data name="Msg_Tmdb_RateLimited" xml:space="preserve"><value>TMDB laat op dit moment geen verdere verzoeken toe. Probeer het zo meteen nog eens.</value></data>
+  <data name="Msg_Tmdb_Empty" xml:space="preserve"><value>TMDB heeft een leeg antwoord gegeven.</value></data>
+  <data name="Msg_Tmdb_Broken" xml:space="preserve"><value>TMDB is niet bereikbaar of geeft een onverwacht antwoord.</value></data>
+  <data name="Msg_Tmdb_NotFound" xml:space="preserve"><value>TMDB kent deze vermelding niet.</value></data>
+  <data name="Msg_AniList_UserTooFast" xml:space="preserve"><value>Je zoekt op dit moment heel vaak. Probeer het over {0} seconden nog eens.</value></data>
+  <data name="Msg_AniList_Busy" xml:space="preserve"><value>Het zoeken naar anime is op dit moment overbelast. Probeer het over {0} seconden nog eens.</value></data>
+  <data name="Msg_AniList_RateLimited" xml:space="preserve"><value>AniList laat op dit moment geen verzoeken toe. Probeer het over {0} seconden nog eens.</value></data>
+  <data name="Msg_AniList_Http" xml:space="preserve"><value>AniList antwoordt met HTTP {0}.</value></data>
+  <data name="Msg_AniList_Empty" xml:space="preserve"><value>AniList heeft een leeg antwoord gegeven.</value></data>
+  <data name="Msg_AniList_Failed" xml:space="preserve"><value>AniList kon de zoekopdracht niet verwerken.</value></data>
+  <data name="Msg_AniList_Broken" xml:space="preserve"><value>AniList is niet bereikbaar of geeft een onverwacht antwoord.</value></data>
+  <data name="Msg_AnimeList_Http" xml:space="preserve"><value>De anime-koppellijst is niet op te halen (HTTP {0}).</value></data>
+  <data name="Msg_AnimeList_TooLarge" xml:space="preserve"><value>De anime-koppellijst is ongewoon groot en wordt niet geladen.</value></data>
+  <data name="Msg_AnimeList_Unreachable" xml:space="preserve"><value>De anime-koppellijst is niet bereikbaar of antwoordt te traag.</value></data>
+  <data name="Msg_Connection_UrlFormat" xml:space="preserve"><value>Geef een volledig adres op met http:// of https://.</value></data>
+  <data name="Msg_Connection_UrlParts" xml:space="preserve"><value>Het adres mag geen inloggegevens, parameters (?…) of ankers (#…) bevatten.</value></data>
+  <data name="Msg_Connection_KeyMissing" xml:space="preserve"><value>De {0}-API-sleutel ontbreekt.</value></data>
+  <data name="Msg_Connection_KeyInvalid" xml:space="preserve"><value>De {0}-API-sleutel bevat ongeldige tekens.</value></data>
+  <data name="Msg_Connection_Interval" xml:space="preserve"><value>Het update-interval moet tussen {0} en {1} minuten liggen.</value></data>
+  <data name="Msg_Connection_KeyUnreadable" xml:space="preserve"><value>Een API-sleutel ontbreekt of is niet meer leesbaar. Voer hem opnieuw in.</value></data>
+  <data name="Msg_Library_NotConfigured" xml:space="preserve"><value>Jellyfin is nog niet ingesteld.</value></data>
+  <data name="Msg_Block_Permanent" xml:space="preserve"><value>Dit adres is geblokkeerd. Neem contact op met een beheerder.</value></data>
+  <data name="Msg_Block_Temporary" xml:space="preserve"><value>Te veel mislukte pogingen. Probeer het {0} opnieuw.</value></data>
+  <data name="Msg_Legal_TextTooLong" xml:space="preserve"><value>De teksten mogen hoogstens {0} tekens lang zijn.</value></data>
+  <data name="Msg_Legal_ContactTooLong" xml:space="preserve"><value>De contactgegevens mogen hoogstens {0} tekens lang zijn.</value></data>
+  <data name="Msg_Setup_TokenInvalid" xml:space="preserve"><value>Het setup-token is ongeldig of de installatie is al afgerond.</value></data>
+  <data name="Msg_Setup_AlreadyDone" xml:space="preserve"><value>De installatie is al afgerond.</value></data>
+  <data name="Msg_RateLimited" xml:space="preserve"><value>Te veel verzoeken. Wacht een minuut en probeer het dan opnieuw.</value></data>
+  <data name="Msg_LogoutInvalid" xml:space="preserve"><value>Ongeldig afmeldverzoek.</value></data>
+  <data name="Routes_NotAuthorized" xml:space="preserve"><value>Je hebt geen toegang tot deze pagina.</value></data>
+  <data name="Language_Label" xml:space="preserve"><value>Taal</value></data>
+  <data name="Language_Automatic" xml:space="preserve"><value>Automatisch (browser)</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>Taal</value></data>
+  <data name="Settings_DefaultLanguage" xml:space="preserve"><value>Standaardtaal</value></data>
+  <data name="Settings_DefaultLanguageHint" xml:space="preserve"><value>Geldt als het account geen taal heeft gekozen en de browser geen van de aangeboden talen noemt. Elke gebruiker kan zijn taal kiezen in het menu bovenaan.</value></data>
+  <data name="Settings_DefaultLanguageSaved" xml:space="preserve"><value>Standaardtaal opgeslagen.</value></data>
+  <data name="Mud_MudInput_Clear" xml:space="preserve"><value>Wissen</value></data>
+  <data name="Mud_MudInput_Increment" xml:space="preserve"><value>Verhogen</value></data>
+  <data name="Mud_MudInput_Decrement" xml:space="preserve"><value>Verlagen</value></data>
+  <data name="Mud_MudSnackbar_Close" xml:space="preserve"><value>Sluiten</value></data>
+  <data name="Mud_MudDialog_Close" xml:space="preserve"><value>Sluiten</value></data>
+  <data name="Mud_MudAlert_Close" xml:space="preserve"><value>Sluiten</value></data>
+  <data name="Mud_MudChip_Close" xml:space="preserve"><value>Verwijderen</value></data>
+  <data name="Mud_MudFormComponent_Required" xml:space="preserve"><value>Verplicht veld</value></data>
+  <data name="Mud_MudTable_Loading" xml:space="preserve"><value>Wordt geladen …</value></data>
+  <data name="Mud_MudSelect_SelectAll" xml:space="preserve"><value>Alles selecteren</value></data>
+  <data name="Mud_MudStepper_Next" xml:space="preserve"><value>Verder</value></data>
+  <data name="Mud_MudStepper_Previous" xml:space="preserve"><value>Terug</value></data>
+  <data name="Mud_MudStepper_Complete" xml:space="preserve"><value>Afronden</value></data>
+  <data name="Mud_MudStepper_Skip" xml:space="preserve"><value>Overslaan</value></data>
+  <data name="Mud_MudStepper_Reset" xml:space="preserve"><value>Opnieuw beginnen</value></data>
+  <data name="Mud_MudNavGroup_ToggleExpand" xml:space="preserve"><value>In- of uitklappen</value></data>
+  <data name="Mud_MudBaseDatePicker_Open" xml:space="preserve"><value>Kalender openen</value></data>
+  <data name="Msg_Login_TooManyCodes" xml:space="preserve"><value>Te veel verkeerde codes voor dit account. Wacht even (langer bij herhaalde mislukkingen) en meld je daarna opnieuw aan.</value></data>
+  <data name="TwoFactor_RecoveryUsed" xml:space="preserve"><value>Je hebt je aangemeld met een herstelcode. Die is nu niet meer geldig. Nog over: {0}. Maak op tijd nieuwe codes aan.</value></data>
+  <data name="TwoFactor_EnablePassword" xml:space="preserve"><value>Huidig wachtwoord ter bevestiging</value></data>
+  <data name="Check_ProxyNoForwarding" xml:space="preserve"><value>Er komen verzoeken van deze server zelf, maar met een andere hostnaam en zonder X-Forwarded-For. Draait de proxy op dezelfde server, dan ziet de app elke bezoeker als lokaal: dan werken noch het blokkeren van adressen noch de verzoeklimiet. Stel de proxy zo in dat hij X-Forwarded-For meestuurt (Nginx Proxy Manager: standaard; in een eigen Nginx-bestand: proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;). De melding vervalt na 24 uur zonder nieuwe bevinding of met “Melding negeren”.</value></data>
+  <data name="Confirm_Password" xml:space="preserve"><value>Je wachtwoord ter bevestiging</value></data>
+  <data name="Settings_ConfirmPasswordHint" xml:space="preserve"><value>Nodig als je het adres van Jellyfin of een sleutel wijzigt.</value></data>
+  <data name="Users_ConfirmPasswordHint" xml:space="preserve"><value>Nodig voor aanmaken, wachtwoord instellen, rol wijzigen, uitschakelen, inschakelen en 2FA resetten. Daarna wordt het veld weer leeggemaakt.</value></data>
+  <data name="Msg_Connection_KeyNeededForNewAddress" xml:space="preserve"><value>Bij een nieuw adres (andere host, ander protocol of andere poort) moet je de Jellyfin-sleutel opnieuw invoeren. De opgeslagen sleutel wordt nooit naar een ander adres gestuurd.</value></data>
+  <data name="TwoFactor_SignInAgain" xml:space="preserve"><value>Tip: vermoed je onbevoegde toegang, meld je dan af nadat je de codes hebt bewaard. Dat beëindigt alle sessies van dit account.</value></data>
+  <data name="Password_MustChange" xml:space="preserve"><value>Een beheerder heeft je wachtwoord ingesteld. Kies nu een eigen wachtwoord dat alleen jij kent.</value></data>
+</root>

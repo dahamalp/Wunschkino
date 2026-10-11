@@ -1,0 +1,83 @@
+.brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-right: 1.5rem;
+    color: inherit;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+}
+
+/* Unter dem Desktop-Breakpoint steht keine Navigation neben der Marke; der Abstand würde Darstellung und Abmelden aus dem Bild schieben. */
+@media (max-width: 959.98px) {
+    .brand {
+        margin-right: 0;
+    }
+}
+
+/* Auf sehr schmalen Handys (320 px) bleibt nur das Symbol; der Link hat ein aria-label. */
+@media (max-width: 359.98px) {
+    .brand ::deep .wordmark {
+        display: none;
+    }
+}
+
+.app-footer {
+    text-align: center;
+    padding: 1.5rem 1rem 2rem;
+    color: var(--mud-palette-text-secondary);
+    font-size: 0.8125rem;
+}
+
+.app-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 1rem;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    list-style: none;
+}
+
+    .app-footer-links a {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+.app-footer-notice {
+    margin: 0 auto;
+    max-width: 60ch;
+}
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    color: #17171a;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 3rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        all: unset;
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        top: 0;
+        right: 0.25rem;
+    }

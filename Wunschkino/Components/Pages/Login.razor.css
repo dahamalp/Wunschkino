@@ -1,0 +1,48 @@
+.login-wrapper {
+    max-width: 420px;
+    margin: 4rem auto 0;
+}
+
+.login-label {
+    display: block;
+    margin: 1rem 0 0.25rem;
+    font-size: 0.875rem;
+}
+
+::deep .login-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid var(--mud-palette-lines-inputs);
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-primary);
+    border-radius: var(--mud-default-borderradius);
+}
+
+::deep .login-input:focus {
+    outline: 2px solid var(--mud-palette-primary);
+    border-color: transparent;
+}
+
+::deep .login-validation {
+    color: var(--mud-palette-error);
+    font-size: 0.8rem;
+}
+
+.login-back {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 0;
+    color: var(--mud-palette-primary);
+    text-decoration: underline;
+}
+
+.login-remember {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}

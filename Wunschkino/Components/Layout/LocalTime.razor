@@ -1,0 +1,28 @@
+@implements IDisposable
+@inject Wunschkino.Localization.UserTimeZone TimeZone
+@Text
+@code {
+    [Parameter, EditorRequired]
+    public DateTime Utc { get; set; }
+
+    [Parameter]
+    public string Format { get; set; } = "g";
+
+    [Parameter]
+    public Func<string, string>? Wrap { get; set; }
+
+    private string Text
+    {
+        get
+        {
+            var formatted = TimeZone.ToLocal(Utc).ToString(Format, Texts.Culture);
+            return Wrap is null ? formatted : Wrap(formatted);
+        }
+    }
+
+    protected override void OnInitialized() => TimeZone.Changed += OnTimeZoneChanged;
+
+    private void OnTimeZoneChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => TimeZone.Changed -= OnTimeZoneChanged;
+}

@@ -1,0 +1,227 @@
+@page "/account/2fa"
+@using Wunschkino.Auth
+@inject TwoFactorService TwoFactorService
+@inject ILogger<TwoFactor> Logger
+
+<PageTitle>@Texts.TwoFactor_PageTitle</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.TwoFactor_Title</MudText>
+    <AccountNav Current="/account/2fa" />
+
+    @if (RecoveryUsed && _status is { Enabled: true })
+    {
+        <MudAlert Severity="Severity.Warning" Class="mb-4">@string.Format(Texts.Culture, Texts.TwoFactor_RecoveryUsed, _status.RecoveryCodesLeft)</MudAlert>
+    }
+
+    <div aria-live="polite">
+        @if (_message is not null)
+        {
+            <MudAlert Severity="Severity.Success" Class="mb-4">@_message</MudAlert>
+        }
+    </div>
+    <div aria-live="assertive">
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">@_error</MudAlert>
+        }
+    </div>
+
+    @if (_status is null)
+    {
+        <MudProgressCircular Indeterminate="true" aria-label="@Texts.Common_Loading" />
+    }
+    else if (_recoveryCodes is not null)
+    {
+        <MudPaper Class="pa-6" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.TwoFactor_RecoveryTitle</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4">@Texts.TwoFactor_RecoveryIntro</MudText>
+            @if (_signedOutNotice)
+            {
+                <MudAlert Severity="Severity.Info" Class="mb-4">@Texts.TwoFactor_SignInAgain</MudAlert>
+            }
+            <ul class="recovery-codes" aria-label="@Texts.TwoFactor_RecoveryTitle">
+                @foreach (var recoveryCode in _recoveryCodes)
+                {
+                    <li><code>@recoveryCode</code></li>
+                }
+            </ul>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="CloseRecoveryCodes">@Texts.TwoFactor_RecoveryDone</MudButton>
+        </MudPaper>
+    }
+    else if (!_status.Enabled && _setup is null)
+    {
+        <MudPaper Class="pa-6" Elevation="1">
+            <MudText Typo="Typo.body1" Class="mb-2">@Texts.TwoFactor_Off</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4">@Texts.TwoFactor_Intro</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartSetup">@Texts.TwoFactor_Start</MudButton>
+        </MudPaper>
+    }
+    else if (_setup is not null)
+    {
+        <MudPaper Class="pa-6" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.TwoFactor_SetupTitle</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4">@Texts.TwoFactor_SetupScan</MudText>
+            <img src="@_setup.QrCodeDataUri" alt="@Texts.TwoFactor_QrAlt" width="200" height="200" class="totp-qr" />
+            <MudText Typo="Typo.body2" Class="mt-4">@Texts.TwoFactor_SetupManual</MudText>
+            <p class="totp-secret"><code>@_setup.SecretText</code></p>
+            <MudTextField @bind-Value="_enablePassword" Label="@Texts.TwoFactor_EnablePassword" InputType="InputType.Password" Variant="Variant.Outlined" Class="mt-4"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "current-password" })" />
+            <MudTextField @bind-Value="_code" Label="@Texts.TwoFactor_Code" Variant="Variant.Outlined" Class="mt-4" MaxLength="7"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "one-time-code", ["inputmode"] = "numeric" })" />
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableAsync" Disabled="_busy">@Texts.TwoFactor_Enable</MudButton>
+                <MudButton Variant="Variant.Text" OnClick="CancelSetup">@Texts.Common_Cancel</MudButton>
+            </div>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Class="pa-6 mb-4" Elevation="1">
+            <MudText Typo="Typo.body1">@Texts.TwoFactor_On</MudText>
+            <MudText Typo="Typo.body2" Class="mt-2" Color="@(_status.RecoveryCodesLeft <= 3 ? Color.Warning : Color.Default)">
+                @string.Format(Texts.Culture, Texts.TwoFactor_RecoveryLeft, _status.RecoveryCodesLeft)
+            </MudText>
+        </MudPaper>
+
+        <MudPaper Class="pa-6 mb-4" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.TwoFactor_RenewTitle</MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">@Texts.TwoFactor_RenewIntro</MudText>
+            <MudTextField @bind-Value="_renewCode" Label="@Texts.TwoFactor_Code" Variant="Variant.Outlined" MaxLength="7"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "one-time-code", ["inputmode"] = "numeric" })" />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mt-4" OnClick="RenewAsync" Disabled="_busy">@Texts.TwoFactor_Renew</MudButton>
+        </MudPaper>
+
+        <MudPaper Class="pa-6" Elevation="1">
+            <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.TwoFactor_DisableTitle</MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">@Texts.TwoFactor_DisableIntro</MudText>
+            <MudTextField @bind-Value="_password" Label="@Texts.Password_Current" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-3"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "current-password" })" />
+            <MudTextField @bind-Value="_disableCode" Label="@Texts.TwoFactor_CodeOrRecovery" Variant="Variant.Outlined" MaxLength="32"
+                          UserAttributes="@(new Dictionary<string, object?> { ["autocomplete"] = "one-time-code" })" />
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" Class="mt-4" OnClick="DisableAsync" Disabled="_busy">@Texts.TwoFactor_Disable</MudButton>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    [SupplyParameterFromQuery(Name = "recoveryUsed")]
+    private bool RecoveryUsed { get; set; }
+
+    private int _userId;
+    private string _username = "";
+    private TwoFactorStatus? _status;
+    private TwoFactorSetup? _setup;
+    private IReadOnlyList<string>? _recoveryCodes;
+    private string _code = "";
+    private string _enablePassword = "";
+    private string _renewCode = "";
+    private string _disableCode = "";
+    private string _password = "";
+    private string? _error;
+    private string? _message;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthState).User;
+        if (AuthClaims.GetUserId(user) is not { } userId)
+            return;
+        _userId = userId;
+        _username = user.Identity?.Name ?? "";
+        _status = await TwoFactorService.GetStatusAsync(_userId);
+    }
+
+    private void StartSetup()
+    {
+        ClearFeedback();
+        _setup = TwoFactorService.CreateSetup(_username);
+        _code = "";
+    }
+
+    private void CancelSetup()
+    {
+        ClearFeedback();
+        _setup = null;
+    }
+
+    private Task EnableAsync() => RunAsync(async () =>
+    {
+        var result = await TwoFactorService.EnableAsync(_userId, _enablePassword, _setup!.Secret, _code);
+        _enablePassword = "";
+        _code = "";
+        if (!result.Success)
+        {
+            _error = result.Error;
+            return;
+        }
+        _setup = null;
+        _recoveryCodes = result.RecoveryCodes;
+        _signedOutNotice = true;
+        _message = Texts.TwoFactor_Enabled;
+    });
+
+    private Task RenewAsync() => RunAsync(async () =>
+    {
+        var result = await TwoFactorService.RegenerateRecoveryCodesAsync(_userId, _renewCode);
+        _renewCode = "";
+        if (!result.Success)
+        {
+            _error = result.Error;
+            return;
+        }
+        _recoveryCodes = result.RecoveryCodes;
+        _message = Texts.TwoFactor_Renewed;
+    });
+
+    private Task DisableAsync() => RunAsync(async () =>
+    {
+        var result = await TwoFactorService.DisableAsync(_userId, _password, _disableCode);
+        _password = "";
+        _disableCode = "";
+        if (!result.Success)
+        {
+            _error = result.Error;
+            return;
+        }
+        _message = Texts.TwoFactor_Disabled;
+    });
+
+    private bool _signedOutNotice;
+
+    private async Task CloseRecoveryCodes()
+    {
+        _recoveryCodes = null;
+        _signedOutNotice = false;
+        _status = await TwoFactorService.GetStatusAsync(_userId);
+    }
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        ClearFeedback();
+        _busy = true;
+        try
+        {
+            await action();
+            _status = await TwoFactorService.GetStatusAsync(_userId);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Logger.LogError(ex, "Aktion der Zwei-Faktor-Anmeldung fehlgeschlagen.");
+            _error = Texts.Users_Failed;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void ClearFeedback()
+    {
+        _error = null;
+        _message = null;
+    }
+}

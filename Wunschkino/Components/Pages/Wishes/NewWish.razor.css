@@ -1,0 +1,20 @@
+.result-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+    gap: 1rem;
+}
+
+.search-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.search-field {
+    flex: 1 1 240px;
+}
+
+.search-button {
+    margin-top: 0.5rem;
+}

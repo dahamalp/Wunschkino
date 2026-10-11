@@ -1,0 +1,29 @@
+@using Wunschkino.Data
+
+<MudMenu Icon="@Icons.Material.Filled.Brightness6" Color="Color.Inherit" AriaLabel="@Texts.Theme_Label"
+         UserAttributes="@(new Dictionary<string, object?> { ["title"] = Texts.Theme_Label })"
+         AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    @foreach (var (option, label) in Options)
+    {
+        <MudMenuItem OnClick="() => SelectAsync(option)" Icon="@(option == Value ? Icons.Material.Filled.Check : null)">
+            @label@if (option == Value) { <span class="visually-hidden"> (@Texts.Theme_Active)</span> }
+        </MudMenuItem>
+    }
+</MudMenu>
+
+@code {
+    [Parameter]
+    public ThemePreference Value { get; set; }
+
+    [Parameter]
+    public EventCallback<ThemePreference> ValueChanged { get; set; }
+
+    private static (ThemePreference Option, string Label)[] Options =>
+    [
+        (ThemePreference.System, Texts.Theme_System),
+        (ThemePreference.Light, Texts.Theme_Light),
+        (ThemePreference.Dark, Texts.Theme_Dark)
+    ];
+
+    private Task SelectAsync(ThemePreference option) => ValueChanged.InvokeAsync(option);
+}

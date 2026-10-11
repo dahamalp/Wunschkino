@@ -1,0 +1,331 @@
+@page "/wishes"
+@using Wunschkino.Auth
+@using Wunschkino.Data
+@using Wunschkino.Library
+@using Wunschkino.Services
+@using Wunschkino.Wishes
+@inject NavigationManager Navigation
+@inject WishService WishService
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+@inject SettingsService AppSettings
+@inject ILogger<WishList> Logger
+@inject Wunschkino.Localization.UserTimeZone TimeZone
+@implements IDisposable
+
+<PageTitle>@Texts.WishList_PageTitle</PageTitle>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4" Wrap="Wrap.Wrap">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@Texts.WishList_Title</MudText>
+    <MudButton Href="/wishes/new" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">@Texts.WishList_New</MudButton>
+</MudStack>
+
+@if (_namesHidden)
+{
+    <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">@Texts.WishList_AnonymousNote</MudText>
+}
+
+<MudGrid Class="mb-4" Spacing="2">
+    <MudItem xs="12" sm="4">
+        <MudSelect T="WishScope" Value="_scope" ValueChanged="ScopeChanged" Label="@Texts.WishList_Scope" Variant="Variant.Outlined">
+            <MudSelectItem Value="WishScope.All">@Texts.WishList_ScopeAll</MudSelectItem>
+            <MudSelectItem Value="WishScope.Mine">@Texts.WishList_ScopeMine</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudSelect T="WishStatus?" Value="_status" ValueChanged="StatusFilterChanged" Label="@Texts.WishList_Status" Variant="Variant.Outlined">
+            <MudSelectItem T="WishStatus?" Value="null">@Texts.WishList_StatusAll</MudSelectItem>
+            @foreach (var status in Enum.GetValues<WishStatus>())
+            {
+                <MudSelectItem T="WishStatus?" Value="status">@StatusDisplay.Label(status)</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudSelect T="WishSort" Value="_sort" ValueChanged="SortChanged" Label="@Texts.WishList_Sort" Variant="Variant.Outlined">
+            <MudSelectItem Value="WishSort.Newest">@Texts.WishList_SortNewest</MudSelectItem>
+            <MudSelectItem Value="WishSort.MostVotes">@Texts.WishList_SortMostVotes</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@if (_loaded && _wishes.Count == 0)
+{
+    <MudStack AlignItems="AlignItems.Start" Spacing="2" Class="mb-4">
+        <MudText Class="mud-text-secondary" role="status">@Texts.WishList_None</MudText>
+        <MudButton Href="/wishes/new" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">@Texts.WishList_New</MudButton>
+    </MudStack>
+}
+
+<div class="wish-list" role="list" aria-label="@Texts.WishList_ListLabel">
+    @foreach (var wish in _wishes)
+    {
+        var posterUrl = TmdbPosters.ProxyUrl(wish.PosterPath, 185);
+        <MudPaper Class="wish-card pa-3" Elevation="1" @key="wish.Id" role="listitem">
+            @if (posterUrl is not null)
+            {
+                <img src="@posterUrl" alt="" width="92" height="138" loading="lazy" decoding="async" class="wish-poster" />
+            }
+            else
+            {
+                <div class="wish-poster wish-poster-placeholder" aria-hidden="true">
+                    <MudIcon Icon="@(wish.Kind == MediaKind.Movie ? Icons.Material.Filled.Movie : Icons.Material.Filled.Tv)" Size="Size.Large" />
+                </div>
+            }
+            <div class="wish-body">
+                <MudText Typo="Typo.h6" HtmlTag="h2">@wish.Title</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">
+                    @(wish.Kind == MediaKind.Movie ? Texts.Kind_Movie : Texts.Kind_Series)@(wish.Year is { } year ? $" · {year}" : "")
+                    @(wish.CreatedByName is { } creator ? $" · {string.Format(Texts.Culture, Texts.WishList_By, creator)}" : "") · @TimeZone.ToLocal(wish.CreatedUtc).ToString("d", CultureInfo.CurrentCulture)
+                </MudText>
+
+                <MudStack Row="true" Spacing="1" Class="mb-2" Wrap="Wrap.Wrap">
+                    <MudChip T="string" Color="@StatusDisplay.Color(wish.Status)" Size="Size.Small" Icon="@StatusDisplay.Icon(wish.Status)">@StatusDisplay.Label(wish.Status)</MudChip>
+                    @if (wish.CompletedAutomatically)
+                    {
+                        <MudTooltip Text="@Texts.WishList_AutomaticTooltip">
+                            <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.AutoMode">@Texts.WishList_Automatic</MudChip>
+                        </MudTooltip>
+                    }
+                    <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.ThumbUp">
+                        <span aria-hidden="true">@wish.Votes</span>
+                        <span class="visually-hidden">@string.Format(Texts.Culture, wish.Votes == 1 ? Texts.NewWish_VoteOne : Texts.NewWish_VotesMany, wish.Votes)</span>
+                    </MudChip>
+                </MudStack>
+                @if (wish.AdminComment is { } comment)
+                {
+                    <MudAlert Severity="Severity.Normal" Dense="true" Class="mb-2">@comment</MudAlert>
+                }
+                @foreach (var note in wish.Notes)
+                {
+                    <MudText Typo="Typo.caption" Class="d-block">
+                        @if (note.UserName is { } author)
+                        {
+                            <strong>@author:</strong>
+                        }
+                        @note.Text
+                    </MudText>
+                }
+
+                <MudStack Row="true" Spacing="1" Class="mt-2" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
+                    @if (CanWithdraw(wish))
+                    {
+                        <MudButton Variant="Variant.Outlined" Disabled="_busy" OnClick="@(() => WithdrawAsync(wish))"
+                                   aria-label="@ActionFor(wish.Votes == 1 ? Texts.WishList_Withdraw : Texts.WishList_WithdrawVote, wish)">
+                            @(wish.Votes == 1 ? Texts.WishList_Withdraw : Texts.WishList_WithdrawVote)
+                        </MudButton>
+                    }
+                    @if (CanJoin(wish))
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="@(() => JoinAsync(wish))"
+                                   aria-label="@ActionFor(Texts.NewWish_PlusOne, wish)">@Texts.NewWish_PlusOne</MudButton>
+                    }
+                </MudStack>
+                <AuthorizeView Roles="@AuthClaims.AdminRole">
+                    <div class="wish-admin">
+                        <MudTooltip Text="@StatusTooltip(wish, WishStatus.Done)">
+                            <MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Disabled="_busy"
+                                           Variant="@StatusButtonVariant(wish, WishStatus.Done)" aria-label="@ActionFor(Texts.WishList_MarkDone, wish)"
+                                           aria-pressed="@(wish.Status == WishStatus.Done ? "true" : "false")"
+                                           OnClick="@(() => ToggleStatusAsync(wish, WishStatus.Done))" />
+                        </MudTooltip>
+                        <MudTooltip Text="@StatusTooltip(wish, WishStatus.Accepted)">
+                            <MudIconButton Icon="@Icons.Material.Filled.Timer" Color="Color.Warning" Disabled="_busy"
+                                           Variant="@StatusButtonVariant(wish, WishStatus.Accepted)" aria-label="@ActionFor(Texts.WishList_MarkAccepted, wish)"
+                                           aria-pressed="@(wish.Status == WishStatus.Accepted ? "true" : "false")"
+                                           OnClick="@(() => ToggleStatusAsync(wish, WishStatus.Accepted))" />
+                        </MudTooltip>
+                        <MudTooltip Text="@StatusTooltip(wish, WishStatus.Rejected)">
+                            <MudIconButton Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" Disabled="_busy"
+                                           Variant="@StatusButtonVariant(wish, WishStatus.Rejected)" aria-label="@ActionFor(Texts.WishList_MarkRejected, wish)"
+                                           aria-pressed="@(wish.Status == WishStatus.Rejected ? "true" : "false")"
+                                           OnClick="@(() => ToggleStatusAsync(wish, WishStatus.Rejected))" />
+                        </MudTooltip>
+                        <MudTooltip Text="@Texts.WishList_EditComment">
+                            <MudIconButton Icon="@Icons.Material.Filled.Comment" Disabled="_busy" aria-label="@ActionFor(Texts.WishList_EditComment, wish)"
+                                           OnClick="@(() => OpenCommentEditor(wish))" />
+                        </MudTooltip>
+                        <MudTooltip Text="@Texts.WishList_Delete">
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Disabled="_busy" aria-label="@ActionFor(Texts.WishList_Delete, wish)"
+                                           OnClick="@(() => DeleteAsync(wish))" />
+                        </MudTooltip>
+                    </div>
+                </AuthorizeView>
+
+                @if (_editing?.Wish.Id == wish.Id)
+                {
+                    <MudStack Class="mt-2" Spacing="1">
+                        <MudTextField @bind-Value="_editing.Comment" Label="@Texts.WishList_CommentLabel" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                      MaxLength="@WishValidation.MaxCommentLength" />
+                        <MudStack Row="true" Spacing="1">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="SaveCommentAsync">
+                                @Texts.WishList_CommentSave
+                            </MudButton>
+                            <MudButton Variant="Variant.Text" OnClick="@(() => _editing = null)">@Texts.WishList_Cancel</MudButton>
+                        </MudStack>
+                    </MudStack>
+                }
+            </div>
+        </MudPaper>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private IReadOnlyList<WishListItem> _wishes = [];
+    private WishScope _scope = WishScope.All;
+    private WishStatus? _status;
+    private WishSort _sort = WishSort.Newest;
+    private CommentEdit? _editing;
+    private bool _namesHidden;
+    private bool _loaded;
+    private bool _busy;
+
+    [SupplyParameterFromQuery(Name = "scope")]
+    private string? ScopeQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "status")]
+    private string? StatusQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "sort")]
+    private string? SortQuery { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        _scope = UrlFilter.ParseEnum<WishScope>(ScopeQuery) ?? WishScope.All;
+        _status = UrlFilter.ParseEnum<WishStatus>(StatusQuery);
+        _sort = UrlFilter.ParseEnum<WishSort>(SortQuery) ?? WishSort.Newest;
+        TimeZone.Changed += OnTimeZoneChanged;
+        return ReloadAsync();
+    }
+
+    private void OnTimeZoneChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => TimeZone.Changed -= OnTimeZoneChanged;
+
+    // Gleichlautende Knöpfe in jeder Karte brauchen den Titel im Namen, sonst sind sie für Screenreader nicht unterscheidbar.
+    private static string ActionFor(string action, WishListItem wish) =>
+        string.Format(Texts.Culture, Texts.A11y_ActionFor, action, wish.Title);
+
+    // Spiegelt die Regeln aus WishService.WithdrawAsync, damit kein Button erscheint, den der Server ablehnen würde.
+    private static bool CanWithdraw(WishListItem wish) =>
+        wish.VotedByMe && (wish.Status == WishStatus.Open || (wish.Status == WishStatus.Accepted && wish.Votes > 1));
+
+    private async Task ReloadAsync()
+    {
+        if (await CurrentUserIdAsync() is not { } userId)
+            return;
+        try
+        {
+            var isAdmin = (await AuthState).User.IsInRole(AuthClaims.AdminRole);
+            _wishes = await WishService.ListAsync(userId, _scope, _status, _sort, isAdmin);
+            _namesHidden = !isAdmin && WishPrivacy.IsAnonymous(await AppSettings.GetAsync(SettingKeys.WishesAnonymous));
+            _loaded = true;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Logger.LogError(ex, "Wunschliste konnte nicht geladen werden.");
+            Snackbar.Add(Texts.WishList_LoadFailed, Severity.Error);
+        }
+    }
+
+    private Task ScopeChanged(WishScope scope)
+    {
+        _scope = scope;
+        WriteFiltersToUrl();
+        return ReloadAsync();
+    }
+
+    private Task StatusFilterChanged(WishStatus? status)
+    {
+        _status = status;
+        WriteFiltersToUrl();
+        return ReloadAsync();
+    }
+
+    private Task SortChanged(WishSort sort)
+    {
+        _sort = sort;
+        WriteFiltersToUrl();
+        return ReloadAsync();
+    }
+
+    private void WriteFiltersToUrl() => UrlFilter.Replace(Navigation, new Dictionary<string, object?>
+    {
+        ["scope"] = UrlFilter.Write<WishScope>(_scope, WishScope.All),
+        ["status"] = UrlFilter.Write(_status),
+        ["sort"] = UrlFilter.Write<WishSort>(_sort, WishSort.Newest),
+    });
+
+    private static bool CanJoin(WishListItem wish) =>
+        !wish.VotedByMe && wish.Status is WishStatus.Open or WishStatus.Accepted;
+
+    private static Variant StatusButtonVariant(WishListItem wish, WishStatus status) =>
+        wish.Status == status ? Variant.Filled : Variant.Text;
+
+    private static string StatusTooltip(WishListItem wish, WishStatus status) =>
+        string.Format(Texts.Culture, wish.Status == status ? Texts.WishList_StatusActive : Texts.WishList_StatusSet, StatusDisplay.Label(status));
+
+    private void OpenCommentEditor(WishListItem wish) =>
+        _editing = new CommentEdit(wish) { Comment = wish.AdminComment };
+
+    private Task JoinAsync(WishListItem wish) =>
+        RunAsync(userId => WishService.CreateOrJoinAsync(userId, wish.TmdbId, wish.Kind, note: null));
+
+    private Task WithdrawAsync(WishListItem wish) => RunAsync(userId => WishService.WithdrawAsync(userId, wish.Id));
+
+    private Task ToggleStatusAsync(WishListItem wish, WishStatus status) =>
+        RunAsync(userId => WishService.SetStatusAsync(userId, wish.Id, wish.Status == status ? WishStatus.Open : status, wish.AdminComment));
+
+    private async Task DeleteAsync(WishListItem wish)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            Texts.WishList_DeleteTitle, string.Format(Texts.Culture, Texts.WishList_DeleteMessage, wish.Title),
+            yesText: Texts.WishList_DeleteYes, cancelText: Texts.WishList_Cancel);
+        if (confirmed == true)
+            await RunAsync(userId => WishService.DeleteAsync(userId, wish.Id));
+    }
+
+    private async Task SaveCommentAsync()
+    {
+        if (_editing is not { } edit)
+            return;
+        if (await RunAsync(userId => WishService.SetStatusAsync(userId, edit.Wish.Id, edit.Wish.Status, edit.Comment)))
+            _editing = null;
+    }
+
+    private async Task<bool> RunAsync(Func<int, Task<WishResult>> operation)
+    {
+        if (_busy || await CurrentUserIdAsync() is not { } userId)
+            return false;
+
+        _busy = true;
+        try
+        {
+            var result = await operation(userId);
+            Snackbar.Add(result.Message, result.Success ? Severity.Success : Severity.Error);
+            await ReloadAsync();
+            return result.Success;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Logger.LogError(ex, "Aktion auf der Wunschliste fehlgeschlagen.");
+            Snackbar.Add(Texts.WishList_ActionFailed, Severity.Error);
+            return false;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task<int?> CurrentUserIdAsync() => AuthClaims.GetUserId((await AuthState).User);
+
+    private sealed class CommentEdit(WishListItem wish)
+    {
+        public WishListItem Wish { get; } = wish;
+        public string? Comment { get; set; }
+    }
+}

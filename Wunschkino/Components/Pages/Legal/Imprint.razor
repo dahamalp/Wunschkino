@@ -1,0 +1,25 @@
+@page "/impressum"
+@attribute [AllowAnonymous]
+@using Wunschkino.Legal
+@inject LegalService Legal
+
+<PageTitle>@Texts.Imprint_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.Imprint_Title</MudText>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    @if (_texts.Imprint is { } imprint)
+    {
+        <LegalText Text="@imprint" />
+    }
+    else
+    {
+        <MudText Class="mud-text-secondary">@Texts.Imprint_None</MudText>
+    }
+</MudPaper>
+
+@code {
+    private LegalTexts _texts = LegalTexts.Empty;
+
+    protected override async Task OnInitializedAsync() => _texts = await Legal.GetAsync();
+}

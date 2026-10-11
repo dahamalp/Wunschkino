@@ -1,0 +1,56 @@
+@page "/about"
+@attribute [AllowAnonymous]
+@using Wunschkino.Hosting
+@inject AppInfo AppInfo
+
+<PageTitle>@Texts.About_PageTitle</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@Texts.About_Title</MudText>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText>@Texts.About_Intro</MudText>
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.About_LicenseTitle</MudText>
+    <MudText Class="mb-2">
+        @((MarkupString)string.Format(Texts.Culture, Texts.About_License, Link("https://www.gnu.org/licenses/agpl-3.0.html", Texts.About_LicenseName)))
+    </MudText>
+    <MudText>
+        @((MarkupString)string.Format(Texts.Culture, Texts.About_SourceHere, Link(AppInfo.SourceUrl, AppInfo.SourceUrl)))
+    </MudText>
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.About_ThanksTitle</MudText>
+
+    <div class="about-tmdb">
+        <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" aria-label="@Texts.About_TmdbLabel" class="touch-target">
+            <img src="@Assets["images/tmdb-logo.svg"]" alt="@Texts.About_TmdbAlt" class="about-tmdb-logo" />
+        </a>
+        <MudText lang="en">@Texts.Footer_TmdbNotice</MudText>
+    </div>
+
+    <MudText Class="mt-4 mb-2">
+        @((MarkupString)string.Format(Texts.Culture, Texts.About_Sources,
+            Link("https://www.themoviedb.org/", "TMDB"), Link("https://anilist.co/", "AniList"), Link("https://github.com/Fribb/anime-lists", "Fribb/anime-lists")))
+    </MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary">@Texts.About_Disclaimer</MudText>
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.About_FontsTitle</MudText>
+    <MudText>
+        @((MarkupString)string.Format(Texts.Culture, Texts.About_Fonts, Link(AppInfo.SourceUrl, Texts.About_FontsSource)))
+    </MudText>
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText Typo="Typo.h6" HtmlTag="h2" GutterBottom="true">@Texts.About_A11yTitle</MudText>
+    <MudText>@Texts.About_A11y</MudText>
+</MudPaper>
+
+@code {
+    private static string Link(string url, string text) =>
+        $"<a class=\"text-link\" href=\"{System.Net.WebUtility.HtmlEncode(url)}\" target=\"_blank\" rel=\"noopener noreferrer\">{System.Net.WebUtility.HtmlEncode(text)}</a>";
+}

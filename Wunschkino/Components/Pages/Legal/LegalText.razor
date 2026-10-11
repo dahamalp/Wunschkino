@@ -1,0 +1,13 @@
+@foreach (var paragraph in Paragraphs)
+{
+    <p class="legal-paragraph">@paragraph</p>
+}
+
+@code {
+    /// <summary>Text des Betreibers: reiner Text ohne HTML. Blazor kodiert die Ausgabe, Leerzeilen trennen Absätze.</summary>
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = "";
+
+    private IEnumerable<string> Paragraphs =>
+        Text.Replace("\r\n", "\n").Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+}
