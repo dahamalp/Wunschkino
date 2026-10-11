@@ -173,7 +173,7 @@ a.mud-link.mud-link {
 
 /* Lange Wörter in Übersetzungen (zum Beispiel niederländisch „Tweestapsverificatie“) dürfen auf kleinen Handys umbrechen,
    statt die Seite zu verbreitern. */
-h1, h2, h3 {
+h1, h2, h3, code {
     overflow-wrap: anywhere;
 }
 
