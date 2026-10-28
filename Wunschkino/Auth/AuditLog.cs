@@ -102,7 +102,7 @@ public sealed class AuditLog(IDbContextFactory<AppDbContext> dbFactory, TimeProv
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogWarning(ex, "Der Eintrag „{Action}“ konnte nicht ins Protokoll geschrieben werden.", action);
+            logger.LogWarning(ex, "Ein Eintrag konnte nicht ins Protokoll geschrieben werden.");
             return false;
         }
     }
