@@ -1,5 +1,6 @@
 # Hält die GitHub-Actions (im Release-Workflow) und die NuGet-Pakete aktuell. Die Aktionen sind auf Commit-SHAs festgelegt
 # (mit der Version im Kommentar); Dependabot schlägt neue SHAs samt Version als Pull Request vor. Prüfen, bevor man sie übernimmt.
+# Die Microsoft-Pakete (EF Core, ASP.NET Core) müssen dieselbe Version haben, darum kommen sie in einem gemeinsamen Pull Request.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -10,3 +11,16 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      dotnet-runtime-packages:
+        patterns:
+          - "Microsoft.EntityFrameworkCore*"
+          - "Microsoft.AspNetCore.*"
+          - "Microsoft.Extensions.*"
+      test-packages:
+        patterns:
+          - "Microsoft.NET.Test.Sdk"
+          - "xunit*"
+          - "coverlet*"
+          - "bunit*"
+          - "Microsoft.Playwright*"

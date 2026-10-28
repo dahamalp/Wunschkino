@@ -19,11 +19,20 @@ public partial class TwoFactorLoginPipelineTests : IAsyncLifetime
         var service = _factory.Services.GetRequiredService<TwoFactorService>();
         var setup = service.CreateSetup(WunschkinoFactory.AdminUsername);
         _secret = setup.Secret;
+        await WaitForFreshTimeStepAsync();
         var result = await service.EnableAsync(1, WunschkinoFactory.AdminPassword, _secret, CodeFor(DateTimeOffset.UtcNow.AddSeconds(-30)));
         Assert.True(result.Success, result.Error);
     }
 
     public async Task DisposeAsync() => await _factory.DisposeAsync();
+
+    // Der Code für den vorigen Zeitabschnitt wird nur bis zum Ende des laufenden akzeptiert. Läuft die Passwortprüfung auf einem
+    // langsamen Rechner über die Abschnittsgrenze, wird er abgelehnt. Darum erst in der ersten Hälfte eines Abschnitts starten.
+    private static async Task WaitForFreshTimeStepAsync()
+    {
+        var secondsIntoStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() % (long)Totp.Period.TotalSeconds;
+        if (secondsIntoStep >= 15) await Task.Delay(TimeSpan.FromSeconds(Totp.Period.TotalSeconds - secondsIntoStep + 1));
+    }
 
     private string CodeFor(DateTimeOffset time) => Totp.ComputeCode(_secret, Totp.TimeStep(time));
 
