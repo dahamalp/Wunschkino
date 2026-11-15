@@ -50,8 +50,9 @@ public class ConnectionSettingsServiceTests : IDisposable
         Assert.Equal("http://ALT:8096/jellyfin", await _settings.GetAsync(SettingKeys.JellyfinUrl));
         Assert.Equal("30", await _settings.GetAsync(SettingKeys.JellyfinRefreshMinutes));
         Assert.Equal("alter-jellyfin-key", await _settings.GetAsync(SettingKeys.JellyfinApiKey));
-        var jellyfinRequest = _requests.Single(r => r.RequestUri!.Host == "alt");
-        Assert.Contains("alter-jellyfin-key", string.Join("", jellyfinRequest.Headers.GetValues("Authorization")));
+        var jellyfinRequests = _requests.Where(r => r.RequestUri!.Host == "alt").ToList();
+        Assert.NotEmpty(jellyfinRequests);
+        Assert.All(jellyfinRequests, r => Assert.Contains("alter-jellyfin-key", string.Join("", r.Headers.GetValues("Authorization"))));
     }
 
     [Theory]

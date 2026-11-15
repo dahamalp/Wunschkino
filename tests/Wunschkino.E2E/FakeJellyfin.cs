@@ -52,6 +52,7 @@ public sealed class FakeJellyfin : IAsyncDisposable
         var app = builder.Build();
 
         app.MapGet("/System/Info", () => Results.Json(new { ServerName = "Demo-Jellyfin", Version = "10.10.0" }));
+        app.MapGet("/Library/VirtualFolders", () => Results.Json(new[] { new { Name = "Filme und Serien", ItemId = "demo-bibliothek" } }));
         app.MapGet("/Items", () => Results.Json(new
         {
             TotalRecordCount = Titles.Length,

@@ -16,9 +16,25 @@ public class JellyfinClientTests
 
         Assert.True(result.Success);
         Assert.Contains("Heimkino", result.Message);
-        var request = Assert.Single(handler.Requests);
-        Assert.Equal("http://jellyfin:8096/System/Info", request.RequestUri!.ToString());
-        Assert.Equal("MediaBrowser Token=\"abc123\"", string.Join("", request.Headers.GetValues("Authorization")));
+        Assert.Equal(["http://jellyfin:8096/System/Info", "http://jellyfin:8096/Library/VirtualFolders"],
+            handler.Requests.Select(r => r.RequestUri!.ToString()));
+        Assert.All(handler.Requests, r => Assert.Equal("MediaBrowser Token=\"abc123\"", string.Join("", r.Headers.GetValues("Authorization"))));
+    }
+
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized)]
+    [InlineData(HttpStatusCode.Forbidden)]
+    public async Task TestConnection_KeyWithoutAdminRights_FailsWithAHint(HttpStatusCode librariesStatus)
+    {
+        var handler = new FakeHttpHandler(request => request.RequestUri!.AbsolutePath.EndsWith("/Library/VirtualFolders", StringComparison.Ordinal)
+            ? new HttpResponseMessage(librariesStatus)
+            : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("""{"ServerName":"Heimkino","Version":"10.11.0"}""", System.Text.Encoding.UTF8, "application/json") });
+        var client = new JellyfinClient(new HttpClient(handler));
+
+        var result = await client.TestConnectionAsync("http://jellyfin:8096", "benutzer-token");
+
+        Assert.False(result.Success);
+        Assert.Contains("Admin-Rechte", result.Message);
     }
 
     [Fact]

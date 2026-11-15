@@ -555,6 +555,7 @@
   <data name="Msg_TwoFactor_ResetNotOn" xml:space="preserve"><value>Voor dit account staat geen tweestapsverificatie aan.</value></data>
   <data name="Msg_Jellyfin_KeyInvalidChars" xml:space="preserve"><value>De Jellyfin-API-sleutel bevat ongeldige tekens.</value></data>
   <data name="Msg_Jellyfin_KeyRejected" xml:space="preserve"><value>Jellyfin heeft de API-sleutel geweigerd.</value></data>
+  <data name="Msg_Jellyfin_KeyNotAdmin" xml:space="preserve"><value>De API-sleutel werkt, maar heeft geen beheerdersrechten. Wunschkino heeft een API-sleutel uit het Jellyfin-dashboard nodig (Dashboard → API-sleutels) om de bibliotheken te lezen.</value></data>
   <data name="Msg_Jellyfin_Http" xml:space="preserve"><value>Jellyfin antwoordt met HTTP {0}.</value></data>
   <data name="Msg_Jellyfin_Connected" xml:space="preserve"><value>Verbonden met „{0}” (Jellyfin {1}).</value></data>
   <data name="Msg_Jellyfin_Unreachable" xml:space="preserve"><value>Jellyfin is op dit adres niet bereikbaar.</value></data>

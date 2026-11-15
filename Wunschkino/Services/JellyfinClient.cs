@@ -13,8 +13,10 @@ public sealed class JellyfinClient(HttpClient http)
 {
     public const int PageSize = 500;
 
-    // Schutz gegen Endlosschleifen, falls ein Server falsche Gesamtzahlen meldet (entspricht 100.000 Titeln).
+    // Schutz gegen Endlosschleifen, falls ein Server falsche Gesamtzahlen meldet (entspricht 100.000 Titeln je Bibliothek).
     private const int MaxPages = 200;
+
+    private const string LibrariesPath = "Library/VirtualFolders";
 
     public async Task<ConnectionTestResult> TestConnectionAsync(string baseUrl, string apiKey, CancellationToken ct = default)
     {
@@ -31,6 +33,15 @@ public sealed class JellyfinClient(HttpClient http)
                 return ConnectionTestResult.Fail(string.Format(Texts.Culture, Texts.Msg_Jellyfin_Http, (int)response.StatusCode));
 
             var info = await response.Content.ReadFromJsonAsync<SystemInfo>(ct);
+
+            // Die Bibliotheken liest nur ein Admin-Key; ohne diese Prüfung fiele ein Benutzer-Token erst beim ersten Abruf auf.
+            using var libraries = CreateRequest(baseUrl, LibrariesPath, apiKey);
+            using var librariesResponse = await http.SendAsync(libraries, ct);
+            if (librariesResponse.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+                return ConnectionTestResult.Fail(Texts.Msg_Jellyfin_KeyNotAdmin);
+            if (!librariesResponse.IsSuccessStatusCode)
+                return ConnectionTestResult.Fail(string.Format(Texts.Culture, Texts.Msg_Jellyfin_Http, (int)librariesResponse.StatusCode));
+
             return ConnectionTestResult.Ok(string.Format(Texts.Culture, Texts.Msg_Jellyfin_Connected, info?.ServerName, info?.Version));
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
@@ -39,22 +50,38 @@ public sealed class JellyfinClient(HttpClient http)
         }
     }
 
+    /// <summary>
+    /// Fragt je eingerichteter Bibliothek ab statt quer über die ganze Datenbank: Jellyfin behält Einträge einer gelöschten oder
+    /// umbenannten Bibliothek mitunter, zeigt sie selbst nicht mehr an, liefert sie bei einer Abfrage ohne Bibliothek aber weiter.
+    /// </summary>
     /// <exception cref="JellyfinException">Wenn Jellyfin nicht erreichbar ist, den Key ablehnt oder Unlesbares liefert.</exception>
     public async Task<IReadOnlyList<LibraryItem>> GetLibraryAsync(string baseUrl, string apiKey, CancellationToken ct = default)
     {
         if (!ApiKeyFormat.IsValid(apiKey))
             throw new JellyfinException(Texts.Msg_Jellyfin_StoredKeyInvalid);
 
+        var libraries = await SendForJsonAsync<List<VirtualFolder>>(baseUrl, LibrariesPath, apiKey, ct);
+        var items = new Dictionary<string, LibraryItem>(StringComparer.OrdinalIgnoreCase);
+        foreach (var libraryId in libraries.Select(l => l.ItemId).OfType<string>().Where(id => id.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            foreach (var item in await GetLibraryItemsAsync(baseUrl, apiKey, libraryId, ct))
+                items.TryAdd(item.JellyfinId, item);
+        }
+        return [.. items.Values];
+    }
+
+    private async Task<List<LibraryItem>> GetLibraryItemsAsync(string baseUrl, string apiKey, string libraryId, CancellationToken ct)
+    {
         var items = new List<LibraryItem>();
         for (var page = 0; page < MaxPages; page++)
         {
-            var path = "Items?IncludeItemTypes=Movie,Series&Recursive=true&Fields=ProviderIds,DateCreated"
-                       + $"&EnableImageTypes=Primary&ImageTypeLimit=1&SortBy=SortName&StartIndex={page * PageSize}&Limit={PageSize}";
+            var path = $"Items?ParentId={Uri.EscapeDataString(libraryId)}&IncludeItemTypes=Movie,Series&Recursive=true&Fields=ProviderIds,DateCreated"
+                       + $"&EnableImageTypes=Primary&ImageTypeLimit=1&SortBy=SortName,Id&StartIndex={page * PageSize}&Limit={PageSize}";
             var result = await SendForJsonAsync<ItemsResult>(baseUrl, path, apiKey, ct);
             var pageItems = result.Items ?? [];
             items.AddRange(pageItems.Select(ToLibraryItem).OfType<LibraryItem>());
 
-            if (pageItems.Count < PageSize || items.Count >= result.TotalRecordCount)
+            if (pageItems.Count < PageSize || (page + 1) * PageSize >= result.TotalRecordCount)
                 return items;
         }
         return items;
@@ -158,6 +185,8 @@ public sealed class JellyfinClient(HttpClient http)
     }
 
     private sealed record SystemInfo(string? ServerName, string? Version);
+
+    private sealed record VirtualFolder(string? ItemId);
 
     private sealed record ItemsResult(List<BaseItem>? Items, int TotalRecordCount);
 

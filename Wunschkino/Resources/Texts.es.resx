@@ -555,6 +555,7 @@
   <data name="Msg_TwoFactor_ResetNotOn" xml:space="preserve"><value>Esta cuenta no tiene activada la verificación en dos pasos.</value></data>
   <data name="Msg_Jellyfin_KeyInvalidChars" xml:space="preserve"><value>La clave de API de Jellyfin contiene caracteres no válidos.</value></data>
   <data name="Msg_Jellyfin_KeyRejected" xml:space="preserve"><value>Jellyfin ha rechazado la clave de API.</value></data>
+  <data name="Msg_Jellyfin_KeyNotAdmin" xml:space="preserve"><value>La clave API funciona, pero no tiene permisos de administrador. Wunschkino necesita una clave API del panel de Jellyfin (Panel → Claves API) para leer las bibliotecas.</value></data>
   <data name="Msg_Jellyfin_Http" xml:space="preserve"><value>Jellyfin responde con HTTP {0}.</value></data>
   <data name="Msg_Jellyfin_Connected" xml:space="preserve"><value>Conectado con “{0}” (Jellyfin {1}).</value></data>
   <data name="Msg_Jellyfin_Unreachable" xml:space="preserve"><value>Jellyfin no es accesible en esta dirección.</value></data>

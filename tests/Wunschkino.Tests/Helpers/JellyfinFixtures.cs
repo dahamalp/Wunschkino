@@ -5,8 +5,22 @@ namespace Wunschkino.Tests.Helpers;
 
 public static class JellyfinFixtures
 {
+    public const string LibraryId = "bibliothek";
+
     public static string ItemsJson(int totalRecordCount, params object[] items) =>
         JsonSerializer.Serialize(new { Items = items, TotalRecordCount = totalRecordCount });
+
+    public static string VirtualFoldersJson(params string[] libraryIds) =>
+        JsonSerializer.Serialize(libraryIds.Select(id => new { Name = $"Bibliothek {id}", ItemId = id }));
+
+    /// <summary>Beantwortet die Abfrage der Bibliotheken mit einer einzigen Bibliothek und alles andere mit <paramref name="respond"/>.</summary>
+    public static Func<HttpRequestMessage, HttpResponseMessage> WithOneLibrary(Func<HttpRequestMessage, HttpResponseMessage> respond) =>
+        request => request.RequestUri!.AbsolutePath.EndsWith("/Library/VirtualFolders", StringComparison.Ordinal)
+            ? new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent(VirtualFoldersJson(LibraryId), System.Text.Encoding.UTF8, "application/json")
+            }
+            : respond(request);
 
     public static object Movie(string id, string name, int? year = null, string? tmdb = null, string? imdb = null, bool poster = true) =>
         Item(id, name, "Movie", year, tmdb, imdb, poster);

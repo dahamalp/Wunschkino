@@ -32,7 +32,7 @@ public class LibraryRefreshServiceTests : IDisposable
         collection.AddSingleton<SettingsService>();
         collection.AddSingleton(new Wunschkino.Auth.UserService(_db, new PlainTextHasher(), TimeProvider.System));
         collection.AddScoped<ConnectionSettingsService>();
-        collection.AddScoped(_ => new JellyfinClient(new HttpClient(new FakeHttpHandler(_ => _jellyfinResponse()))));
+        collection.AddScoped(_ => new JellyfinClient(new HttpClient(new FakeHttpHandler(WithOneLibrary(_ => _jellyfinResponse())))));
         collection.AddScoped(_ => new TmdbClient(new HttpClient(FakeHttpHandler.Json(HttpStatusCode.OK, """{"id":603,"title":"Matrix Neu","release_date":"1999-03-30"}"""))));
         collection.AddSingleton(TimeProvider.System);
         collection.AddScoped<WishMetadataRefresher>();
