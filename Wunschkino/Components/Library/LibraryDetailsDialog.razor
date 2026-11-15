@@ -1,0 +1,223 @@
+@using Wunschkino.Library
+@implements IDisposable
+@inject LibraryDetailsService DetailsService
+@inject ILogger<LibraryDetailsDialog> Logger
+
+<MudDialog Class="library-details" ContentClass="library-details-content">
+    <TitleContent>
+        <MudText Typo="Typo.h5" HtmlTag="h2">@Item.Title</MudText>
+    </TitleContent>
+    <DialogContent>
+        @* Nicht im Titel: MudBlazor zeichnet den Titel nicht neu, wenn die Details erst nach dem Öffnen ankommen. *@
+        <MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">
+            @foreach (var (fact, index) in Facts.Select((fact, index) => (fact, index)))
+            {
+                @if (index > 0)
+                {
+                    <span aria-hidden="true"> · </span>
+                }
+                <span>@fact</span>
+            }
+            @if (Info?.CommunityRating is { } rating)
+            {
+                <span aria-hidden="true"> · </span>
+                <span class="library-details-rating"><span class="visually-hidden">@string.Format(Texts.Culture, Texts.Details_Rating, rating.ToString("0.0", Texts.Culture))</span><span aria-hidden="true"><MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />@rating.ToString("0.0", Texts.Culture)</span></span>
+            }
+        </MudText>
+        <div class="library-details-body">
+            <div class="library-details-poster">
+                @if (Item.HasPoster)
+                {
+                    <img src="/posters/@Item.JellyfinId?w=300" alt="" width="300" height="450" decoding="async" />
+                }
+                else
+                {
+                    <div class="library-details-placeholder" aria-hidden="true">
+                        <MudIcon Icon="@(Item.Kind == MediaKind.Movie ? Icons.Material.Filled.Movie : Icons.Material.Filled.Tv)" Size="Size.Large" />
+                    </div>
+                }
+            </div>
+            <div class="library-details-info">
+                @* Die Region steht von Anfang an im DOM: Screenreader melden nur Änderungen in einer schon vorhandenen Live-Region. *@
+                <div role="status" class="visually-hidden">@(_result is null ? Texts.Details_Loading : Info is not null ? Texts.Details_Loaded : null)</div>
+                @if (_result is null)
+                {
+                    <div aria-hidden="true">
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mb-2" />
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Texts.Details_Loading</MudText>
+                    </div>
+                }
+                else if (_result.Error is { } error)
+                {
+                    <MudAlert Severity="Severity.Warning" Dense="true">@error</MudAlert>
+                }
+                else if (Info is { } info)
+                {
+                    @if (info.Genres.Count > 0)
+                    {
+                        <ul class="library-details-genres" role="list">
+                            @foreach (var genre in info.Genres)
+                            {
+                                <li><MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@genre</MudChip></li>
+                            }
+                        </ul>
+                    }
+                    @if (info.Tagline is { } tagline)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="library-details-tagline">@tagline</MudText>
+                    }
+                    @if (info.Overview is { } overview)
+                    {
+                        <MudText Typo="Typo.body1" Class="library-details-overview">@overview</MudText>
+                    }
+                    @if (info.Directors.Count > 0 || info.Studios.Count > 0)
+                    {
+                        <dl class="library-details-credits">
+                            @if (info.Directors.Count > 0)
+                            {
+                                <dt>@Texts.Details_Director</dt>
+                                <dd>@string.Join(", ", info.Directors)</dd>
+                            }
+                            @if (info.Studios.Count > 0)
+                            {
+                                <dt>@Texts.Details_Studio</dt>
+                                <dd>@string.Join(", ", info.Studios)</dd>
+                            }
+                        </dl>
+                    }
+                    @if (info.Cast.Count > 0)
+                    {
+                        <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mt-4 mb-1">@Texts.Details_Cast</MudText>
+                        <ul class="library-details-cast" role="list">
+                            @foreach (var member in info.Cast)
+                            {
+                                <li>
+                                    <span class="library-details-cast-name">@member.Name</span>
+                                    @if (member.Role is { } role)
+                                    {
+                                        <span class="mud-text-secondary"> · @role</span>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+            </div>
+        </div>
+
+        @if (_result?.Details is { } details && Item.Kind == MediaKind.Series)
+        {
+            <MudText Typo="Typo.h6" HtmlTag="h3" Class="mt-6 mb-2">@Texts.Details_Seasons</MudText>
+            @if (details.MissingIsUncertain)
+            {
+                <MudAlert Severity="Severity.Info" Dense="true" Class="mb-2">@Texts.Details_MissingUncertain</MudAlert>
+            }
+            @if (details.Seasons.Count == 0)
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@Texts.Details_NoEpisodes</MudText>
+            }
+            else
+            {
+                <MudExpansionPanels MultiExpansion="true" Outlined="true" Class="library-details-seasons">
+                    @foreach (var season in details.Seasons)
+                    {
+                        <MudExpansionPanel @key="season.Season" Text="@SeasonHeading(season)" Expanded="@(details.Seasons.Count == 1)">
+                            <ol class="library-details-episodes" role="list">
+                                @foreach (var row in Rows(season))
+                                {
+                                    <li class="@(row.Missing ? "library-details-missing" : null)">
+                                        <span class="library-details-episode-number"><span class="visually-hidden">@Texts.Details_EpisodeLabel </span>@row.Number</span>
+                                        <span>@(row.Missing ? Texts.Details_EpisodeMissing : row.Title ?? string.Format(Texts.Culture, Texts.Details_Episode, row.Number))</span>
+                                    </li>
+                                }
+                            </ol>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            }
+        }
+
+        @if (Info is not null)
+        {
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mt-4 d-block">@Texts.Details_Source</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(() => MudDialog.Close())">@Texts.Details_Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public LibraryItem Item { get; set; } = default!;
+
+    private LibraryDetailsResult? _result;
+    private readonly CancellationTokenSource _closing = new();
+
+    private JellyfinDetails? Info => _result?.Details?.Info;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _result = await DetailsService.GetAsync(Item.JellyfinId, _closing.Token);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Details zu {JellyfinId} konnten nicht zusammengestellt werden", Item.JellyfinId);
+            _result = LibraryDetailsResult.Fail(Texts.Msg_Jellyfin_Broken);
+        }
+    }
+
+    private IEnumerable<string> Facts
+    {
+        get
+        {
+            yield return Item.Kind == MediaKind.Movie ? Texts.Kind_Movie : Texts.Kind_Series;
+            if (Years() is { } years)
+                yield return years;
+            if (Info?.OfficialRating is { } rating)
+                yield return rating;
+            if (Item.Kind == MediaKind.Movie && Info?.Runtime is { } runtime)
+                yield return string.Format(Texts.Culture, Texts.Details_Runtime, (int)Math.Round(runtime.TotalMinutes));
+        }
+    }
+
+    private string? Years()
+    {
+        if (Item.Year is not { } start)
+            return null;
+        if (Item.Kind == MediaKind.Series && Info?.IsContinuing == true)
+            return string.Format(Texts.Culture, Texts.Details_Since, start);
+        return Info?.EndYear is { } end && end > start ? $"{start}–{end}" : start.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private static string SeasonHeading(SeasonOverview season)
+    {
+        var name = season.IsSpecials ? Texts.Details_Specials : string.Format(Texts.Culture, Texts.Details_Season, season.Season);
+        var count = season.Episodes.Count == 1 ? Texts.Details_EpisodeCountOne : string.Format(Texts.Culture, Texts.Details_EpisodeCount, season.Episodes.Count);
+        var heading = $"{name} · {count}";
+        if (season.Missing.Count > 0)
+            heading += " · " + (season.Missing.Count == 1 ? Texts.Details_MissingCountOne : string.Format(Texts.Culture, Texts.Details_MissingCount, season.Missing.Count));
+        return heading;
+    }
+
+    private sealed record EpisodeRow(int SortKey, string Number, string? Title, bool Missing);
+
+    private static IEnumerable<EpisodeRow> Rows(SeasonOverview season) => season.Episodes
+        .Select(e => new EpisodeRow(e.Number, e.NumberEnd is { } end && end > e.Number ? $"{e.Number}–{end}" : e.Number.ToString(CultureInfo.InvariantCulture), e.Title, false))
+        .Concat(season.Missing.Select(n => new EpisodeRow(n, n.ToString(CultureInfo.InvariantCulture), null, true)))
+        .OrderBy(row => row.SortKey);
+
+    public void Dispose()
+    {
+        _closing.Cancel();
+        _closing.Dispose();
+    }
+}

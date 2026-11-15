@@ -631,4 +631,27 @@
   <data name="Msg_Connection_KeyNeededForNewAddress" xml:space="preserve"><value>Bij een nieuw adres (andere host, ander protocol of andere poort) moet je de Jellyfin-sleutel opnieuw invoeren. De opgeslagen sleutel wordt nooit naar een ander adres gestuurd.</value></data>
   <data name="TwoFactor_SignInAgain" xml:space="preserve"><value>Tip: vermoed je onbevoegde toegang, meld je dan af nadat je de codes hebt bewaard. Dat beëindigt alle sessies van dit account.</value></data>
   <data name="Password_MustChange" xml:space="preserve"><value>Een beheerder heeft je wachtwoord ingesteld. Kies nu een eigen wachtwoord dat alleen jij kent.</value></data>
+  <data name="Details_NotInLibrary" xml:space="preserve"><value>Deze titel staat niet meer in de bibliotheek.</value></data>
+  <data name="Details_Loading" xml:space="preserve"><value>Details worden geladen …</value></data>
+  <data name="Details_Close" xml:space="preserve"><value>Sluiten</value></data>
+  <data name="Details_Runtime" xml:space="preserve"><value>{0} min</value></data>
+  <data name="Details_Rating" xml:space="preserve"><value>Beoordeling {0} van 10</value></data>
+  <data name="Details_Since" xml:space="preserve"><value>sinds {0}</value></data>
+  <data name="Details_Director" xml:space="preserve"><value>Regie</value></data>
+  <data name="Details_Studio" xml:space="preserve"><value>Studio</value></data>
+  <data name="Details_Cast" xml:space="preserve"><value>Cast</value></data>
+  <data name="Details_Seasons" xml:space="preserve"><value>Seizoenen</value></data>
+  <data name="Details_Season" xml:space="preserve"><value>Seizoen {0}</value></data>
+  <data name="Details_Specials" xml:space="preserve"><value>Specials</value></data>
+  <data name="Details_EpisodeCount" xml:space="preserve"><value>{0} afleveringen</value></data>
+  <data name="Details_EpisodeCountOne" xml:space="preserve"><value>1 aflevering</value></data>
+  <data name="Details_MissingCount" xml:space="preserve"><value>{0} ontbreken</value></data>
+  <data name="Details_MissingCountOne" xml:space="preserve"><value>1 ontbreekt</value></data>
+  <data name="Details_Episode" xml:space="preserve"><value>Aflevering {0}</value></data>
+  <data name="Details_EpisodeLabel" xml:space="preserve"><value>Aflevering</value></data>
+  <data name="Details_Loaded" xml:space="preserve"><value>Details geladen</value></data>
+  <data name="Details_EpisodeMissing" xml:space="preserve"><value>ontbreekt</value></data>
+  <data name="Details_MissingUncertain" xml:space="preserve"><value>Jellyfin en TMDB nummeren de afleveringen van deze serie mogelijk anders. De ontbrekende afleveringen zijn daarom slechts een aanwijzing.</value></data>
+  <data name="Details_NoEpisodes" xml:space="preserve"><value>Er staan nog geen afleveringen in Jellyfin.</value></data>
+  <data name="Details_Source" xml:space="preserve"><value>Gegevens uit Jellyfin</value></data>
 </root>

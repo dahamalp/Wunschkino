@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Wunschkino.Gaps;
 using Wunschkino.Library;
 using Wunschkino.Resources;
@@ -9,7 +10,7 @@ namespace Wunschkino.Services;
 
 public sealed class JellyfinException(string message, Exception? inner = null) : Exception(message, inner);
 
-public sealed class JellyfinClient(HttpClient http)
+public sealed partial class JellyfinClient(HttpClient http)
 {
     public const int PageSize = 500;
 
@@ -98,9 +99,74 @@ public sealed class JellyfinClient(HttpClient http)
         var result = await SendForJsonAsync<EpisodesResult>(baseUrl, path, apiKey, ct);
         return (result.Items ?? [])
             .Where(e => e.LocationType != "Virtual" && e.ParentIndexNumber is not null && e.IndexNumber is not null)
-            .Select(e => new JellyfinEpisode(e.ParentIndexNumber!.Value, e.IndexNumber!.Value, e.IndexNumberEnd))
+            .Select(e => new JellyfinEpisode(e.ParentIndexNumber!.Value, e.IndexNumber!.Value, e.IndexNumberEnd, Clean(e.Name, MaxNameLength)))
             .ToList();
     }
+
+    /// <summary>Metadaten eines Titels für die Detailansicht, in der Metadaten-Sprache des Jellyfin-Servers; null, wenn Jellyfin ihn nicht kennt.</summary>
+    /// <exception cref="JellyfinException">Wenn Jellyfin nicht erreichbar ist, den Key ablehnt oder Unlesbares liefert.</exception>
+    public async Task<JellyfinDetails?> GetDetailsAsync(string baseUrl, string apiKey, string itemId, CancellationToken ct = default)
+    {
+        if (!ApiKeyFormat.IsValid(apiKey))
+            throw new JellyfinException(Texts.Msg_Jellyfin_StoredKeyInvalid);
+
+        var path = $"Items?Ids={Uri.EscapeDataString(itemId)}&Fields=Overview,Genres,People,Studios,Taglines";
+        var result = await SendForJsonAsync<DetailsResult>(baseUrl, path, apiKey, ct);
+        if (result.Items is not [var item, ..])
+            return null;
+
+        var people = item.People ?? [];
+        return new JellyfinDetails(
+            Clean(PlainText(item.Overview), MaxOverviewLength),
+            Clean(item.Taglines?.FirstOrDefault(), MaxNameLength),
+            Names(item.Genres, 10),
+            Clean(item.OfficialRating, MaxNameLength),
+            item.CommunityRating is > 0 ? item.CommunityRating : null,
+            item.RunTimeTicks is > 0 and < long.MaxValue / 2 ? TimeSpan.FromTicks(item.RunTimeTicks.Value) : null,
+            item.Status == "Ended" ? item.EndDate?.Year : null,
+            item.Status == "Continuing",
+            Names(item.Studios?.Select(s => s.Name), 5),
+            Names(people.Where(p => p.Type == "Director").Select(p => p.Name), 3),
+            [.. people.Where(p => p.Type == "Actor" && !string.IsNullOrWhiteSpace(p.Name))
+                .Take(MaxCast)
+                .Select(p => new CastMember(Clean(p.Name, MaxNameLength)!, Clean(p.Role, MaxNameLength)))]);
+    }
+
+    private const int MaxCast = 10;
+    private const int MaxNameLength = 200;
+    private const int MaxOverviewLength = 5000;
+
+    private static IReadOnlyList<string> Names(IEnumerable<string?>? values, int max) =>
+        [.. (values ?? []).Select(v => Clean(v, MaxNameLength)).OfType<string>().Distinct().Take(max)];
+
+    private static string? Clean(string? value, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+        var trimmed = value.Trim();
+        if (trimmed.Length <= maxLength)
+            return trimmed;
+        var cut = char.IsHighSurrogate(trimmed[maxLength - 1]) ? maxLength - 1 : maxLength;
+        return trimmed[..cut] + "…";
+    }
+
+    // Jellyfin übernimmt Beschreibungen oft mit HTML aus den Quellen. Angezeigt wird reiner Text, nie das HTML selbst.
+    private static string? PlainText(string? html)
+    {
+        if (string.IsNullOrWhiteSpace(html))
+            return null;
+        // Vorher kürzen: Die Tag-Suche ist bei vielen „<“ ohne „>“ quadratisch, und mehr als MaxOverviewLength zeigt der Dialog ohnehin nicht.
+        var bounded = html.Length <= MaxOverviewLength * 4 ? html : html[..(MaxOverviewLength * 4)];
+        var withBreaks = LineBreakTags().Replace(bounded, "\n");
+        var text = WebUtility.HtmlDecode(AnyTag().Replace(withBreaks, ""));
+        return string.Join('\n', text.Split('\n').Select(line => line.Trim())).Trim();
+    }
+
+    [GeneratedRegex(@"<br\s*/?>|</p\s*>", RegexOptions.IgnoreCase)]
+    private static partial Regex LineBreakTags();
+
+    [GeneratedRegex("<[^>]*>")]
+    private static partial Regex AnyTag();
 
     /// <summary>Liefert die Bildantwort ungelesen (Aufrufer streamt und entsorgt sie) oder null, wenn es kein Bild gibt.</summary>
     public async Task<HttpResponseMessage?> GetPosterAsync(string baseUrl, string apiKey, string itemId, int maxWidth, CancellationToken ct = default)
@@ -192,7 +258,25 @@ public sealed class JellyfinClient(HttpClient http)
 
     private sealed record EpisodesResult(List<EpisodeItem>? Items);
 
-    private sealed record EpisodeItem(int? ParentIndexNumber, int? IndexNumber, int? IndexNumberEnd, string? LocationType);
+    private sealed record EpisodeItem(string? Name, int? ParentIndexNumber, int? IndexNumber, int? IndexNumberEnd, string? LocationType);
+
+    private sealed record DetailsResult(List<DetailItem>? Items);
+
+    private sealed record DetailItem(
+        string? Overview,
+        List<string?>? Taglines,
+        List<string?>? Genres,
+        string? OfficialRating,
+        double? CommunityRating,
+        long? RunTimeTicks,
+        string? Status,
+        DateTimeOffset? EndDate,
+        List<NamedItem>? Studios,
+        List<PersonItem>? People);
+
+    private sealed record NamedItem(string? Name);
+
+    private sealed record PersonItem(string? Name, string? Role, string? Type);
 
     private sealed record BaseItem(
         string? Id,

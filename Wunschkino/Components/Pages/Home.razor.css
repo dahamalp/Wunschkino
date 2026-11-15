@@ -11,6 +11,44 @@
     min-width: 0;
 }
 
+.library-card-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    border-radius: var(--mud-default-borderradius);
+}
+
+.library-card-button .library-poster {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+@media (hover: hover) {
+    .library-card-button:hover .library-poster {
+        transform: translateY(-2px);
+        box-shadow: var(--mud-elevation-4);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .library-card-button .library-poster {
+        transition: none;
+    }
+
+    .library-card-button:hover .library-poster {
+        transform: none;
+    }
+}
+
+::deep .library-meta {
+    display: block;
+}
+
 .library-poster {
     width: 100%;
     aspect-ratio: 2 / 3;

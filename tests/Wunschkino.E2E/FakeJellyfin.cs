@@ -53,31 +53,64 @@ public sealed class FakeJellyfin : IAsyncDisposable
 
         app.MapGet("/System/Info", () => Results.Json(new { ServerName = "Demo-Jellyfin", Version = "10.10.0" }));
         app.MapGet("/Library/VirtualFolders", () => Results.Json(new[] { new { Name = "Filme und Serien", ItemId = "demo-bibliothek" } }));
-        app.MapGet("/Items", () => Results.Json(new
-        {
-            TotalRecordCount = Titles.Length,
-            Items = Titles.Select((t, i) => new
-            {
-                Id = t.Id,
-                Name = t.Name,
-                Type = t.Type,
-                ProductionYear = t.Year,
-                DateCreated = DateTimeOffset.UtcNow.AddDays(-i * 3),
-                ProviderIds = new Dictionary<string, string> { ["Tmdb"] = (1000 + i).ToString() },
-                ImageTags = t.Poster ? new Dictionary<string, string> { ["Primary"] = "x" } : new Dictionary<string, string>()
-            })
-        }));
+        app.MapGet("/Items", (string? ids) => Results.Json(ids is null ? Library() : Details(ids)));
         app.MapGet("/Items/{id}/Images/Primary", (string id) =>
         {
             var title = Titles.FirstOrDefault(t => t.Id == id);
             return title.Id is null ? Results.NotFound() : Results.Bytes(PosterPng(Array.IndexOf(Titles, title)), "image/png");
         });
-        app.MapGet("/Shows/{id}/Episodes", () => Results.Json(new { Items = Array.Empty<object>() }));
+        app.MapGet("/Shows/{id}/Episodes", (string id) => Results.Json(new { Items = id == "s01" ? DemoEpisodes : [] }));
 
         await app.StartAsync();
         var url = app.Urls.First();
         return new FakeJellyfin(app, url);
     }
+
+    private static readonly object[] DemoEpisodes =
+    [
+        new { Name = "Der erste Fund", ParentIndexNumber = 1, IndexNumber = 1, LocationType = "FileSystem" },
+        new { Name = "Staub und Papier", ParentIndexNumber = 1, IndexNumber = 2, LocationType = "FileSystem" },
+        new { Name = "Die verschlossene Kiste", ParentIndexNumber = 2, IndexNumber = 1, LocationType = "FileSystem" }
+    ];
+
+    private static object Library() => new
+    {
+        TotalRecordCount = Titles.Length,
+        Items = Titles.Select((t, i) => new
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Type = t.Type,
+            ProductionYear = t.Year,
+            DateCreated = DateTimeOffset.UtcNow.AddDays(-i * 3),
+            ProviderIds = new Dictionary<string, string> { ["Tmdb"] = (1000 + i).ToString() },
+            ImageTags = t.Poster ? new Dictionary<string, string> { ["Primary"] = "x" } : new Dictionary<string, string>()
+        })
+    };
+
+    private static object Details(string id) => new
+    {
+        Items = Titles.Where(t => t.Id == id).Select(t => new
+        {
+            Id = t.Id,
+            Name = t.Name,
+            Type = t.Type,
+            Overview = $"Worum es in „{t.Name}“ geht.<br>Ein zweiter Absatz mit <i>Hervorhebung</i>.",
+            Taglines = new[] { "Eine Geschichte, die bleibt" },
+            Genres = new[] { "Drama", "Abenteuer" },
+            OfficialRating = "FSK-12",
+            CommunityRating = 7.8,
+            RunTimeTicks = TimeSpan.FromMinutes(t.Type == "Movie" ? 112 : 45).Ticks,
+            Status = t.Type == "Series" ? "Continuing" : null,
+            Studios = new[] { new { Name = "Demo-Studio" } },
+            People = new object[]
+            {
+                new { Name = "Regina Regie", Type = "Director" },
+                new { Name = "Anna Beispiel", Role = "Hauptrolle", Type = "Actor" },
+                new { Name = "Ben Muster", Role = "Freund", Type = "Actor" }
+            }
+        })
+    };
 
     // Der Bild-Proxy lässt nur Rasterbilder durch, deshalb ein PNG mit Farbverlauf (ohne Bibliothek); den Titel zeigt die Karte darunter.
     private static byte[] PosterPng(int index)

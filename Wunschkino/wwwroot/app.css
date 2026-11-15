@@ -208,3 +208,129 @@ a, button, .mud-button-root, .mud-icon-button, .mud-select, .mud-switch {
 .mud-table td, .mud-table th {
     font-variant-numeric: tabular-nums;
 }
+
+/* Detailansicht der Bibliothek: MudBlazor rendert Dialoge außerhalb der Seite, deshalb hier statt im Seiten-CSS. */
+.library-details-body {
+    display: grid;
+    grid-template-columns: minmax(120px, 200px) 1fr;
+    gap: 1.5rem;
+}
+
+.library-details-poster img,
+.library-details-placeholder {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--mud-default-borderradius);
+    background: var(--mud-palette-background-gray);
+}
+
+.library-details-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mud-palette-text-disabled);
+}
+
+.library-details-info {
+    min-width: 0;
+}
+
+.library-details-rating {
+    white-space: nowrap;
+}
+
+.library-details-rating .mud-icon-root {
+    color: var(--mud-palette-warning);
+    vertical-align: -0.2em;
+    margin-inline-end: 0.15em;
+}
+
+.library-details-genres,
+.library-details-cast,
+.library-details-episodes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.library-details-genres {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.library-details-tagline {
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+/* Jellyfin trennt Absätze mit Zeilenumbrüchen; der Text kommt ohne HTML an. */
+.library-details-overview {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.library-details-credits {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1rem;
+    margin: 1rem 0 0;
+}
+
+.library-details-credits dt {
+    color: var(--mud-palette-text-secondary);
+}
+
+.library-details-credits dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.library-details-cast li,
+.library-details-episodes li {
+    padding: 0.2rem 0;
+    overflow-wrap: anywhere;
+}
+
+.library-details-cast-name {
+    font-weight: 500;
+}
+
+.library-details-episodes li {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.library-details-episode-number {
+    min-width: 3.5ch;
+    text-align: end;
+    color: var(--mud-palette-text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.library-details-missing {
+    color: var(--mud-palette-warning-darken);
+    font-style: italic;
+}
+
+@media (max-width: 599.98px) {
+    .mud-dialog.library-details {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .library-details-body {
+        grid-template-columns: 1fr;
+    }
+
+    .library-details-poster {
+        max-width: 160px;
+    }
+}

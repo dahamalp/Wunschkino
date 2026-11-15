@@ -200,6 +200,7 @@ builder.Services.AddSingleton<LibraryCache>();
 builder.Services.AddSingleton<WishAutoCompleter>();
 builder.Services.AddScoped<WishMetadataRefresher>();
 builder.Services.AddScoped<SeriesGapService>();
+builder.Services.AddScoped<LibraryDetailsService>();
 builder.Services.AddSingleton<SeriesGapProgress>();
 builder.Services.AddSingleton<LibraryRefreshService>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<LibraryRefreshService>());

@@ -631,4 +631,27 @@
   <data name="Msg_Connection_KeyNeededForNewAddress" xml:space="preserve"><value>Bei einer neuen Adresse (anderer Host, anderes Protokoll oder anderer Port) musst Du den Jellyfin-Key neu eingeben. Der gespeicherte Key wird nie an eine andere Adresse geschickt.</value></data>
   <data name="TwoFactor_SignInAgain" xml:space="preserve"><value>Tipp: Wenn Du fremden Zugriff vermutest, melde Dich nach dem Sichern der Codes ab. Das beendet alle Sitzungen dieses Kontos.</value></data>
   <data name="Password_MustChange" xml:space="preserve"><value>Ein Admin hat Dein Passwort vergeben. Wähle jetzt ein eigenes, das nur Du kennst.</value></data>
+  <data name="Details_NotInLibrary" xml:space="preserve"><value>Dieser Titel ist nicht mehr in der Bibliothek.</value></data>
+  <data name="Details_Loading" xml:space="preserve"><value>Details werden geladen …</value></data>
+  <data name="Details_Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Details_Runtime" xml:space="preserve"><value>{0} Min.</value></data>
+  <data name="Details_Rating" xml:space="preserve"><value>Bewertung {0} von 10</value></data>
+  <data name="Details_Since" xml:space="preserve"><value>seit {0}</value></data>
+  <data name="Details_Director" xml:space="preserve"><value>Regie</value></data>
+  <data name="Details_Studio" xml:space="preserve"><value>Studio</value></data>
+  <data name="Details_Cast" xml:space="preserve"><value>Darsteller</value></data>
+  <data name="Details_Seasons" xml:space="preserve"><value>Staffeln</value></data>
+  <data name="Details_Season" xml:space="preserve"><value>Staffel {0}</value></data>
+  <data name="Details_Specials" xml:space="preserve"><value>Specials</value></data>
+  <data name="Details_EpisodeCount" xml:space="preserve"><value>{0} Folgen</value></data>
+  <data name="Details_EpisodeCountOne" xml:space="preserve"><value>1 Folge</value></data>
+  <data name="Details_MissingCount" xml:space="preserve"><value>{0} fehlen</value></data>
+  <data name="Details_MissingCountOne" xml:space="preserve"><value>1 fehlt</value></data>
+  <data name="Details_Episode" xml:space="preserve"><value>Folge {0}</value></data>
+  <data name="Details_EpisodeLabel" xml:space="preserve"><value>Folge</value></data>
+  <data name="Details_Loaded" xml:space="preserve"><value>Details geladen</value></data>
+  <data name="Details_EpisodeMissing" xml:space="preserve"><value>fehlt</value></data>
+  <data name="Details_MissingUncertain" xml:space="preserve"><value>Die Folgenzählung von Jellyfin und TMDB passt bei dieser Serie nicht sicher zusammen. Die fehlenden Folgen sind deshalb nur ein Hinweis.</value></data>
+  <data name="Details_NoEpisodes" xml:space="preserve"><value>In Jellyfin liegen noch keine Folgen.</value></data>
+  <data name="Details_Source" xml:space="preserve"><value>Angaben aus Jellyfin</value></data>
 </root>

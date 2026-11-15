@@ -4,7 +4,7 @@ namespace Wunschkino.Gaps;
 public sealed record TmdbEpisode(int Season, int Number, DateOnly? AirDate);
 
 /// <param name="NumberEnd">Letzte Folge einer Doppelfolgen-Datei (z. B. 2 bis 3); sonst null.</param>
-public sealed record JellyfinEpisode(int Season, int Number, int? NumberEnd);
+public sealed record JellyfinEpisode(int Season, int Number, int? NumberEnd, string? Title = null);
 
 public enum GapStatus
 {

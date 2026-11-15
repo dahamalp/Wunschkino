@@ -3,7 +3,10 @@
 @using Wunschkino.Auth
 @using Wunschkino.Library
 @using Wunschkino.Services
+@using Wunschkino.Components.Library
 @inject NavigationManager Navigation
+@inject IDialogService Dialogs
+@inject IJSRuntime JS
 @inject LibraryCache Cache
 @inject LibraryRefreshService RefreshService
 @inject Wunschkino.Localization.UserTimeZone TimeZone
@@ -88,20 +91,22 @@ else if (matches.Count == 0 && _snapshot.Items.Count > 0)
     @foreach (var item in matches.Take(_visibleCount))
     {
         <li class="library-card" @key="item.JellyfinId">
-            @if (item.HasPoster)
-            {
-                <img src="/posters/@item.JellyfinId?w=300" alt="" width="300" height="450" loading="lazy" decoding="async" class="library-poster" />
-            }
-            else
-            {
-                <div class="library-poster library-poster-placeholder" aria-hidden="true">
-                    <MudIcon Icon="@(item.Kind == MediaKind.Movie ? Icons.Material.Filled.Movie : Icons.Material.Filled.Tv)" Size="Size.Large" />
-                </div>
-            }
-            <MudText Typo="Typo.body2" Class="library-title" title="@item.Title">@item.Title</MudText>
-            <MudText Typo="Typo.caption" Class="mud-text-secondary">
-                @(item.Kind == MediaKind.Movie ? Texts.Kind_Movie : Texts.Kind_Series)@(item.Year is { } year ? $" · {year}" : "")
-            </MudText>
+            <button type="button" class="library-card-button" aria-haspopup="dialog" data-item-id="@item.JellyfinId" @onclick="() => OpenDetails(item)">
+                @if (item.HasPoster)
+                {
+                    <img src="/posters/@item.JellyfinId?w=300" alt="" width="300" height="450" loading="lazy" decoding="async" class="library-poster" />
+                }
+                else
+                {
+                    <span class="library-poster library-poster-placeholder" aria-hidden="true">
+                        <MudIcon Icon="@(item.Kind == MediaKind.Movie ? Icons.Material.Filled.Movie : Icons.Material.Filled.Tv)" Size="Size.Large" />
+                    </span>
+                }
+                <MudText Typo="Typo.body2" HtmlTag="span" Class="library-title" title="@item.Title">@item.Title</MudText>
+                <MudText Typo="Typo.caption" HtmlTag="span" Class="mud-text-secondary library-meta">
+                    @(item.Kind == MediaKind.Movie ? Texts.Kind_Movie : Texts.Kind_Series)@(item.Year is { } year ? $" · {year}" : "")
+                </MudText>
+            </button>
         </li>
     }
 </ul>
@@ -134,6 +139,26 @@ else if (matches.Count == 0 && _snapshot.Items.Count > 0)
     [SupplyParameterFromQuery(Name = "sort")]
     private string? SortQuery { get; set; }
 
+    // Der geöffnete Titel steht in der Adresse: So schließt die Zurück-Taste (auf dem Handy) den Dialog, und ein Link öffnet ihn direkt.
+    [SupplyParameterFromQuery(Name = "item")]
+    private string? ItemQuery { get; set; }
+
+    private static readonly DialogOptions DetailsOptions = new()
+    {
+        MaxWidth = MaxWidth.Medium,
+        FullWidth = true,
+        CloseButton = true,
+        CloseOnEscapeKey = true,
+        BackdropClick = true
+    };
+
+    private IDialogReference? _details;
+    private string? _detailsId;
+    private int _detailsVersion;
+    private bool _detailsPushedHistory;
+    private bool _rendered;
+    private bool _disposed;
+
     protected override void OnInitialized()
     {
         _search = UrlFilter.Text(SearchQuery);
@@ -144,13 +169,102 @@ else if (matches.Count == 0 && _snapshot.Items.Count > 0)
         TimeZone.Changed += OnTimeZoneChanged;
     }
 
+    protected override Task OnParametersSetAsync() => _rendered ? SyncDetailsAsync() : Task.CompletedTask;
+
+    // Dialoge brauchen die laufende Verbindung; beim Vorab-Rendern auf dem Server lässt sich noch keiner öffnen.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        _rendered = true;
+        await SyncDetailsAsync();
+    }
+
+    private void OpenDetails(LibraryItem item)
+    {
+        // Ein Doppelklick legte sonst zwei Verlaufseinträge an, und das Schließen landete wieder beim offenen Titel.
+        if (_detailsPushedHistory || _detailsId is not null)
+            return;
+        _detailsPushedHistory = true;
+        Navigation.NavigateTo(Navigation.GetUriWithQueryParameter("item", item.JellyfinId));
+    }
+
+    private async Task SyncDetailsAsync()
+    {
+        var wanted = UrlFilter.Text(ItemQuery) is { } id && Cache.TryGet(id, out var item) ? item : null;
+        if (wanted?.JellyfinId == _detailsId)
+            return;
+
+        var version = ++_detailsVersion;
+        _detailsId = null;
+        if (_details is { } open)
+        {
+            // Zurück-Taste oder ein anderer Titel: Der Verlaufseintrag des alten Dialogs ist damit verbraucht.
+            _details = null;
+            _detailsPushedHistory = wanted is not null && _detailsPushedHistory;
+            open.Close();
+        }
+
+        if (wanted is null)
+        {
+            _detailsPushedHistory = false;
+            // Solange der Bestand noch lädt, fehlt der Titel nur vorläufig; OnCacheChanged gleicht danach erneut ab.
+            if (ItemQuery is not null && Cache.Snapshot.UpdatedUtc is not null)
+                UrlFilter.Replace(Navigation, new Dictionary<string, object?> { ["item"] = null });
+            return;
+        }
+
+        _detailsId = wanted.JellyfinId;
+        var reference = await Dialogs.ShowAsync<LibraryDetailsDialog>(wanted.Title,
+            new DialogParameters<LibraryDetailsDialog> { { d => d.Item, wanted } }, DetailsOptions);
+        if (version != _detailsVersion || _disposed)
+        {
+            reference.Close();
+            return;
+        }
+        _details = reference;
+        _ = RemoveFromUrlWhenClosedAsync(reference, wanted.JellyfinId);
+    }
+
+    private async Task RemoveFromUrlWhenClosedAsync(IDialogReference reference, string jellyfinId)
+    {
+        await reference.Result;
+        await InvokeAsync(async () =>
+        {
+            if (_disposed || _details != reference)
+                return;
+
+            _details = null;
+            _detailsId = null;
+            var pushed = _detailsPushedHistory;
+            _detailsPushedHistory = false;
+            // Nur zurückgehen, solange die Adresse noch diesen Titel zeigt; sonst träfe history.back eine fremde Seite.
+            var stillOpenInUrl = Navigation.GetUriWithQueryParameter("item", jellyfinId) == Navigation.Uri;
+            try
+            {
+                if (pushed && stillOpenInUrl)
+                    await JS.InvokeVoidAsync("history.back");
+                else if (stillOpenInUrl)
+                    UrlFilter.Replace(Navigation, new Dictionary<string, object?> { ["item"] = null });
+
+                await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./library.js");
+                await module.InvokeVoidAsync("focusCard", jellyfinId);
+            }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException)
+            {
+            }
+        });
+    }
+
     private void OnTimeZoneChanged() => InvokeAsync(StateHasChanged);
 
-    private void OnCacheChanged() => InvokeAsync(() =>
+    private void OnCacheChanged() => InvokeAsync(async () =>
     {
         _snapshot = Cache.Snapshot;
         _refreshRequested = false;
         StateHasChanged();
+        if (_rendered && !_disposed)
+            await SyncDetailsAsync();
     });
 
     private void RefreshNow()
@@ -190,6 +304,8 @@ else if (matches.Count == 0 && _snapshot.Items.Count > 0)
 
     public void Dispose()
     {
+        _disposed = true;
+        _details?.Close();
         Cache.Changed -= OnCacheChanged;
         TimeZone.Changed -= OnTimeZoneChanged;
     }
