@@ -38,7 +38,8 @@ public sealed class TwoFactorService(
     IPasswordHasher passwordHasher,
     SettingsService settings,
     TimeProvider time,
-    AuditLog? audit = null)
+    AuditLog? audit = null,
+    PrincipalValidator? sessions = null)
 {
     public const string Issuer = "Wunschkino";
     public const int RecoveryCodeCount = 10;
@@ -187,6 +188,7 @@ public sealed class TwoFactorService(
             return UserOperationResult.Fail(Texts.Msg_TwoFactor_ResetNotOn);
 
         await ClearAsync(db, user.Id, rotateSecurityStamp: true, ct);
+        sessions?.Forget(user.Id);
         ForgetFailures(userId);
         if (audit is not null)
         {

@@ -66,6 +66,32 @@ public class SessionHardeningTests : IDisposable
     }
 
     [Fact]
+    public async Task ChangesMadeInTheApp_RejectTheOldCookieAtOnce_DespiteTheCache()
+    {
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var validator = Validator(cache: cache);
+        var users = new UserService(_db, new PlainTextHasher(), _time, sessions: validator);
+        var admin = TestUsers.Add(_db, "chef", UserRole.Admin);
+        var anna = TestUsers.Add(_db, "anna");
+        await users.ResetPasswordAsync(admin.Id, anna.Id, Password);
+
+        var beforeChange = AuthClaims.CreatePrincipal(TestUsers.Reload(_db, anna.Id), _time.GetUtcNow());
+        Assert.True(await validator.IsValidAsync(beforeChange));
+        await users.ChangeOwnPasswordAsync(anna.Id, Password, "neues-langes-passwort");
+        Assert.False(await validator.IsValidAsync(beforeChange));
+
+        var beforeRevoke = AuthClaims.CreatePrincipal(TestUsers.Reload(_db, anna.Id), _time.GetUtcNow());
+        Assert.True(await validator.IsValidAsync(beforeRevoke));
+        await users.RevokeSessionsAsync(anna.Id);
+        Assert.False(await validator.IsValidAsync(beforeRevoke));
+
+        var beforeDisable = AuthClaims.CreatePrincipal(TestUsers.Reload(_db, anna.Id), _time.GetUtcNow());
+        Assert.True(await validator.IsValidAsync(beforeDisable));
+        await users.SetDisabledAsync(admin.Id, anna.Id, disabled: true);
+        Assert.False(await validator.IsValidAsync(beforeDisable));
+    }
+
+    [Fact]
     public async Task SigningInAgainRightAfterSigningOut_IsNotRejectedByTheCache()
     {
         using var cache = new MemoryCache(new MemoryCacheOptions());

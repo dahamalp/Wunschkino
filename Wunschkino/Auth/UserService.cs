@@ -20,7 +20,8 @@ public sealed class UserService(
     IDbContextFactory<AppDbContext> dbFactory,
     IPasswordHasher passwordHasher,
     TimeProvider time,
-    AuditLog? audit = null)
+    AuditLog? audit = null,
+    PrincipalValidator? sessions = null)
 {
     private static string NotAllowed => Texts.Msg_User_NotAllowed;
     private static string UnknownUser => Texts.Msg_User_Unknown;
@@ -136,6 +137,7 @@ public sealed class UserService(
         user.FailedLogins = 0;
         user.LockedUntilUtc = null;
         await db.SaveChangesAsync(ct);
+        sessions?.Forget(user.Id);
         if (audit is not null)
             await audit.WriteAsync(AuditActions.PasswordChanged, user.Id, user.Username, ct: ct);
         return UserOperationResult.Ok();
@@ -147,6 +149,7 @@ public sealed class UserService(
         await using var db = await dbFactory.CreateDbContextAsync(ct);
         var stamp = User.NewSecurityStamp();
         await db.Users.Where(u => u.Id == userId).ExecuteUpdateAsync(s => s.SetProperty(u => u.SecurityStamp, stamp), ct);
+        sessions?.Forget(userId);
     }
 
     /// <summary>
@@ -220,6 +223,8 @@ public sealed class UserService(
             if (rotateSecurityStamp)
                 user.SecurityStamp = User.NewSecurityStamp();
             await db.SaveChangesAsync(ct);
+            if (rotateSecurityStamp)
+                sessions?.Forget(user.Id);
             await AuditAsync(db, actingUserId, auditEvent.Action, user.Username, auditEvent.Detail, ct);
             return UserOperationResult.Ok();
         }

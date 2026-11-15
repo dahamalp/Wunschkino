@@ -103,8 +103,17 @@
 
     private string LoginUrl => ReturnUrl is null ? "/login" : $"/login?ReturnUrl={Uri.EscapeDataString(ReturnUrl)}";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        // Ein noch gültiges Anmelde-Cookie bände das Formular-Token an dieses Konto. Läuft das Cookie bis zum Absenden ab
+        // (Passwortwechsel, Abmeldung auf einem anderen Gerät), scheitert die Anmeldung sonst mit 400.
+        if (HttpMethods.IsGet(HttpContext.Request.Method) && HttpContext.User.Identity?.IsAuthenticated == true)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Navigation.NavigateTo(HttpContext.Request.Path + HttpContext.Request.QueryString);
+            return;
+        }
+
         Input ??= new();
         CodeInput ??= new();
         if (IsSecondStep)

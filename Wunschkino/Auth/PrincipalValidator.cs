@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -8,8 +9,9 @@ namespace Wunschkino.Auth;
 /// <summary>
 /// Prüft, ob ein Login-Cookie noch zum aktuellen Stand des Kontos passt (existiert, aktiv, gleiche Rolle, gleicher Security-Stamp)
 /// und nicht länger als die erlaubte Gesamtdauer zurückliegt. Das Ergebnis der Kontoabfrage bleibt kurz im Speicher, denn jede
-/// Anfrage mit Cookie fragt, auch die nach Bildern und Skripten; eine Änderung wirkt deshalb mit bis zu
-/// <see cref="CacheLifetime"/> Verzögerung (Änderungen über die Konsole kommen aus einem anderen Prozess).
+/// Anfrage mit Cookie fragt, auch die nach Bildern und Skripten. Änderungen in der App verwerfen den Eintrag über
+/// <see cref="Forget"/>; Änderungen über die Konsole kommen aus einem anderen Prozess und wirken mit bis zu
+/// <see cref="CacheLifetime"/> Verzögerung.
 /// </summary>
 public sealed class PrincipalValidator(
     IDbContextFactory<AppDbContext> dbFactory,
@@ -21,8 +23,15 @@ public sealed class PrincipalValidator(
 
     private readonly TimeProvider _time = time ?? TimeProvider.System;
     private readonly TimeSpan _maxAge = TimeSpan.FromDays(options?.SessionMaxDays ?? WunschkinoOptions.DefaultSessionMaxDays);
+    private readonly ConcurrentDictionary<int, long> _generations = new();
 
     private sealed record Snapshot(string SecurityStamp, string Role, bool IsDisabled);
+
+    /// <summary>
+    /// Verwirft die gemerkte Prüfung eines Kontos, damit eine Änderung in der App sofort wirkt. Sonst gälte das alte Cookie nach
+    /// einem Passwortwechsel noch kurz weiter, und die Login-Seite bekäme ein Formular-Token, das beim Absenden nicht mehr passt.
+    /// </summary>
+    public void Forget(int userId) => _generations.AddOrUpdate(userId, 1, (_, generation) => generation + 1);
 
     public async Task<bool> IsValidAsync(ClaimsPrincipal principal, CancellationToken ct = default)
     {
@@ -49,7 +58,7 @@ public sealed class PrincipalValidator(
     // einen neuen Stempel und trifft den alten Eintrag nicht, sondern liest frisch aus der Datenbank.
     private async Task<Snapshot?> LoadAsync(int userId, string? cookieStamp, CancellationToken ct)
     {
-        var key = $"principal:{userId}:{cookieStamp}";
+        var key = $"principal:{userId}:{_generations.GetValueOrDefault(userId)}:{cookieStamp}";
         if (cache is not null && cache.TryGetValue(key, out Snapshot? cached))
             return cached;
 
