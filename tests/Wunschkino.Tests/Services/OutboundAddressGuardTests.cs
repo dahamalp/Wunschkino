@@ -60,7 +60,7 @@ public class OutboundAddressGuardTests
         {
             using var connection = await listener.AcceptTcpClientAsync();
             await using var stream = connection.GetStream();
-            await stream.ReadAsync(new byte[4096]);
+            _ = await stream.ReadAsync(new byte[4096]);
             await stream.WriteAsync(Encoding.ASCII.GetBytes("HTTP/1.1 204 No Content\r\nConnection: close\r\n\r\n"));
         });
         using var client = new HttpClient(OutboundAddressGuard.CreateHandler(allowLinkLocal: false));

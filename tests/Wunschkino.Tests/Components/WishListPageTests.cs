@@ -251,7 +251,7 @@ public class WishListPageTests : ComponentTestBase
         Assert.EndsWith("?status=rejected", navigation.Uri);
         await page.InvokeAsync(() => select.Instance.ValueChanged.InvokeAsync(null));
         page.WaitForAssertion(() => Assert.NotEmpty(page.FindAll(".wish-card")), Patience);
-        Assert.False(navigation.Uri.Contains("status="));
+        Assert.DoesNotContain("status=", navigation.Uri);
     }
 
     [Fact]

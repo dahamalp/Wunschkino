@@ -73,13 +73,13 @@ public class SettingsPageTests : ComponentTestBase
     }
 
     [Fact]
-    public void WishVisibility_IsAnonymousByDefault_AndTheSwitchSavesImmediately()
+    public async Task WishVisibility_IsAnonymousByDefault_AndTheSwitchSavesImmediately()
     {
         var page = RenderLoadedPage();
         var toggle = page.Find("input[type=checkbox]");
         Assert.Contains("Wünsche anonym anzeigen", page.Markup);
         Assert.Contains("Admins sehen es immer", page.Markup);
-        Assert.True(WishPrivacy.IsAnonymous(_settings.GetAsync(SettingKeys.WishesAnonymous).GetAwaiter().GetResult()));
+        Assert.True(WishPrivacy.IsAnonymous(await _settings.GetAsync(SettingKeys.WishesAnonymous)));
 
         toggle.Change(false);
 
@@ -137,9 +137,9 @@ public class SettingsPageTests : ComponentTestBase
     }
 
     [Fact]
-    public void UserLimits_ShowTheSavedValues_WhenThePageIsOpenedAgain()
+    public async Task UserLimits_ShowTheSavedValues_WhenThePageIsOpenedAgain()
     {
-        _settings.SetAsync(SettingKeys.WishesPerDay, "7", isProtected: false).GetAwaiter().GetResult();
+        await _settings.SetAsync(SettingKeys.WishesPerDay, "7", isProtected: false);
 
         var page = RenderLoadedPage();
 
