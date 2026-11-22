@@ -51,6 +51,35 @@ public class MigrationUpgradeTests : IDisposable
     }
 
     [Fact]
+    public void ExistingVotes_KeepTheMiddlePriority_WhenThePriorityColumnIsAdded()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseSqlite($"Data Source={Path.Combine(_directory.Path, "priority.db")};Pooling=False")
+            .Options;
+
+        const string beforePriority = "20261011163811_AddSecondFactorLockAndPasswordChange";
+        using (var old = new AppDbContext(options))
+        {
+            old.GetService<IMigrator>().Migrate(beforePriority);
+            old.Database.ExecuteSqlRaw(
+                "INSERT INTO Users (Username, PasswordHash, Role, IsDisabled, FailedLogins, CreatedAtUtc, SecurityStamp) " +
+                "VALUES ('alt', 'x', 'User', 0, 0, '2026-10-01 10:00:00', 'stamp')");
+            old.Database.ExecuteSqlRaw(
+                "INSERT INTO Wishes (TmdbId, Kind, Title, Status, CreatedByUserId, CreatedUtc, UpdatedUtc) " +
+                "VALUES (603, 'Movie', 'Matrix', 'Open', 1, '2026-10-01 10:00:00', '2026-10-01 10:00:00')");
+            old.Database.ExecuteSqlRaw(
+                "INSERT INTO WishVotes (WishId, UserId, Note, CreatedUtc) VALUES (1, 1, 'bitte', '2026-10-01 10:00:00')");
+        }
+
+        using var upgraded = new AppDbContext(options);
+        upgraded.Database.Migrate();
+
+        var vote = upgraded.WishVotes.Single();
+        Assert.Equal("bitte", vote.Note);
+        Assert.Equal(WishPriority.Normal, vote.Priority);
+    }
+
+    [Fact]
     public void ExistingUsers_GetTheSystemAppearance_WhenTheThemeColumnIsAdded()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()

@@ -270,6 +270,41 @@ public class WishListPageTests : ComponentTestBase
     }
 
     [Fact]
+    public async Task OwnPriority_CanBeChangedOnTheCard_AndTheHighChipAppears()
+    {
+        await WishAsync(_alice);
+        var page = OpenAs(_alice);
+        Assert.DoesNotContain("besonders wichtig", page.Markup);
+
+        await page.InvokeAsync(() => page.FindComponent<MudBlazor.MudSelect<WishPriority>>().Instance.ValueChanged.InvokeAsync(WishPriority.High));
+
+        page.WaitForAssertion(() => Assert.Contains("1× besonders wichtig", page.Markup), Patience);
+        using var db = _db.CreateDbContext();
+        Assert.Equal(WishPriority.High, db.WishVotes.Single(v => v.UserId == _alice.Id).Priority);
+    }
+
+    [Fact]
+    public async Task APersonWhoDoesNotSupportTheWish_SeesNoPriorityPicker()
+    {
+        await WishAsync(_bob);
+        var page = OpenAs(_alice);
+
+        Assert.Empty(page.FindComponents<MudBlazor.MudSelect<WishPriority>>());
+    }
+
+    [Fact]
+    public async Task SortingByImportance_IsWrittenToTheUrl()
+    {
+        await WishAsync(_bob);
+        var page = OpenAs(_alice);
+        var navigation = Services.GetRequiredService<NavigationManager>();
+
+        await page.InvokeAsync(() => page.FindComponent<MudBlazor.MudSelect<WishSort>>().Instance.ValueChanged.InvokeAsync(WishSort.Importance));
+
+        page.WaitForAssertion(() => Assert.Contains("sort=importance", navigation.Uri), Patience);
+    }
+
+    [Fact]
     public async Task Admin_CanAccept_Reject_AndReopenByPressingTheActiveButtonAgain()
     {
         await WishAsync(_bob);

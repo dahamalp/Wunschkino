@@ -13,7 +13,14 @@ public static class UserLimits
     public const int DefaultSearchesPerMinute = 10;
     public const int MaxSearchesPerMinute = 120;
 
+    public const int DefaultHighPriorityWishes = 3;
+    public const int MaxHighPriorityWishes = 100;
+
     public static int ParseWishesPerDay(string? stored) => Parse(stored, DefaultWishesPerDay, MaxWishesPerDay);
+
+    public static int ParseHighPriorityWishes(string? stored) => Parse(stored, DefaultHighPriorityWishes, MaxHighPriorityWishes);
+
+    public static int ClampHighPriorityWishes(int value) => Math.Clamp(value, 0, MaxHighPriorityWishes);
 
     public static int ParseSearchesPerMinute(string? stored) => Parse(stored, DefaultSearchesPerMinute, MaxSearchesPerMinute);
 

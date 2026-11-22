@@ -11,6 +11,7 @@ Wunschkino ("wish cinema") is a web portal for **family and friends** that sits 
 - **Library:** poster grid of all movies and series from Jellyfin with search, filter (movie/series) and sorting. Images are served through the server, so the Jellyfin key never reaches the browser.
 - **Wishing:** search by title or IMDb number (`tt0133093`). Every result shows whether the title is already in Jellyfin, already wished for, or still wishable. Optional note.
 - **No duplicate wishes, "+1":** each title can be wished for only once. Other users join with "+1".
+- **Importance:** when wishing and with "+1", everyone says for themselves how important the wish is to them ("Can wait", "Normal" or "Especially important", the middle is the default). The level can be changed later on the card, and the wish list can be sorted by importance.
 - **Anime:** a separate search through [AniList](https://anilist.co/) (including romaji and Japanese titles), no account needed. The whole series is wished for via its TMDB number.
 - **Wish lists:** "All wishes" and "My wishes" with status (open, accepted, rejected, done), filter and sorting.
 - **Admin:** change the status with one click (green check, yellow timer, red cross), comment, delete, user management (create, lock, reset password, roles).
@@ -234,7 +235,7 @@ Under **Einstellungen → Wünsche** (settings, and already in the setup wizard)
 
 ### Limits per user
 
-Under **Einstellungen → Wünsche → Begrenzungen pro Nutzer** you set how many **wishes** a user may make per day (default 20, counting new wishes and "+1" of the last 24 hours, **admins are exempt**) and how many **TMDB searches** per minute (default 10). A value of 0 means no limit. This keeps one person from flooding the wish list or using up your TMDB quota.
+Under **Einstellungen → Wünsche → Begrenzungen pro Nutzer** you set how many **wishes** a user may make per day (default 20, counting new wishes and "+1" of the last 24 hours, **admins are exempt**) and how many **TMDB searches** per minute (default 10). A value of 0 means no limit. This keeps one person from flooding the wish list or using up your TMDB quota. **Especially important wishes per person** (default 3, admins exempt) also limits how many open wishes each person may mark as "Especially important" at the same time. Fulfilled and rejected wishes do not count.
 
 ### Audit log
 

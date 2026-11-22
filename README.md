@@ -11,6 +11,7 @@ Wunschkino ist ein Webportal für **Familie und Freunde** zu einer bestehenden [
 - **Bibliothek:** Poster-Raster aller Filme und Serien aus Jellyfin mit Suche, Filter (Film/Serie) und Sortierung. Die Bilder laufen über den Server, der Jellyfin-Schlüssel erreicht nie den Browser.
 - **Wünschen:** Suche nach Titel oder IMDb-Nummer (`tt0133093`). Jedes Ergebnis zeigt, ob der Titel schon in Jellyfin liegt, schon gewünscht wurde oder noch wünschbar ist. Optional mit Notiz.
 - **Kein doppelter Wunsch, „+1“:** Jeder Titel wird nur einmal gewünscht. Weitere Nutzer schließen sich per „+1“ an.
+- **Wichtigkeit:** Beim Wünschen und beim „+1“ sagt jeder für sich, wie wichtig ihm der Wunsch ist („Kann warten“, „Normal“ oder „Besonders wichtig“, Standard ist die Mitte). Die Stufe lässt sich später an der Karte ändern, und die Wunschliste lässt sich nach Wichtigkeit sortieren.
 - **Anime:** Eigene Suche über [AniList](https://anilist.co/) (auch Romaji- und japanische Titel), ohne Konto. Gewünscht wird die ganze Serie über ihre TMDB-Nummer.
 - **Wunschlisten:** „Alle Wünsche“ und „Meine Wünsche“ mit Status (Offen, Angenommen, Abgelehnt, Erledigt), Filter und Sortierung.
 - **Admin:** Status per Klick (grüner Haken, gelbe Stoppuhr, rotes X), Kommentar, Löschen, Benutzerverwaltung (anlegen, sperren, Passwort zurücksetzen, Rollen).
@@ -232,7 +233,7 @@ Unter **Einstellungen → Wünsche** (und schon im Einrichtungsassistenten) stel
 
 ### Begrenzungen pro Nutzer
 
-Unter **Einstellungen → Wünsche → Begrenzungen pro Nutzer** stellst Du ein, wie viele **Wünsche** ein Nutzer pro Tag abgeben darf (Standard 20, gezählt werden neue Wünsche und „+1“ der letzten 24 Stunden, **Admins sind ausgenommen**) und wie viele **TMDB-Suchen** pro Minute (Standard 10). Der Wert 0 heißt: kein Limit. So kann einer nicht die Wunschliste fluten oder Dein TMDB-Kontingent aufbrauchen.
+Unter **Einstellungen → Wünsche → Begrenzungen pro Nutzer** stellst Du ein, wie viele **Wünsche** ein Nutzer pro Tag abgeben darf (Standard 20, gezählt werden neue Wünsche und „+1“ der letzten 24 Stunden, **Admins sind ausgenommen**) und wie viele **TMDB-Suchen** pro Minute (Standard 10). Der Wert 0 heißt: kein Limit. So kann einer nicht die Wunschliste fluten oder Dein TMDB-Kontingent aufbrauchen. Außerdem begrenzt **Besonders wichtige Wünsche pro Person** (Standard 3, Admins ausgenommen), wie viele offene Wünsche jede Person gleichzeitig als „Besonders wichtig“ führen darf. Erledigte und abgelehnte Wünsche zählen nicht mit.
 
 ### Protokoll
 

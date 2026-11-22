@@ -37,6 +37,13 @@
     margin-top: 0.25rem;
 }
 
+/* Darf schrumpfen: Auf schmalen Handys steht die Auswahl in einer eigenen Zeile, ohne die Karte zu verbreitern. */
+.priority-picker {
+    flex: 1 1 11rem;
+    min-width: 0;
+    max-width: 100%;
+}
+
 .wish-body {
     min-width: 0;
     flex: 1;

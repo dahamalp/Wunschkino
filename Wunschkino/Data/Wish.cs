@@ -46,12 +46,23 @@ public class Wish
     public List<WishVote> Votes { get; set; } = [];
 }
 
+/// <summary>Wie wichtig ein Wunsch der Person ist, die ihn unterstützt. Die Mitte ist der Standard.</summary>
+public enum WishPriority
+{
+    Low = 0,
+    Normal = 1,
+    High = 2
+}
+
 /// <summary>Eine Stimme für einen Wunsch. Der Ersteller gibt die erste ab, jeder weitere Nutzer per „+1“.</summary>
 public class WishVote
 {
     public int WishId { get; set; }
     public int UserId { get; set; }
     public string? Note { get; set; }
+
+    /// <summary>Gehört zur Stimme, nicht zum Wunsch: Jede Person sagt für sich, wie wichtig er ihr ist.</summary>
+    public WishPriority Priority { get; set; } = WishPriority.Normal;
     public DateTime CreatedUtc { get; set; }
 
     public Wish? Wish { get; set; }

@@ -1,0 +1,30 @@
+@using Wunschkino.Data
+@using Wunschkino.Wishes
+
+<MudSelect T="WishPriority" Value="Value" ValueChanged="ValueChanged" Label="@Texts.Priority_Label" Variant="Variant.Outlined"
+           Disabled="Disabled" Class="@Class" UserAttributes="@Attributes">
+    @foreach (var priority in PriorityDisplay.All)
+    {
+        <MudSelectItem T="WishPriority" Value="priority">@PriorityDisplay.Label(priority)</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    [Parameter]
+    public WishPriority Value { get; set; } = WishPriority.Normal;
+
+    [Parameter]
+    public EventCallback<WishPriority> ValueChanged { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Gleich beschriftete Auswahlen in jeder Karte brauchen den Titel im Namen, sonst sind sie für Screenreader nicht unterscheidbar.</summary>
+    [Parameter]
+    public string? AriaLabel { get; set; }
+
+    private Dictionary<string, object?>? Attributes => AriaLabel is null ? null : new() { ["aria-label"] = AriaLabel };
+}

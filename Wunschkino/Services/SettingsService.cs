@@ -18,6 +18,9 @@ public static class SettingKeys
     /// <summary>Wünsche (neue und „+1“) je Nutzer in den letzten 24 Stunden; 0 = kein Limit, Admins sind ausgenommen.</summary>
     public const string WishesPerDay = "Limits.WishesPerDay";
 
+    /// <summary>Offene Wünsche, die ein Nutzer gleichzeitig als „Besonders wichtig“ markieren darf; 0 = kein Limit, Admins sind ausgenommen.</summary>
+    public const string HighPriorityWishes = "Limits.HighPriorityWishes";
+
     /// <summary>TMDB-Suchen je Nutzer und Minute; 0 = kein Limit.</summary>
     public const string TmdbSearchesPerMinute = "Limits.TmdbSearchesPerMinute";
 

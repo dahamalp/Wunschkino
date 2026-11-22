@@ -71,6 +71,8 @@
                     <MudTextField T="string" Value="@_notes.GetValueOrDefault(key)" ValueChanged="@(value => _notes[key] = value)"
                                   Label="@Texts.NewWish_Note" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="@WishValidation.MaxNoteLength" Class="mb-2"
                                   UserAttributes="@NoteAttributes(title.Title)" />
+                    <PriorityPicker Value="@_priorities.GetValueOrDefault(key, WishPriority.Normal)" ValueChanged="@(value => _priorities[key] = value)"
+                                    AriaLabel="@ActionFor(Texts.Priority_Label, title.Title)" Class="mb-2" />
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="@(() => WishAsync(result))"
                                aria-label="@ActionFor(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish, title.Title)">
                         @(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish)
@@ -91,6 +93,8 @@
                     <MudTextField T="string" Value="@_animeNotes.GetValueOrDefault(anime.Id)" ValueChanged="@(value => _animeNotes[anime.Id] = value)"
                                   Label="@Texts.NewWish_Note" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="@WishValidation.MaxNoteLength" Class="mb-2"
                                   UserAttributes="@NoteAttributes(anime.DisplayTitle)" />
+                    <PriorityPicker Value="@_animePriorities.GetValueOrDefault(anime.Id, WishPriority.Normal)" ValueChanged="@(value => _animePriorities[anime.Id] = value)"
+                                    AriaLabel="@ActionFor(Texts.Priority_Label, anime.DisplayTitle)" Class="mb-2" />
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="@(() => WishAnimeAsync(result))"
                                aria-label="@ActionFor(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish, anime.DisplayTitle)">
                         @(result.Availability == WishAvailability.Wished ? Texts.NewWish_PlusOne : Texts.NewWish_Wish)
@@ -113,6 +117,8 @@
 
     private readonly Dictionary<(int, MediaKind), string?> _notes = [];
     private readonly Dictionary<int, string?> _animeNotes = [];
+    private readonly Dictionary<(int, MediaKind), WishPriority> _priorities = [];
+    private readonly Dictionary<int, WishPriority> _animePriorities = [];
     private IReadOnlyList<AnimeSearchResult> _animeResults = [];
     private SearchMode _mode = SearchMode.Media;
     private IReadOnlyList<WishSearchResult> _results = [];
@@ -213,10 +219,14 @@
         try
         {
             var key = (result.Title.TmdbId, result.Title.Kind);
-            var outcome = await WishService.CreateOrJoinAsync(userId, result.Title.TmdbId, result.Title.Kind, _notes.GetValueOrDefault(key));
+            var outcome = await WishService.CreateOrJoinAsync(
+                userId, result.Title.TmdbId, result.Title.Kind, _notes.GetValueOrDefault(key), _priorities.GetValueOrDefault(key, WishPriority.Normal));
             Snackbar.Add(outcome.Message, outcome.Success ? Severity.Success : Severity.Error);
             if (outcome.Success)
+            {
                 _notes.Remove(key);
+                _priorities.Remove(key);
+            }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -239,10 +249,14 @@
         try
         {
             var id = result.Anime.Id;
-            var outcome = await WishService.CreateOrJoinAnimeAsync(userId, id, _animeNotes.GetValueOrDefault(id));
+            var outcome = await WishService.CreateOrJoinAnimeAsync(
+                userId, id, _animeNotes.GetValueOrDefault(id), _animePriorities.GetValueOrDefault(id, WishPriority.Normal));
             Snackbar.Add(outcome.Message, outcome.Success ? Severity.Success : Severity.Error);
             if (outcome.Success)
+            {
                 _animeNotes.Remove(id);
+                _animePriorities.Remove(id);
+            }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

@@ -76,6 +76,8 @@
             <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="mt-6 mb-2">@Texts.Settings_Limits</MudText>
             <MudNumericField HideSpinButtons="true" T="int" @bind-Value="_wishesPerDay" Label="@Texts.Settings_WishesPerDay" Variant="Variant.Outlined"
                              Min="0" Max="UserLimits.MaxWishesPerDay" Class="mb-3" HelperText="@Texts.Settings_WishesPerDayHint" />
+            <MudNumericField HideSpinButtons="true" T="int" @bind-Value="_highPriorityWishes" Label="@Texts.Settings_HighPriorityWishes" Variant="Variant.Outlined"
+                             Min="0" Max="UserLimits.MaxHighPriorityWishes" Class="mb-3" HelperText="@Texts.Settings_HighPriorityHint" />
             <MudNumericField HideSpinButtons="true" T="int" @bind-Value="_searchesPerMinute" Label="@Texts.Settings_SearchesPerMinute" Variant="Variant.Outlined"
                              Min="0" Max="UserLimits.MaxSearchesPerMinute" Class="mb-3" HelperText="@Texts.Settings_SearchesHint" />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveLimitsAsync">@Texts.Settings_SaveLimits</MudButton>
@@ -145,6 +147,7 @@
         _anonymousWishes = WishPrivacy.IsAnonymous(await AppSettings.GetAsync(SettingKeys.WishesAnonymous));
         _defaultLanguage = await Languages.GetDefaultAsync();
         _wishesPerDay = UserLimits.ParseWishesPerDay(await AppSettings.GetAsync(SettingKeys.WishesPerDay));
+        _highPriorityWishes = UserLimits.ParseHighPriorityWishes(await AppSettings.GetAsync(SettingKeys.HighPriorityWishes));
         _searchesPerMinute = UserLimits.ParseSearchesPerMinute(await AppSettings.GetAsync(SettingKeys.TmdbSearchesPerMinute));
         var legal = await LegalService.GetAsync();
         (_legalContact, _legalImprint, _legalPrivacy) = (legal.Contact ?? "", legal.Imprint ?? "", legal.Privacy ?? "");
@@ -152,6 +155,7 @@
     }
 
     private int _wishesPerDay = UserLimits.DefaultWishesPerDay;
+    private int _highPriorityWishes = UserLimits.DefaultHighPriorityWishes;
     private int _searchesPerMinute = UserLimits.DefaultSearchesPerMinute;
 
     private async Task<bool> IsAdminAsync() => await Guard.IsAdminAsync((await AuthState).User);
@@ -163,9 +167,11 @@
 
         _wishesPerDay = UserLimits.ClampWishesPerDay(_wishesPerDay);
         _searchesPerMinute = UserLimits.ClampSearchesPerMinute(_searchesPerMinute);
+        _highPriorityWishes = UserLimits.ClampHighPriorityWishes(_highPriorityWishes);
         await AppSettings.SetAsync(SettingKeys.WishesPerDay, _wishesPerDay.ToString(System.Globalization.CultureInfo.InvariantCulture), isProtected: false);
+        await AppSettings.SetAsync(SettingKeys.HighPriorityWishes, _highPriorityWishes.ToString(System.Globalization.CultureInfo.InvariantCulture), isProtected: false);
         await AppSettings.SetAsync(SettingKeys.TmdbSearchesPerMinute, _searchesPerMinute.ToString(System.Globalization.CultureInfo.InvariantCulture), isProtected: false);
-        await AuditAsync($"Wünsche pro Tag: {_wishesPerDay}, TMDB-Suchen pro Minute: {_searchesPerMinute}");
+        await AuditAsync($"Wünsche pro Tag: {_wishesPerDay}, besonders wichtige Wünsche pro Person: {_highPriorityWishes}, TMDB-Suchen pro Minute: {_searchesPerMinute}");
         Snackbar.Add(Texts.Settings_LimitsSaved, Severity.Success);
     }
 

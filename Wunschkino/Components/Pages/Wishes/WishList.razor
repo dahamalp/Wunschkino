@@ -45,6 +45,7 @@
         <MudSelect T="WishSort" Value="_sort" ValueChanged="SortChanged" Label="@Texts.WishList_Sort" Variant="Variant.Outlined">
             <MudSelectItem Value="WishSort.Newest">@Texts.WishList_SortNewest</MudSelectItem>
             <MudSelectItem Value="WishSort.MostVotes">@Texts.WishList_SortMostVotes</MudSelectItem>
+            <MudSelectItem Value="WishSort.Importance">@Texts.WishList_SortImportance</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>
@@ -91,6 +92,12 @@
                         <span aria-hidden="true">@wish.Votes</span>
                         <span class="visually-hidden">@string.Format(Texts.Culture, wish.Votes == 1 ? Texts.NewWish_VoteOne : Texts.NewWish_VotesMany, wish.Votes)</span>
                     </MudChip>
+                    @if (wish.HighCount > 0)
+                    {
+                        <MudChip T="string" Color="Color.Warning" Size="Size.Small" Icon="@Icons.Material.Filled.PriorityHigh">
+                            @string.Format(Texts.Culture, Texts.WishList_HighCount, wish.HighCount)
+                        </MudChip>
+                    }
                 </MudStack>
                 @if (wish.AdminComment is { } comment)
                 {
@@ -108,6 +115,13 @@
                 }
 
                 <MudStack Row="true" Spacing="1" Class="mt-2" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
+                    @if (CanSetPriority(wish))
+                    {
+                        <div class="priority-picker">
+                            <PriorityPicker Value="wish.MyPriority" Disabled="_busy" AriaLabel="@ActionFor(Texts.Priority_Label, wish)"
+                                            ValueChanged="@(priority => SetPriorityAsync(wish, priority))" />
+                        </div>
+                    }
                     @if (CanWithdraw(wish))
                     {
                         <MudButton Variant="Variant.Outlined" Disabled="_busy" OnClick="@(() => WithdrawAsync(wish))"
@@ -259,6 +273,13 @@
         ["sort"] = UrlFilter.Write<WishSort>(_sort, WishSort.Newest),
     });
 
+    // Spiegelt WishService.SetPriorityAsync: Nur bei offenen oder angenommenen Wünschen hat die Stufe eine Wirkung.
+    private static bool CanSetPriority(WishListItem wish) =>
+        wish.VotedByMe && wish.Status is WishStatus.Open or WishStatus.Accepted;
+
+    private Task SetPriorityAsync(WishListItem wish, WishPriority priority) =>
+        RunAsync(userId => WishService.SetPriorityAsync(userId, wish.Id, priority));
+
     private static bool CanJoin(WishListItem wish) =>
         !wish.VotedByMe && wish.Status is WishStatus.Open or WishStatus.Accepted;
 
@@ -313,6 +334,8 @@
         {
             Logger.LogError(ex, "Aktion auf der Wunschliste fehlgeschlagen.");
             Snackbar.Add(Texts.WishList_ActionFailed, Severity.Error);
+            // Ohne Neuladen zeigte eine Auswahl (etwa die Wichtigkeit) weiter einen Wert, der nie gespeichert wurde.
+            await ReloadAsync();
             return false;
         }
         finally

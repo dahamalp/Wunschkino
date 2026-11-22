@@ -654,4 +654,16 @@
   <data name="Details_MissingUncertain" xml:space="preserve"><value>Jellyfin en TMDB nummeren de afleveringen van deze serie mogelijk anders. De ontbrekende afleveringen zijn daarom slechts een aanwijzing.</value></data>
   <data name="Details_NoEpisodes" xml:space="preserve"><value>Er staan nog geen afleveringen in Jellyfin.</value></data>
   <data name="Details_Source" xml:space="preserve"><value>Gegevens uit Jellyfin</value></data>
+  <data name="Priority_Label" xml:space="preserve"><value>Belangrijkheid</value></data>
+  <data name="Priority_Low" xml:space="preserve"><value>Kan wachten</value></data>
+  <data name="Priority_Normal" xml:space="preserve"><value>Normaal</value></data>
+  <data name="Priority_High" xml:space="preserve"><value>Extra belangrijk</value></data>
+  <data name="WishList_SortImportance" xml:space="preserve"><value>Belangrijkheid</value></data>
+  <data name="WishList_HighCount" xml:space="preserve"><value>{0}× extra belangrijk</value></data>
+  <data name="Msg_Wish_InvalidPriority" xml:space="preserve"><value>Ongeldige belangrijkheid.</value></data>
+  <data name="Msg_Wish_PriorityClosed" xml:space="preserve"><value>De belangrijkheid van vervulde of afgewezen wensen kan niet meer worden gewijzigd.</value></data>
+  <data name="Msg_Wish_PrioritySaved" xml:space="preserve"><value>Belangrijkheid opgeslagen.</value></data>
+  <data name="Msg_Wish_HighLimit" xml:space="preserve"><value>Je hebt al {0} open wensen als „Extra belangrijk” gemarkeerd. Zet er eerst een lager.</value></data>
+  <data name="Settings_HighPriorityWishes" xml:space="preserve"><value>Extra belangrijke wensen per persoon</value></data>
+  <data name="Settings_HighPriorityHint" xml:space="preserve"><value>Hoeveel open wensen elke persoon tegelijk als „Extra belangrijk” mag markeren. 0 = geen limiet. Admins zijn uitgezonderd.</value></data>
 </root>

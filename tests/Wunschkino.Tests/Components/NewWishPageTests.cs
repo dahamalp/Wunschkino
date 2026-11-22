@@ -149,6 +149,44 @@ public class NewWishPageTests : ComponentTestBase
     }
 
     [Fact]
+    public async Task MediaSearch_TheChosenImportance_IsStoredWithTheWish_AndDefaultsToNormal()
+    {
+        var page = OpenPage();
+        Search(page, "matrix");
+        page.WaitForAssertion(() => Assert.Contains("Matrix", page.Markup), Patience);
+        var picker = page.FindComponent<MudBlazor.MudSelect<WishPriority>>();
+        Assert.Equal(WishPriority.Normal, picker.Instance.Value);
+
+        await page.InvokeAsync(() => picker.Instance.ValueChanged.InvokeAsync(WishPriority.High));
+        Button(page, "Wünschen").Click();
+
+        page.WaitForAssertion(() =>
+        {
+            using var db = _db.CreateDbContext();
+            Assert.Equal(WishPriority.High, db.WishVotes.Single(v => v.UserId == _alice.Id).Priority);
+        }, Patience);
+    }
+
+    [Fact]
+    public async Task AnimeSearch_JoiningWithAnImportance_StoresItWithMyVote()
+    {
+        await _wishes.CreateOrJoinAsync(_bob.Id, 1399, MediaKind.Series, null);
+        var page = OpenPage();
+        SwitchToAnime(page);
+        Search(page, "anohana");
+        page.WaitForAssertion(() => Assert.Contains("Schon gewünscht", page.Markup), Patience);
+
+        await page.InvokeAsync(() => page.FindComponent<MudBlazor.MudSelect<WishPriority>>().Instance.ValueChanged.InvokeAsync(WishPriority.Low));
+        Button(page, "+1").Click();
+
+        page.WaitForAssertion(() =>
+        {
+            using var db = _db.CreateDbContext();
+            Assert.Equal(WishPriority.Low, db.WishVotes.Single(v => v.UserId == _alice.Id).Priority);
+        }, Patience);
+    }
+
+    [Fact]
     public void MediaSearch_WishingATitle_ConfirmsInASnackbar_AndMarksItAsWished()
     {
         var page = OpenPage();

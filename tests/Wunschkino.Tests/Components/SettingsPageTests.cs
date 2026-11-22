@@ -118,6 +118,18 @@ public class SettingsPageTests : ComponentTestBase
     }
 
     [Fact]
+    public void HighPriorityLimit_ShowsTheDefault_AndSavingStoresTheChosenValue()
+    {
+        var page = RenderLoadedPage();
+        Assert.Equal("3", NumericField(page, "Besonders wichtige Wünsche pro Person").Find("input").GetAttribute("value"));
+
+        NumericField(page, "Besonders wichtige Wünsche pro Person").Find("input").Change("1");
+        page.FindAll("button").Single(b => b.TextContent.Contains("Begrenzungen speichern")).Click();
+
+        page.WaitForAssertion(() => Assert.Equal("1", StoredSetting(SettingKeys.HighPriorityWishes)), Patience);
+    }
+
+    [Fact]
     public async Task ChangingTheWishSettings_IsWrittenToTheAuditLog_WithTheAdminAsActor()
     {
         var page = RenderLoadedPage();

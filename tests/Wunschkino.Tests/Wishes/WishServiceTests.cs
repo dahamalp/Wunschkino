@@ -89,6 +89,133 @@ public class WishServiceTests : IAsyncLifetime, IDisposable
     }
 
     [Fact]
+    public async Task Priority_DefaultsToTheMiddle_AndCanBeChosenWhenWishingOrJoining()
+    {
+        await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null);
+        await _service.CreateOrJoinAsync(_bob.Id, MatrixId, MediaKind.Movie, null, WishPriority.High);
+        var carol = TestUsers.Add(_db, "carol");
+        await _service.CreateOrJoinAsync(carol.Id, ThronesId, MediaKind.Series, null, WishPriority.Low);
+
+        using var db = _db.CreateDbContext();
+        Assert.Equal(WishPriority.Normal, db.WishVotes.Single(v => v.UserId == _alice.Id).Priority);
+        Assert.Equal(WishPriority.High, db.WishVotes.Single(v => v.UserId == _bob.Id).Priority);
+        Assert.Equal(WishPriority.Low, db.WishVotes.Single(v => v.UserId == carol.Id).Priority);
+    }
+
+    [Fact]
+    public async Task Priority_AnInvalidValueFromTheBrowser_IsRejected()
+    {
+        var result = await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null, (WishPriority)42);
+
+        Assert.False(result.Success);
+        using var db = _db.CreateDbContext();
+        Assert.Empty(db.Wishes);
+        Assert.False((await _service.SetPriorityAsync(_alice.Id, 1, (WishPriority)(-1))).Success);
+    }
+
+    [Fact]
+    public async Task SetPriority_ChangesOnlyTheOwnVote_AndDoesNotCountAgainstTheDailyLimit()
+    {
+        await _settings.SetAsync(SettingKeys.WishesPerDay, "2", isProtected: false);
+        await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null);
+        await _service.CreateOrJoinAsync(_bob.Id, MatrixId, MediaKind.Movie, null);
+        var wishId = _db.CreateDbContext().Wishes.Single().Id;
+
+        var first = await _service.SetPriorityAsync(_alice.Id, wishId, WishPriority.High);
+        var second = await _service.SetPriorityAsync(_alice.Id, wishId, WishPriority.Low);
+
+        Assert.True(first.Success && second.Success, first.Message + second.Message);
+        using (var db = _db.CreateDbContext())
+        {
+            Assert.Equal(WishPriority.Low, db.WishVotes.Single(v => v.UserId == _alice.Id).Priority);
+            Assert.Equal(WishPriority.Normal, db.WishVotes.Single(v => v.UserId == _bob.Id).Priority);
+        }
+
+        // Alice hat erst eine Handlung (den Wunsch) verbraucht; die zwei Änderungen zählten nicht mit.
+        var another = await _service.CreateOrJoinAsync(_alice.Id, ThronesId, MediaKind.Series, null);
+        Assert.True(another.Success, another.Message);
+    }
+
+    [Fact]
+    public async Task SetPriority_WithoutAVote_OrOnAClosedWish_IsRejected()
+    {
+        await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null);
+        var wishId = _db.CreateDbContext().Wishes.Single().Id;
+
+        Assert.False((await _service.SetPriorityAsync(_bob.Id, wishId, WishPriority.High)).Success);
+        Assert.False((await _service.SetPriorityAsync(_alice.Id, 999, WishPriority.High)).Success);
+
+        await _service.SetStatusAsync(_admin.Id, wishId, WishStatus.Done, null);
+        Assert.False((await _service.SetPriorityAsync(_alice.Id, wishId, WishPriority.High)).Success);
+    }
+
+    [Fact]
+    public async Task HighPriority_IsLimitedPerPerson_ClosedWishesAndAdminsDoNotCount()
+    {
+        const int friendsId = 1668;
+        _tmdbHandler.SetSeries(friendsId, "Friends");
+        await _settings.SetAsync(SettingKeys.HighPriorityWishes, "1", isProtected: false);
+        await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null, WishPriority.High);
+        await _service.CreateOrJoinAsync(_alice.Id, ThronesId, MediaKind.Series, null);
+        var matrix = _db.CreateDbContext().Wishes.Single(w => w.TmdbId == MatrixId).Id;
+        var thrones = _db.CreateDbContext().Wishes.Single(w => w.TmdbId == ThronesId).Id;
+
+        // Die zweite „Besonders wichtig“-Markierung geht nicht, die bestehende erneut setzen schon.
+        Assert.False((await _service.SetPriorityAsync(_alice.Id, thrones, WishPriority.High)).Success);
+        Assert.True((await _service.SetPriorityAsync(_alice.Id, matrix, WishPriority.High)).Success);
+        var blocked = await _service.CreateOrJoinAsync(_alice.Id, friendsId, MediaKind.Series, null, WishPriority.High);
+        Assert.False(blocked.Success);
+        Assert.Equal(2, _db.CreateDbContext().Wishes.Count());
+
+        // Ein erledigter Wunsch gibt den Platz wieder frei.
+        await _service.SetStatusAsync(_admin.Id, matrix, WishStatus.Done, null);
+        Assert.True((await _service.SetPriorityAsync(_alice.Id, thrones, WishPriority.High)).Success);
+
+        // Admins sind ausgenommen.
+        Assert.True((await _service.CreateOrJoinAsync(_admin.Id, friendsId, MediaKind.Series, null, WishPriority.High)).Success);
+        Assert.True((await _service.CreateOrJoinAsync(_admin.Id, ThronesId, MediaKind.Series, null, WishPriority.High)).Success);
+
+        // 0 heißt kein Limit.
+        await _settings.SetAsync(SettingKeys.HighPriorityWishes, "0", isProtected: false);
+        Assert.True((await _service.CreateOrJoinAsync(_bob.Id, friendsId, MediaKind.Series, null, WishPriority.High)).Success);
+        Assert.True((await _service.CreateOrJoinAsync(_bob.Id, ThronesId, MediaKind.Series, null, WishPriority.High)).Success);
+    }
+
+    [Fact]
+    public async Task List_ShowsMyPriorityAndTheNumberOfHighVotes_AndSortsByImportance()
+    {
+        await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null, WishPriority.Low);
+        await _service.CreateOrJoinAsync(_alice.Id, ThronesId, MediaKind.Series, null, WishPriority.High);
+        await _service.CreateOrJoinAsync(_bob.Id, ThronesId, MediaKind.Series, null, WishPriority.High);
+        await _service.CreateOrJoinAsync(_bob.Id, MatrixId, MediaKind.Movie, null);
+        await _service.CreateOrJoinAsync(_admin.Id, MatrixId, MediaKind.Movie, null);
+
+        var byImportance = await _service.ListAsync(_alice.Id, WishScope.All, null, WishSort.Importance);
+        var byVotes = await _service.ListAsync(_alice.Id, WishScope.All, null, WishSort.MostVotes);
+
+        // Matrix: drei Stimmen mit 0 + 1 + 1 = 2 Punkten, Thrones: zwei Stimmen mit 2 + 2 = 4 Punkten.
+        Assert.Equal(["Game of Thrones", "Matrix"], byImportance.Select(w => w.Title));
+        Assert.Equal(["Matrix", "Game of Thrones"], byVotes.Select(w => w.Title));
+        var thrones = byImportance[0];
+        Assert.Equal(WishPriority.High, thrones.MyPriority);
+        Assert.Equal(2, thrones.HighCount);
+        var matrix = byImportance[1];
+        Assert.Equal(WishPriority.Low, matrix.MyPriority);
+        Assert.Equal(0, matrix.HighCount);
+    }
+
+    [Fact]
+    public void UserLimits_HighPriority_FallBackToTheDefault_AndAreCapped()
+    {
+        Assert.Equal(UserLimits.DefaultHighPriorityWishes, UserLimits.ParseHighPriorityWishes(null));
+        Assert.Equal(UserLimits.DefaultHighPriorityWishes, UserLimits.ParseHighPriorityWishes("kaputt"));
+        Assert.Equal(0, UserLimits.ParseHighPriorityWishes("0"));
+        Assert.Equal(UserLimits.MaxHighPriorityWishes, UserLimits.ParseHighPriorityWishes("999999"));
+        Assert.Equal(UserLimits.MaxHighPriorityWishes, UserLimits.ClampHighPriorityWishes(1000));
+        Assert.Equal(0, UserLimits.ClampHighPriorityWishes(-5));
+    }
+
+    [Fact]
     public async Task CreateOrJoin_ExistingWish_AddsVoteInsteadOfSecondWish()
     {
         await _service.CreateOrJoinAsync(_alice.Id, MatrixId, MediaKind.Movie, null);

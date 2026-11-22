@@ -24,7 +24,19 @@ public enum WishScope
 public enum WishSort
 {
     Newest,
-    MostVotes
+    MostVotes,
+    Importance
+}
+
+public static class WishPriorities
+{
+    /// <summary>Gewicht einer Stimme für die Sortierung nach Wichtigkeit: „Kann warten“ zählt nichts, „Besonders wichtig“ doppelt.</summary>
+    public static int Weight(WishPriority priority) => priority switch
+    {
+        WishPriority.Low => 0,
+        WishPriority.High => 2,
+        _ => 1
+    };
 }
 
 public sealed record WishSearchResult(TmdbTitle Title, WishAvailability Availability, WishStatus? Status, int Votes, bool VotedByMe);
@@ -52,7 +64,9 @@ public sealed record WishListItem(
     DateTime CreatedUtc,
     bool VotedByMe,
     IReadOnlyList<WishNote> Notes,
-    bool CompletedAutomatically);
+    bool CompletedAutomatically,
+    WishPriority MyPriority = WishPriority.Normal,
+    int HighCount = 0);
 
 public sealed record WishResult(bool Success, string Message)
 {
@@ -166,7 +180,8 @@ public sealed class WishService(
     }
 
     /// <summary>Wünscht einen Anime über seine TMDB-Zuordnung – es entsteht derselbe Wunsch wie über die normale Suche.</summary>
-    public Task<WishResult> CreateOrJoinAnimeAsync(int userId, int aniListId, string? note, CancellationToken ct = default)
+    public Task<WishResult> CreateOrJoinAnimeAsync(
+        int userId, int aniListId, string? note, WishPriority priority = WishPriority.Normal, CancellationToken ct = default)
     {
         var mapping = animeMapping.Find(aniListId);
         if (mapping is not { HasTmdb: true })
@@ -174,17 +189,21 @@ public sealed class WishService(
         if (IsInLibrary(aniListId, mapping))
             return Task.FromResult(WishResult.Fail(Texts.Msg_Wish_AlreadyInLibrary));
 
-        return CreateOrJoinAsync(userId, mapping.TmdbId!.Value, mapping.Kind!.Value, note, ct);
+        return CreateOrJoinAsync(userId, mapping.TmdbId!.Value, mapping.Kind!.Value, note, priority, ct);
     }
 
     /// <summary>Legt den Wunsch an oder schließt sich einem bestehenden per „+1“ an. Metadaten holt der Server selbst von TMDB.</summary>
-    public async Task<WishResult> CreateOrJoinAsync(int userId, int tmdbId, MediaKind kind, string? note, CancellationToken ct = default)
+    public async Task<WishResult> CreateOrJoinAsync(
+        int userId, int tmdbId, MediaKind kind, string? note, WishPriority priority = WishPriority.Normal, CancellationToken ct = default)
     {
         var cleanNote = WishValidation.NormalizeText(note, WishValidation.MaxNoteLength, out var noteTooLong);
         if (noteTooLong)
             return WishResult.Fail(string.Format(Texts.Culture, Texts.Msg_Wish_NoteTooLong, WishValidation.MaxNoteLength));
         if (tmdbId <= 0 || !Enum.IsDefined(kind))
             return WishResult.Fail(Texts.Msg_Wish_InvalidTitle);
+        // Die Stufe kommt vom Browser und darf nichts anderes als eine der drei Stufen sein.
+        if (!Enum.IsDefined(priority))
+            return WishResult.Fail(Texts.Msg_Wish_InvalidPriority);
         if (library.FindByTmdb(kind, tmdbId.ToString()) is not null)
             return WishResult.Fail(Texts.Msg_Wish_AlreadyInLibrary);
 
@@ -193,11 +212,13 @@ public sealed class WishService(
             return WishResult.Fail(Texts.Msg_Wish_AccountInactive);
         if (await DailyLimitMessageAsync(db, userId, ct) is { } limitReached)
             return WishResult.Fail(limitReached);
+        if (priority == WishPriority.High && await HighPriorityLimitMessageAsync(db, userId, exceptWishId: null, ct) is { } highLimitReached)
+            return WishResult.Fail(highLimitReached);
         await CleanUpActionsAsync(db, ct);
 
         var existing = await db.Wishes.Include(w => w.Votes).SingleOrDefaultAsync(w => w.TmdbId == tmdbId && w.Kind == kind, ct);
         if (existing is not null)
-            return await JoinAsync(db, existing, userId, cleanNote, ct);
+            return await JoinAsync(db, existing, userId, cleanNote, priority, ct);
 
         var apiKey = await settings.GetAsync(SettingKeys.TmdbApiKey, ct);
         if (apiKey is null)
@@ -234,7 +255,7 @@ public sealed class WishService(
             CreatedByUserId = userId,
             CreatedUtc = now,
             UpdatedUtc = now,
-            Votes = [new WishVote { UserId = userId, Note = cleanNote, CreatedUtc = now }]
+            Votes = [new WishVote { UserId = userId, Note = cleanNote, Priority = priority, CreatedUtc = now }]
         });
         db.WishActions.Add(new WishAction { UserId = userId, TimeUtc = now });
         try
@@ -249,8 +270,40 @@ public sealed class WishService(
             var winner = await retryDb.Wishes.Include(w => w.Votes).SingleOrDefaultAsync(w => w.TmdbId == tmdbId && w.Kind == kind, ct);
             if (winner is null)
                 throw;
-            return await JoinAsync(retryDb, winner, userId, cleanNote, ct);
+            return await JoinAsync(retryDb, winner, userId, cleanNote, priority, ct);
         }
+    }
+
+    /// <summary>
+    /// Ändert die Wichtigkeit der eigenen Stimme. Das legt keine neue Handlung an und zählt deshalb nicht ins Tageslimit.
+    /// Nur bei offenen oder angenommenen Wünschen: Bei erledigten oder abgelehnten hat die Stufe keine Wirkung mehr.
+    /// </summary>
+    public async Task<WishResult> SetPriorityAsync(int userId, int wishId, WishPriority priority, CancellationToken ct = default)
+    {
+        if (!Enum.IsDefined(priority))
+            return WishResult.Fail(Texts.Msg_Wish_InvalidPriority);
+
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        if (!await IsActiveUserAsync(db, userId, ct))
+            return WishResult.Fail(Texts.Msg_Wish_AccountInactive);
+
+        var wish = await db.Wishes.AsNoTracking().SingleOrDefaultAsync(w => w.Id == wishId, ct);
+        if (wish is null)
+            return WishResult.Fail(Texts.Msg_Wish_Gone);
+        if (wish.Status is WishStatus.Rejected or WishStatus.Done)
+            return WishResult.Fail(Texts.Msg_Wish_PriorityClosed);
+
+        var vote = await db.WishVotes.SingleOrDefaultAsync(v => v.WishId == wishId && v.UserId == userId, ct);
+        if (vote is null)
+            return WishResult.Fail(Texts.Msg_Wish_NotSupporting);
+        if (vote.Priority == priority)
+            return WishResult.Ok(Texts.Msg_Wish_PrioritySaved);
+        if (priority == WishPriority.High && await HighPriorityLimitMessageAsync(db, userId, exceptWishId: wishId, ct) is { } limitReached)
+            return WishResult.Fail(limitReached);
+
+        vote.Priority = priority;
+        await db.SaveChangesAsync(ct);
+        return WishResult.Ok(Texts.Msg_Wish_PrioritySaved);
     }
 
     /// <summary>
@@ -339,9 +392,15 @@ public sealed class WishService(
             query = query.Where(w => w.Status == filter);
 
         var wishes = await query.Include(w => w.Votes).ThenInclude(v => v.User).ToListAsync(ct);
-        var ordered = sort == WishSort.MostVotes
-            ? wishes.OrderByDescending(w => w.Votes.Count).ThenByDescending(w => w.CreatedUtc)
-            : wishes.OrderByDescending(w => w.CreatedUtc);
+        var ordered = sort switch
+        {
+            WishSort.MostVotes => wishes.OrderByDescending(w => w.Votes.Count).ThenByDescending(w => w.CreatedUtc),
+            WishSort.Importance => wishes
+                .OrderByDescending(w => w.Votes.Sum(v => WishPriorities.Weight(v.Priority)))
+                .ThenByDescending(w => w.Votes.Count)
+                .ThenByDescending(w => w.CreatedUtc),
+            _ => wishes.OrderByDescending(w => w.CreatedUtc)
+        };
         var page = ordered.Take(MaxListedWishes).ToList();
 
         var creatorIds = page.Select(w => w.CreatedByUserId).Distinct().ToList();
@@ -370,10 +429,12 @@ public sealed class WishService(
                     hideNames ? (v.UserId == userId ? OwnName : null) : v.User?.Username ?? "?",
                     v.Note!))
                 .ToList(),
-            w.AutoCompletion == WishAutoCompletion.Completed)).ToList();
+            w.AutoCompletion == WishAutoCompletion.Completed,
+            w.Votes.FirstOrDefault(v => v.UserId == userId)?.Priority ?? WishPriority.Normal,
+            w.Votes.Count(v => v.Priority == WishPriority.High))).ToList();
     }
 
-    private async Task<WishResult> JoinAsync(AppDbContext db, Wish wish, int userId, string? note, CancellationToken ct)
+    private async Task<WishResult> JoinAsync(AppDbContext db, Wish wish, int userId, string? note, WishPriority priority, CancellationToken ct)
     {
         if (wish.Status == WishStatus.Rejected)
             return WishResult.Fail(Texts.Msg_Wish_Rejected);
@@ -383,7 +444,7 @@ public sealed class WishService(
             return WishResult.Fail(Texts.Msg_Wish_AlreadySupported);
 
         var now = time.GetUtcNow().UtcDateTime;
-        db.WishVotes.Add(new WishVote { WishId = wish.Id, UserId = userId, Note = note, CreatedUtc = now });
+        db.WishVotes.Add(new WishVote { WishId = wish.Id, UserId = userId, Note = note, Priority = priority, CreatedUtc = now });
         db.WishActions.Add(new WishAction { UserId = userId, TimeUtc = now });
         try
         {
@@ -413,6 +474,27 @@ public sealed class WishService(
         var used = await db.WishActions.CountAsync(a => a.UserId == userId && a.TimeUtc > since, ct);
         return used >= limit
             ? string.Format(Texts.Culture, Texts.Msg_Wish_DailyLimit, limit)
+            : null;
+    }
+
+    /// <summary>
+    /// Begrenzt, wie viele offene Wünsche eine Person gleichzeitig als „Besonders wichtig“ führt (ohne diese Grenze markiert bald jeder alles so).
+    /// Erledigte und abgelehnte Wünsche zählen nicht mit. Admins sind ausgenommen, 0 heißt kein Limit.
+    /// </summary>
+    /// <param name="exceptWishId">Der Wunsch, dessen Stufe gerade geändert wird; seine bisherige Stimme zählt nicht doppelt.</param>
+    private async Task<string?> HighPriorityLimitMessageAsync(AppDbContext db, int userId, int? exceptWishId, CancellationToken ct)
+    {
+        var limit = UserLimits.ParseHighPriorityWishes(await settings.GetAsync(SettingKeys.HighPriorityWishes, ct));
+        if (limit == 0)
+            return null;
+        if (await db.Users.AsNoTracking().AnyAsync(u => u.Id == userId && u.Role == UserRole.Admin, ct))
+            return null;
+
+        var used = await db.WishVotes.AsNoTracking().CountAsync(v =>
+            v.UserId == userId && v.Priority == WishPriority.High && v.WishId != exceptWishId
+            && (v.Wish!.Status == WishStatus.Open || v.Wish.Status == WishStatus.Accepted), ct);
+        return used >= limit
+            ? string.Format(Texts.Culture, Texts.Msg_Wish_HighLimit, limit)
             : null;
     }
 

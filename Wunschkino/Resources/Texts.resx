@@ -654,4 +654,16 @@
   <data name="Details_MissingUncertain" xml:space="preserve"><value>Die Folgenzählung von Jellyfin und TMDB passt bei dieser Serie nicht sicher zusammen. Die fehlenden Folgen sind deshalb nur ein Hinweis.</value></data>
   <data name="Details_NoEpisodes" xml:space="preserve"><value>In Jellyfin liegen noch keine Folgen.</value></data>
   <data name="Details_Source" xml:space="preserve"><value>Angaben aus Jellyfin</value></data>
+  <data name="Priority_Label" xml:space="preserve"><value>Wichtigkeit</value></data>
+  <data name="Priority_Low" xml:space="preserve"><value>Kann warten</value></data>
+  <data name="Priority_Normal" xml:space="preserve"><value>Normal</value></data>
+  <data name="Priority_High" xml:space="preserve"><value>Besonders wichtig</value></data>
+  <data name="WishList_SortImportance" xml:space="preserve"><value>Wichtigkeit</value></data>
+  <data name="WishList_HighCount" xml:space="preserve"><value>{0}× besonders wichtig</value></data>
+  <data name="Msg_Wish_InvalidPriority" xml:space="preserve"><value>Ungültige Wichtigkeit.</value></data>
+  <data name="Msg_Wish_PriorityClosed" xml:space="preserve"><value>Bei erledigten oder abgelehnten Wünschen lässt sich die Wichtigkeit nicht mehr ändern.</value></data>
+  <data name="Msg_Wish_PrioritySaved" xml:space="preserve"><value>Wichtigkeit gespeichert.</value></data>
+  <data name="Msg_Wish_HighLimit" xml:space="preserve"><value>Du hast schon {0} offene Wünsche als „Besonders wichtig“ markiert. Stufe zuerst einen davon herunter.</value></data>
+  <data name="Settings_HighPriorityWishes" xml:space="preserve"><value>Besonders wichtige Wünsche pro Person</value></data>
+  <data name="Settings_HighPriorityHint" xml:space="preserve"><value>Wie viele offene Wünsche jede Person gleichzeitig als „Besonders wichtig“ markieren darf. 0 = kein Limit. Admins sind ausgenommen.</value></data>
 </root>
