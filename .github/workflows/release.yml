@@ -193,7 +193,9 @@ jobs:
           done
       - name: Image testen
         run: bash deploy/docker/test.sh "wunschkino-${GITHUB_REF_NAME}-linux-x64.tar.gz"
-      - name: Image bauen und nach ghcr.io veröffentlichen
+      # Zuerst geht nur der Versions-Tag nach ghcr.io und wird attestiert; „latest“ und der Minor-Tag zeigen erst danach auf
+      # diesen Digest. Schlägt die Attestierung fehl, bekommt kein beweglicher Tag ein unbestätigtes Image.
+      - name: Image bauen und mit dem Versions-Tag veröffentlichen
         id: push
         env:
           GH_TOKEN: ${{ github.token }}
@@ -203,19 +205,15 @@ jobs:
           mkdir context
           cp "wunschkino-${GITHUB_REF_NAME}-linux-x64.tar.gz" context/package-amd64.tar.gz
           cp "wunschkino-${GITHUB_REF_NAME}-linux-arm64.tar.gz" context/package-arm64.tar.gz
-          tags=(--tag "$image:$version")
-          # Vorabversionen (v1.2.3-rc.1) bekommen weder „latest“ noch den beweglichen Minor-Tag.
-          if [[ "$version" != *-* ]]; then
-            IFS=. read -r major minor _ <<< "$version"
-            tags+=(--tag "$image:latest" --tag "$image:$major.$minor")
-          fi
+          # Die Zugangsdaten bleiben nur so lange im Runner, wie dieser Schritt läuft.
+          trap 'docker logout ghcr.io > /dev/null 2>&1 || true' EXIT
           echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           docker buildx create --use --name wunschkino
           docker buildx build --platform linux/amd64,linux/arm64 \
             --file deploy/docker/Dockerfile \
             --build-arg "VERSION=$version" \
             --build-arg "SOURCE_URL=https://github.com/$GITHUB_REPOSITORY" \
-            "${tags[@]}" --push --metadata-file metadata.json context
+            --tag "$image:$version" --push --metadata-file metadata.json context
           echo "name=$image" >> "$GITHUB_OUTPUT"
           echo "digest=$(jq -r '."containerimage.digest"' metadata.json)" >> "$GITHUB_OUTPUT"
       - name: Herkunft des Images bestätigen (Attestierung)
@@ -224,3 +222,16 @@ jobs:
           subject-name: ${{ steps.push.outputs.name }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+      # Vorabversionen (v1.2.3-rc.1) bekommen weder „latest“ noch den beweglichen Minor-Tag.
+      - name: Bewegliche Tags auf das bestätigte Image setzen
+        if: ${{ !contains(github.ref_name, '-') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IMAGE: ${{ steps.push.outputs.name }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          IFS=. read -r major minor _ <<< "$version"
+          trap 'docker logout ghcr.io > /dev/null 2>&1 || true' EXIT
+          echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker buildx imagetools create --tag "$IMAGE:latest" --tag "$IMAGE:$major.$minor" "$IMAGE@$DIGEST"

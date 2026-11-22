@@ -4,7 +4,7 @@ name: wunschkino
 # Der Nginx Proxy Manager läuft auf einem anderen Server und erreicht Wunschkino über den veröffentlichten Port.
 # Setze diese Variablen (in Portainer unter „Environment variables“, sonst in einer .env neben dieser Datei):
 #   TRUSTED_PROXIES    Pflicht: Adresse oder Netz (CIDR), von dem der Proxy bei Wunschkino ankommt, z. B. 192.168.1.5
-#   WUNSCHKINO_DOMAIN  empfohlen: Deine Domain, z. B. wunsch.example.org
+#   WUNSCHKINO_DOMAIN  Pflicht: Deine Domain, z. B. wunsch.example.org (ohne sie nähme die App jeden Host-Namen an)
 #   WUNSCHKINO_VERSION optional: Version festnageln, z. B. 0.1.1 (Standard: latest)
 #   PUBLISH_PORT       optional: Port auf dem Docker-Host (Standard 8080)
 services:
@@ -12,7 +12,7 @@ services:
     image: ghcr.io/dahamalp/wunschkino:${WUNSCHKINO_VERSION:-latest}
     environment:
       Wunschkino__TrustedProxies: ${TRUSTED_PROXIES:?Adresse oder Netz (CIDR), von dem der Nginx Proxy Manager bei Wunschkino ankommt}
-      Wunschkino__Domain: ${WUNSCHKINO_DOMAIN:-}
+      Wunschkino__Domain: ${WUNSCHKINO_DOMAIN:?Deine Domain, z. B. wunsch.example.org (ohne http:// und Pfad)}
     ports:
       - "${PUBLISH_PORT:-8080}:8080"
     volumes:

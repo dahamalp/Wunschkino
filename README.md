@@ -115,7 +115,7 @@ Statt des Install-Scripts läuft Wunschkino auch als Container. Das Image `ghcr.
 | Variable | Bedeutung |
 |---|---|
 | `TRUSTED_PROXIES` | **Pflicht.** Adresse oder Netz (CIDR), von dem der Reverse-Proxy bei Wunschkino ankommt (entspricht `--proxy`). Ohne diese Angabe sehen alle Nutzer dieselbe Adresse, und Anmeldebremse und Sperren greifen für alle gemeinsam. |
-| `WUNSCHKINO_DOMAIN` | Empfohlen. Deine Domain (entspricht `--domain`). |
+| `WUNSCHKINO_DOMAIN` | **Pflicht.** Deine Domain (entspricht `--domain`), ohne `http://` und Pfad. Ohne sie nähme die App jeden Host-Namen an. |
 | `WUNSCHKINO_VERSION` | Optional. Version festlegen, zum Beispiel `0.1.1`. Standard ist `latest`. |
 | `PUBLISH_PORT` | Optional. Port auf dem Docker-Host, Standard `8080`. |
 
@@ -163,7 +163,7 @@ Mit [Portainer](https://www.portainer.io/) legst Du Wunschkino als **Stack** an,
 
 1. **Stack anlegen:** In Portainer die Umgebung des Docker-Hosts öffnen, **Stacks → Add stack**. **Name:** `wunschkino`. **Build method:** **Web editor**.
 2. **Vorlage einfügen:** Den Inhalt von [`deploy/docker/compose.yml`](deploy/docker/compose.yml) in den Editor kopieren (auf GitHub: **Raw**).
-3. **Variablen setzen:** Weiter unten bei **Environment variables → Add environment variable** mindestens `TRUSTED_PROXIES` (Adresse des Proxys) eintragen, empfohlen auch `WUNSCHKINO_DOMAIN`. Ohne `TRUSTED_PROXIES` startet der Stack nicht und meldet die fehlende Variable.
+3. **Variablen setzen:** Weiter unten bei **Environment variables → Add environment variable** `TRUSTED_PROXIES` (Adresse des Proxys) und `WUNSCHKINO_DOMAIN` (Deine Domain) eintragen. Fehlt eine der beiden, startet der Stack nicht und meldet die fehlende Variable.
 4. **Starten:** **Deploy the stack**. Unter **Containers** steht der Wunschkino-Container danach nach etwa einer halben Minute als `healthy`.
 5. **Setup-Token lesen:** **Containers →** den Wunschkino-Container öffnen **→ Console → Connect** (Befehl `/bin/bash`) und `cat /data/setup-token` ausführen.
 6. **Proxy einrichten** wie bei [Nginx Proxy Manager einrichten](#nginx-proxy-manager-einrichten): Ziel ist die IP des Docker-Hosts und der Port `PUBLISH_PORT` (Standard `8080`), WebSockets an. Danach die [Ersteinrichtung](#ersteinrichtung).

@@ -5,14 +5,15 @@
 #
 # Alle Schritte mit RUN laufen auf der Build-Plattform; für arm64 ist deshalb kein Emulator nötig.
 
-FROM --platform=$BUILDPLATFORM debian:stable-slim AS prepare
+# Beide Basis-Images sind per Digest festgelegt, damit ein verschobener Tag nichts ins Image bringt; Dependabot schlägt neue Digests vor.
+FROM --platform=$BUILDPLATFORM debian:stable-slim@sha256:fbfb4059d2127120aa05b6e6064523d2102552f0cf0026ddf0701c12f1f8f3e0 AS prepare
 ARG TARGETARCH
 COPY package-${TARGETARCH}.tar.gz /package.tar.gz
 RUN mkdir -p /out/app /out/data \
  && tar -xzf /package.tar.gz -C /out/app \
  && chmod 755 /out/app/Wunschkino
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0@sha256:fabe6d8f15c430642a1f92ba0b8d58ff81370cd34c39a182164ad13ba136d38f
 ARG VERSION=dev
 ARG SOURCE_URL=https://github.com/dahamalp/Wunschkino
 LABEL org.opencontainers.image.title="Wunschkino" \

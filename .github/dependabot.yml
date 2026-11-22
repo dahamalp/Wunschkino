@@ -7,6 +7,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+  - package-ecosystem: docker
+    directory: /deploy/docker
+    schedule:
+      interval: weekly
   - package-ecosystem: nuget
     directory: /
     schedule:
