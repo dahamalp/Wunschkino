@@ -108,9 +108,9 @@ Jede Option gibt es auch als Umgebungsvariable `WK_<NAME>` (zum Beispiel `WK_POR
 
 Trage danach die IP des Proxy-Servers mit `--proxy` ein, falls Du es bei der Installation noch nicht getan hast.
 
-### Alternative: Docker (zum Beispiel mit Portainer)
+### Alternative: Docker
 
-Statt des Install-Scripts läuft Wunschkino auch als Container. Das Image `ghcr.io/dahamalp/wunschkino` (amd64 und arm64) enthält dasselbe Programm wie das Release-Paket, läuft nicht als root und hat einen eingebauten Gesundheitscheck. Als Vorlage dient [`deploy/docker/compose.yml`](deploy/docker/compose.yml): In Portainer unter **Stacks → Add stack → Web editor** einfügen, sonst mit `docker compose up -d`.
+Statt des Install-Scripts läuft Wunschkino auch als Container. Das Image `ghcr.io/dahamalp/wunschkino` (amd64 und arm64) enthält dasselbe Programm wie das Release-Paket, läuft nicht als root und hat einen eingebauten Gesundheitscheck. Als Vorlage dient [`deploy/docker/compose.yml`](deploy/docker/compose.yml). Dieser Abschnitt beschreibt Docker auf der Kommandozeile, für Portainer siehe [Alternative: Portainer](#alternative-portainer). Beide Wege nutzen dieselbe Vorlage und dieselben Variablen:
 
 | Variable | Bedeutung |
 |---|---|
@@ -119,19 +119,64 @@ Statt des Install-Scripts läuft Wunschkino auch als Container. Das Image `ghcr.
 | `WUNSCHKINO_VERSION` | Optional. Version festlegen, zum Beispiel `0.1.1`. Standard ist `latest`. |
 | `PUBLISH_PORT` | Optional. Port auf dem Docker-Host, Standard `8080`. |
 
-Der Proxy zeigt wie oben beschrieben auf die IP des Docker-Hosts und diesen Port (WebSockets einschalten). Sperre den Port in der Firewall für alle außer dem Proxy. Die Daten (Datenbank, Schlüssel, tägliche Sicherung) liegen im Volume `wunschkino-data`.
+Der Proxy zeigt wie bei [Nginx Proxy Manager einrichten](#nginx-proxy-manager-einrichten) auf die IP des Docker-Hosts und den veröffentlichten Port (`PUBLISH_PORT`, Standard `8080`; WebSockets einschalten). Sperre den Port in der Firewall für alle außer dem Proxy. Die Daten (Datenbank, Schlüssel, tägliche Sicherung) liegen im Volume `wunschkino-data`.
 
-- **Setup-Token:** Es liegt im Volume, nicht im Protokoll: `docker exec <Container> cat /data/setup-token`. In Portainer geht es über **Console** am Container.
-- **Update:** neues Image holen und den Stack neu starten (Portainer: **Update the stack** mit **Re-pull image**, sonst `docker compose pull && docker compose up -d`). Anders als `install.sh` sichert Docker vorher nichts und rollt nicht zurück: Sichere das Volume vor einem Update, und nagle bei Problemen mit `WUNSCHKINO_VERSION` die letzte funktionierende Version fest.
-- **Datensicherung:** Die tägliche Sicherung der App liegt im selben Volume. Sichere das Volume deshalb zusätzlich außerhalb des Docker-Hosts.
-- Weitere Einstellungen setzt Du als Umgebungsvariablen im Stack, zum Beispiel `Wunschkino__BackupKeepCount` (siehe [Datensicherung und Wiederherstellung](#datensicherung-und-wiederherstellung)). Die Variablen stehen im Abschnitt `environment` der Compose-Datei.
-- Die Herkunft des Images prüfst Du mit `gh attestation verify oci://ghcr.io/dahamalp/wunschkino:<Version> --repo dahamalp/Wunschkino`.
+**Schritt für Schritt (Docker auf der Kommandozeile):**
+
+1. **Voraussetzung:** Docker Engine mit dem Compose-Plugin (`docker compose version` muss eine Version nennen), siehe [docs.docker.com/engine/install](https://docs.docker.com/engine/install/).
+2. **Ordner und Vorlage holen:**
+   ```bash
+   mkdir wunschkino && cd wunschkino
+   curl -fsSLO https://raw.githubusercontent.com/dahamalp/Wunschkino/main/deploy/docker/compose.yml
+   ```
+   Lies die Datei, bevor Du sie startest.
+3. **Einstellungen:** Lege neben `compose.yml` eine Datei `.env` an (die Adresse des Proxys und Deine Domain einsetzen):
+   ```
+   TRUSTED_PROXIES=192.168.1.5
+   WUNSCHKINO_DOMAIN=wunsch.example.org
+   ```
+4. **Starten:** `docker compose up -d`. Mit `docker compose ps` siehst Du nach etwa einer halben Minute `healthy`. Das Protokoll zeigt `docker compose logs -f`.
+5. **Setup-Token lesen** (es liegt im Volume, nicht im Protokoll):
+   ```bash
+   docker compose exec wunschkino cat /data/setup-token
+   ```
+6. **Proxy einrichten** wie oben beschrieben und dann die [Ersteinrichtung](#ersteinrichtung) durchlaufen.
+
+**Update:** Sichere zuerst das Volume (siehe unten), dann `docker compose pull && docker compose up -d`. Anders als `install.sh` sichert Docker vorher nichts und rollt nicht zurück. Geht etwas schief, trage in der `.env` die letzte funktionierende Version ein (`WUNSCHKINO_VERSION=0.1.0`) und starte neu.
+
+**Datensicherung:** Die tägliche Sicherung der App liegt im selben Volume. Sichere das Volume deshalb zusätzlich außerhalb des Docker-Hosts, zum Beispiel als Archiv im aktuellen Ordner:
+
+```bash
+docker run --rm -v wunschkino_wunschkino-data:/data -v "$PWD":/backup debian:stable-slim \
+  tar -czf /backup/wunschkino-data.tar.gz -C /data .
+```
+
+Der Volume-Name beginnt mit dem Namen des Compose-Projekts (`docker volume ls` zeigt ihn). Eine Wiederherstellung packt das Archiv in ein leeres Volume desselben Namens aus.
+
+**Beenden:** `docker compose down` hält die Container an, die Daten bleiben. `docker compose down -v` löscht auch das Volume und damit alle Daten.
+
+Weitere Einstellungen setzt Du als Umgebungsvariablen im Abschnitt `environment` der Compose-Datei, zum Beispiel `Wunschkino__BackupKeepCount` (siehe [Datensicherung und Wiederherstellung](#datensicherung-und-wiederherstellung)). Die Herkunft des Images prüfst Du mit `gh attestation verify oci://ghcr.io/dahamalp/wunschkino:<Version> --repo dahamalp/Wunschkino`.
+
+### Alternative: Portainer
+
+Mit [Portainer](https://www.portainer.io/) legst Du Wunschkino als **Stack** an, ohne Kommandozeile. Die Variablen sind dieselben wie unter [Alternative: Docker](#alternative-docker).
+
+1. **Stack anlegen:** In Portainer die Umgebung des Docker-Hosts öffnen, **Stacks → Add stack**. **Name:** `wunschkino`. **Build method:** **Web editor**.
+2. **Vorlage einfügen:** Den Inhalt von [`deploy/docker/compose.yml`](deploy/docker/compose.yml) in den Editor kopieren (auf GitHub: **Raw**).
+3. **Variablen setzen:** Weiter unten bei **Environment variables → Add environment variable** mindestens `TRUSTED_PROXIES` (Adresse des Proxys) eintragen, empfohlen auch `WUNSCHKINO_DOMAIN`. Ohne `TRUSTED_PROXIES` startet der Stack nicht und meldet die fehlende Variable.
+4. **Starten:** **Deploy the stack**. Unter **Containers** steht der Wunschkino-Container danach nach etwa einer halben Minute als `healthy`.
+5. **Setup-Token lesen:** **Containers →** den Wunschkino-Container öffnen **→ Console → Connect** (Befehl `/bin/bash`) und `cat /data/setup-token` ausführen.
+6. **Proxy einrichten** wie bei [Nginx Proxy Manager einrichten](#nginx-proxy-manager-einrichten): Ziel ist die IP des Docker-Hosts und der Port `PUBLISH_PORT` (Standard `8080`), WebSockets an. Danach die [Ersteinrichtung](#ersteinrichtung).
+
+**Update:** Sichere zuerst das Volume (`…wunschkino-data` unter **Volumes**; ein Archiv erzeugt der Befehl aus dem Abschnitt Docker auf dem Docker-Host). Dann **Stacks → wunschkino → Editor**, den Schalter **Re-pull image and redeploy** einschalten und **Update the stack** wählen. Bei Problemen unter **Environment variables** `WUNSCHKINO_VERSION` auf die letzte funktionierende Version setzen und erneut **Update the stack**.
+
+**Beenden:** **Stacks → wunschkino → Stop** hält an, die Daten bleiben. Beim Löschen des Stacks (**Remove**) bleibt das Volume bestehen, solange Du es nicht unter **Volumes** selbst löschst.
 
 ### Ersteinrichtung
 
 Öffne Wunschkino über Deine Domain. Der Einrichtungsassistent führt durch fünf Schritte:
 
-1. **Setup-Token** eingeben (steht am Ende der Installation und in `/var/lib/wunschkino/setup-token`; bei Docker siehe oben).
+1. **Setup-Token** eingeben (steht am Ende der Installation und in `/var/lib/wunschkino/setup-token`; bei Docker und Portainer siehe die jeweilige Anleitung oben).
 2. **Admin-Konto** anlegen (Passwort mindestens 12 Zeichen).
 3. **Jellyfin** verbinden: Adresse (zum Beispiel `http://192.168.1.10:8096`) und API-Schlüssel. Die Verbindung wird sofort getestet.
 4. **TMDB-Schlüssel** eintragen, ebenfalls mit Test.
