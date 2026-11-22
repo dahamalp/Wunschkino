@@ -108,11 +108,30 @@ Jede Option gibt es auch als Umgebungsvariable `WK_<NAME>` (zum Beispiel `WK_POR
 
 Trage danach die IP des Proxy-Servers mit `--proxy` ein, falls Du es bei der Installation noch nicht getan hast.
 
+### Alternative: Docker (zum Beispiel mit Portainer)
+
+Statt des Install-Scripts läuft Wunschkino auch als Container. Das Image `ghcr.io/dahamalp/wunschkino` (amd64 und arm64) enthält dasselbe Programm wie das Release-Paket, läuft nicht als root und hat einen eingebauten Gesundheitscheck. Als Vorlage dient [`deploy/docker/compose.yml`](deploy/docker/compose.yml): In Portainer unter **Stacks → Add stack → Web editor** einfügen, sonst mit `docker compose up -d`.
+
+| Variable | Bedeutung |
+|---|---|
+| `TRUSTED_PROXIES` | **Pflicht.** Adresse oder Netz (CIDR), von dem der Reverse-Proxy bei Wunschkino ankommt (entspricht `--proxy`). Ohne diese Angabe sehen alle Nutzer dieselbe Adresse, und Anmeldebremse und Sperren greifen für alle gemeinsam. |
+| `WUNSCHKINO_DOMAIN` | Empfohlen. Deine Domain (entspricht `--domain`). |
+| `WUNSCHKINO_VERSION` | Optional. Version festlegen, zum Beispiel `0.1.1`. Standard ist `latest`. |
+| `PUBLISH_PORT` | Optional. Port auf dem Docker-Host, Standard `8080`. |
+
+Der Proxy zeigt wie oben beschrieben auf die IP des Docker-Hosts und diesen Port (WebSockets einschalten). Sperre den Port in der Firewall für alle außer dem Proxy. Die Daten (Datenbank, Schlüssel, tägliche Sicherung) liegen im Volume `wunschkino-data`.
+
+- **Setup-Token:** Es liegt im Volume, nicht im Protokoll: `docker exec <Container> cat /data/setup-token`. In Portainer geht es über **Console** am Container.
+- **Update:** neues Image holen und den Stack neu starten (Portainer: **Update the stack** mit **Re-pull image**, sonst `docker compose pull && docker compose up -d`). Anders als `install.sh` sichert Docker vorher nichts und rollt nicht zurück: Sichere das Volume vor einem Update, und nagle bei Problemen mit `WUNSCHKINO_VERSION` die letzte funktionierende Version fest.
+- **Datensicherung:** Die tägliche Sicherung der App liegt im selben Volume. Sichere das Volume deshalb zusätzlich außerhalb des Docker-Hosts.
+- Weitere Einstellungen setzt Du als Umgebungsvariablen im Stack, zum Beispiel `Wunschkino__BackupKeepCount` (siehe [Datensicherung und Wiederherstellung](#datensicherung-und-wiederherstellung)). Die Variablen stehen im Abschnitt `environment` der Compose-Datei.
+- Die Herkunft des Images prüfst Du mit `gh attestation verify oci://ghcr.io/dahamalp/wunschkino:<Version> --repo dahamalp/Wunschkino`.
+
 ### Ersteinrichtung
 
 Öffne Wunschkino über Deine Domain. Der Einrichtungsassistent führt durch fünf Schritte:
 
-1. **Setup-Token** eingeben (steht am Ende der Installation und in `/var/lib/wunschkino/setup-token`).
+1. **Setup-Token** eingeben (steht am Ende der Installation und in `/var/lib/wunschkino/setup-token`; bei Docker siehe oben).
 2. **Admin-Konto** anlegen (Passwort mindestens 12 Zeichen).
 3. **Jellyfin** verbinden: Adresse (zum Beispiel `http://192.168.1.10:8096`) und API-Schlüssel. Die Verbindung wird sofort getestet.
 4. **TMDB-Schlüssel** eintragen, ebenfalls mit Test.

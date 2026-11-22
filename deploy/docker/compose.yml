@@ -1,0 +1,30 @@
+name: wunschkino
+
+# Vorlage für Portainer (Stacks → Add stack → Web editor) oder `docker compose up -d`.
+# Der Nginx Proxy Manager läuft auf einem anderen Server und erreicht Wunschkino über den veröffentlichten Port.
+# Setze diese Variablen (in Portainer unter „Environment variables“, sonst in einer .env neben dieser Datei):
+#   TRUSTED_PROXIES    Pflicht: Adresse oder Netz (CIDR), von dem der Proxy bei Wunschkino ankommt, z. B. 192.168.1.5
+#   WUNSCHKINO_DOMAIN  empfohlen: Deine Domain, z. B. wunsch.example.org
+#   WUNSCHKINO_VERSION optional: Version festnageln, z. B. 0.1.1 (Standard: latest)
+#   PUBLISH_PORT       optional: Port auf dem Docker-Host (Standard 8080)
+services:
+  wunschkino:
+    image: ghcr.io/dahamalp/wunschkino:${WUNSCHKINO_VERSION:-latest}
+    environment:
+      Wunschkino__TrustedProxies: ${TRUSTED_PROXIES:?Adresse oder Netz (CIDR), von dem der Nginx Proxy Manager bei Wunschkino ankommt}
+      Wunschkino__Domain: ${WUNSCHKINO_DOMAIN:-}
+    ports:
+      - "${PUBLISH_PORT:-8080}:8080"
+    volumes:
+      - wunschkino-data:/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  wunschkino-data:

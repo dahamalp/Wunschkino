@@ -110,11 +110,30 @@ Every option is also available as an environment variable `WK_<NAME>` (for examp
 
 Then enter the proxy server's IP with `--proxy` if you did not do so during installation.
 
+### Alternative: Docker (for example with Portainer)
+
+Instead of the install script, Wunschkino also runs as a container. The image `ghcr.io/dahamalp/wunschkino` (amd64 and arm64) contains the same program as the release package, does not run as root and has a built-in health check. [`deploy/docker/compose.yml`](deploy/docker/compose.yml) is the template: paste it into Portainer under **Stacks → Add stack → Web editor**, or use `docker compose up -d`.
+
+| Variable | Meaning |
+|---|---|
+| `TRUSTED_PROXIES` | **Required.** Address or network (CIDR) the reverse proxy reaches Wunschkino from (same as `--proxy`). Without it all users appear to come from one address, so the sign-in throttle and blocks apply to everyone together. |
+| `WUNSCHKINO_DOMAIN` | Recommended. Your domain (same as `--domain`). |
+| `WUNSCHKINO_VERSION` | Optional. Pin a version, for example `0.1.1`. Defaults to `latest`. |
+| `PUBLISH_PORT` | Optional. Port on the Docker host, default `8080`. |
+
+Point the proxy at the Docker host's IP and this port as described above (turn WebSockets on). Block the port in the firewall for everyone except the proxy. The data (database, keys, daily backup) lives in the volume `wunschkino-data`.
+
+- **Setup token:** it is stored in the volume, not in the log: `docker exec <container> cat /data/setup-token`. In Portainer use the container's **Console**.
+- **Update:** pull the new image and restart the stack (Portainer: **Update the stack** with **Re-pull image**, otherwise `docker compose pull && docker compose up -d`). Unlike `install.sh`, Docker neither backs up beforehand nor rolls back: back up the volume before an update, and pin the last working version with `WUNSCHKINO_VERSION` if something goes wrong.
+- **Backups:** the app's daily backup lives in the same volume, so also back the volume up somewhere off the Docker host.
+- Set further settings as environment variables in the stack, for example `Wunschkino__BackupKeepCount` (see [Backups and restoring](#backups-and-restoring)). They go in the `environment` section of the compose file.
+- Verify where the image comes from with `gh attestation verify oci://ghcr.io/dahamalp/wunschkino:<version> --repo dahamalp/Wunschkino`.
+
 ### First-time setup
 
 Open Wunschkino through your domain. The setup wizard walks through five steps:
 
-1. Enter the **setup token** (printed at the end of the installation and stored in `/var/lib/wunschkino/setup-token`).
+1. Enter the **setup token** (printed at the end of the installation and stored in `/var/lib/wunschkino/setup-token`; for Docker see above).
 2. Create the **admin account** (password of at least 12 characters).
 3. Connect **Jellyfin**: address (for example `http://192.168.1.10:8096`) and API key. The connection is tested right away.
 4. Enter the **TMDB key**, also with a test.

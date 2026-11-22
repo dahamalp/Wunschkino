@@ -159,3 +159,68 @@ jobs:
             --title "$GITHUB_REF_NAME" \
             --generate-notes \
             $prerelease
+
+  # Das Docker-Image packt dieselben, bereits attestierten Pakete aus (nichts wird neu gebaut) und läuft erst nach der
+  # Freigabe im Job „release“. Es wird getestet, bevor es nach ghcr.io geht, und bekommt ebenfalls eine Herkunftsbestätigung.
+  image:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: deploy/docker
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: paket-*
+          merge-multiple: true
+      - name: Pakete gegen die Attestierung aus dem Build-Job prüfen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for file in wunschkino-*.tar.gz; do
+            gh attestation verify "$file" --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" \
+              --source-ref "$GITHUB_REF" \
+              --deny-self-hosted-runners
+          done
+      - name: Image testen
+        run: bash deploy/docker/test.sh "wunschkino-${GITHUB_REF_NAME}-linux-x64.tar.gz"
+      - name: Image bauen und nach ghcr.io veröffentlichen
+        id: push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          version="${GITHUB_REF_NAME#v}"
+          mkdir context
+          cp "wunschkino-${GITHUB_REF_NAME}-linux-x64.tar.gz" context/package-amd64.tar.gz
+          cp "wunschkino-${GITHUB_REF_NAME}-linux-arm64.tar.gz" context/package-arm64.tar.gz
+          tags=(--tag "$image:$version")
+          # Vorabversionen (v1.2.3-rc.1) bekommen weder „latest“ noch den beweglichen Minor-Tag.
+          if [[ "$version" != *-* ]]; then
+            IFS=. read -r major minor _ <<< "$version"
+            tags+=(--tag "$image:latest" --tag "$image:$major.$minor")
+          fi
+          echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker buildx create --use --name wunschkino
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            --file deploy/docker/Dockerfile \
+            --build-arg "VERSION=$version" \
+            --build-arg "SOURCE_URL=https://github.com/$GITHUB_REPOSITORY" \
+            "${tags[@]}" --push --metadata-file metadata.json context
+          echo "name=$image" >> "$GITHUB_OUTPUT"
+          echo "digest=$(jq -r '."containerimage.digest"' metadata.json)" >> "$GITHUB_OUTPUT"
+      - name: Herkunft des Images bestätigen (Attestierung)
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ steps.push.outputs.name }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
