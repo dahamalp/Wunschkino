@@ -205,8 +205,7 @@ jobs:
           mkdir context
           cp "wunschkino-${GITHUB_REF_NAME}-linux-x64.tar.gz" context/package-amd64.tar.gz
           cp "wunschkino-${GITHUB_REF_NAME}-linux-arm64.tar.gz" context/package-arm64.tar.gz
-          # Die Zugangsdaten bleiben nur so lange im Runner, wie dieser Schritt läuft.
-          trap 'docker logout ghcr.io > /dev/null 2>&1 || true' EXIT
+          # Die Anmeldung bleibt bis zum letzten Schritt bestehen: Die Attestierung (push-to-registry) liest sie aus der Docker-Konfiguration.
           echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           docker buildx create --use --name wunschkino
           docker buildx build --platform linux/amd64,linux/arm64 \
@@ -226,12 +225,13 @@ jobs:
       - name: Bewegliche Tags auf das bestätigte Image setzen
         if: ${{ !contains(github.ref_name, '-') }}
         env:
-          GH_TOKEN: ${{ github.token }}
           IMAGE: ${{ steps.push.outputs.name }}
           DIGEST: ${{ steps.push.outputs.digest }}
         run: |
           version="${GITHUB_REF_NAME#v}"
           IFS=. read -r major minor _ <<< "$version"
-          trap 'docker logout ghcr.io > /dev/null 2>&1 || true' EXIT
-          echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           docker buildx imagetools create --tag "$IMAGE:latest" --tag "$IMAGE:$major.$minor" "$IMAGE@$DIGEST"
+      # Läuft auch nach einem Fehler: Die Zugangsdaten sollen nicht länger als nötig im Runner bleiben.
+      - name: Abmelden von ghcr.io
+        if: ${{ always() }}
+        run: docker logout ghcr.io || true
