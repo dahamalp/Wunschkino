@@ -666,4 +666,6 @@
   <data name="Msg_Wish_HighLimit" xml:space="preserve"><value>Ya has marcado {0} deseos abiertos como «Especialmente importante». Baja primero uno de ellos.</value></data>
   <data name="Settings_HighPriorityWishes" xml:space="preserve"><value>Deseos especialmente importantes por persona</value></data>
   <data name="Settings_HighPriorityHint" xml:space="preserve"><value>Cuántos deseos abiertos puede marcar cada persona a la vez como «Especialmente importante». 0 = sin límite. Los admins están exentos.</value></data>
+  <data name="WishList_OpenTmdb" xml:space="preserve"><value>Abrir la página de TMDB (pestaña nueva)</value></data>
+  <data name="WishList_OpenImdb" xml:space="preserve"><value>Abrir la página de IMDb (pestaña nueva)</value></data>
 </root>

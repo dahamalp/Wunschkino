@@ -66,7 +66,8 @@ public sealed record WishListItem(
     IReadOnlyList<WishNote> Notes,
     bool CompletedAutomatically,
     WishPriority MyPriority = WishPriority.Normal,
-    int HighCount = 0);
+    int HighCount = 0,
+    string? ImdbId = null);
 
 public sealed record WishResult(bool Success, string Message)
 {
@@ -431,7 +432,9 @@ public sealed class WishService(
                 .ToList(),
             w.AutoCompletion == WishAutoCompletion.Completed,
             w.Votes.FirstOrDefault(v => v.UserId == userId)?.Priority ?? WishPriority.Normal,
-            w.Votes.Count(v => v.Priority == WishPriority.High))).ToList();
+            w.Votes.Count(v => v.Priority == WishPriority.High),
+            // Die IMDb-Nummer dient nur der Suche durch Admins und verlässt den Server sonst nicht.
+            viewerIsAdmin ? w.ImdbId : null)).ToList();
     }
 
     private async Task<WishResult> JoinAsync(AppDbContext db, Wish wish, int userId, string? note, WishPriority priority, CancellationToken ct)

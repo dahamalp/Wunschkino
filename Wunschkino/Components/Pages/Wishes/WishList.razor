@@ -80,6 +80,19 @@
                     @(wish.CreatedByName is { } creator ? $" · {string.Format(Texts.Culture, Texts.WishList_By, creator)}" : "") · @TimeZone.ToLocal(wish.CreatedUtc).ToString("d", CultureInfo.CurrentCulture)
                 </MudText>
 
+                <AuthorizeView Roles="@AuthClaims.AdminRole">
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">
+                        <a class="text-link" href="@TitleLinks.Tmdb(wish.Kind, wish.TmdbId)" target="_blank" rel="noopener noreferrer"
+                           aria-label="@ActionFor(Texts.WishList_OpenTmdb, wish)">TMDB @wish.TmdbId</a>
+                        @if (TitleLinks.Imdb(wish.ImdbId) is { } imdbUrl)
+                        {
+                            <span aria-hidden="true"> · </span>
+                            <a class="text-link" href="@imdbUrl" target="_blank" rel="noopener noreferrer"
+                               aria-label="@ActionFor(Texts.WishList_OpenImdb, wish)">IMDb @wish.ImdbId</a>
+                        }
+                    </MudText>
+                </AuthorizeView>
+
                 <MudStack Row="true" Spacing="1" Class="mb-2" Wrap="Wrap.Wrap">
                     <MudChip T="string" Color="@StatusDisplay.Color(wish.Status)" Size="Size.Small" Icon="@StatusDisplay.Icon(wish.Status)">@StatusDisplay.Label(wish.Status)</MudChip>
                     @if (wish.CompletedAutomatically)

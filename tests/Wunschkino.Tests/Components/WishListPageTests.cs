@@ -165,6 +165,39 @@ public class WishListPageTests : ComponentTestBase
     }
 
     [Fact]
+    public async Task Admins_SeeTheTmdbAndImdbNumbers_AsLinksThatOpenInANewTab()
+    {
+        await WishAsync(_bob);
+
+        var page = OpenAs(_admin);
+
+        var tmdb = page.Find("a[href='https://www.themoviedb.org/movie/603']");
+        Assert.Equal("TMDB 603", tmdb.TextContent);
+        Assert.Equal("_blank", tmdb.GetAttribute("target"));
+        Assert.Contains("noopener", tmdb.GetAttribute("rel"));
+        Assert.Equal("IMDb tt0133093", page.Find("a[href='https://www.imdb.com/title/tt0133093/']").TextContent);
+    }
+
+    [Fact]
+    public async Task NormalUsers_DoNotSeeTheTmdbOrImdbNumbers()
+    {
+        await WishAsync(_bob);
+
+        var page = OpenAs(_alice);
+
+        Assert.Empty(page.FindAll("a[href*='themoviedb.org']"));
+        Assert.DoesNotContain("tt0133093", page.Markup);
+    }
+
+    [Fact]
+    public void TitleLinks_UseTheRightPathPerKind_AndRejectMalformedImdbNumbers()
+    {
+        Assert.Equal("https://www.themoviedb.org/tv/1399", Wunschkino.Wishes.TitleLinks.Tmdb(MediaKind.Series, 1399));
+        Assert.Null(Wunschkino.Wishes.TitleLinks.Imdb("tt1\"><script>"));
+        Assert.Null(Wunschkino.Wishes.TitleLinks.Imdb(null));
+    }
+
+    [Fact]
     public async Task Admin_CanMarkAWishAsDone_AndTheStatusButtonsAreLabelled()
     {
         await WishAsync(_bob);

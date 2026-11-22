@@ -666,4 +666,6 @@
   <data name="Msg_Wish_HighLimit" xml:space="preserve"><value>Du hast schon {0} offene Wünsche als „Besonders wichtig“ markiert. Stufe zuerst einen davon herunter.</value></data>
   <data name="Settings_HighPriorityWishes" xml:space="preserve"><value>Besonders wichtige Wünsche pro Person</value></data>
   <data name="Settings_HighPriorityHint" xml:space="preserve"><value>Wie viele offene Wünsche jede Person gleichzeitig als „Besonders wichtig“ markieren darf. 0 = kein Limit. Admins sind ausgenommen.</value></data>
+  <data name="WishList_OpenTmdb" xml:space="preserve"><value>TMDB-Seite öffnen (neuer Tab)</value></data>
+  <data name="WishList_OpenImdb" xml:space="preserve"><value>IMDb-Seite öffnen (neuer Tab)</value></data>
 </root>

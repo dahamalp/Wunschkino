@@ -666,4 +666,6 @@
   <data name="Msg_Wish_HighLimit" xml:space="preserve"><value>Vous avez déjà marqué {0} souhaits ouverts comme « Particulièrement important ». Baissez d’abord l’un d’eux.</value></data>
   <data name="Settings_HighPriorityWishes" xml:space="preserve"><value>Souhaits particulièrement importants par personne</value></data>
   <data name="Settings_HighPriorityHint" xml:space="preserve"><value>Nombre de souhaits ouverts que chaque personne peut marquer en même temps comme « Particulièrement important ». 0 = aucune limite. Les admins sont exemptés.</value></data>
+  <data name="WishList_OpenTmdb" xml:space="preserve"><value>Ouvrir la page TMDB (nouvel onglet)</value></data>
+  <data name="WishList_OpenImdb" xml:space="preserve"><value>Ouvrir la page IMDb (nouvel onglet)</value></data>
 </root>

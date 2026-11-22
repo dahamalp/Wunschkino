@@ -14,7 +14,7 @@ Wunschkino ("wish cinema") is a web portal for **family and friends** that sits 
 - **Importance:** when wishing and with "+1", everyone says for themselves how important the wish is to them ("Can wait", "Normal" or "Especially important", the middle is the default). The level can be changed later on the card, and the wish list can be sorted by importance.
 - **Anime:** a separate search through [AniList](https://anilist.co/) (including romaji and Japanese titles), no account needed. The whole series is wished for via its TMDB number.
 - **Wish lists:** "All wishes" and "My wishes" with status (open, accepted, rejected, done), filter and sorting.
-- **Admin:** change the status with one click (green check, yellow timer, red cross), comment, delete, user management (create, lock, reset password, roles).
+- **Admin:** every wish card shows the TMDB and IMDb numbers as links to the title page, so the right movie or series is found at once (visible to admins only). Change the status with one click (green check, yellow timer, red cross), comment, delete, user management (create, lock, reset password, roles).
 - **Automatically done:** when a wished title shows up in Jellyfin after the next sync, Wunschkino sets the wish to "done" by itself.
 - **Missing episodes:** admins see which episodes of a series are missing in Jellyfin (compared with TMDB), split into certain cases and uncertain numbering, as it happens with anime.
 - **Built with security in mind:** Argon2 password hashes, optional two-factor sign-in (TOTP) per account, staged blocking of addresses after failed attempts (up to permanent, unblockable by an admin), rate limiting, strict security headers (CSP), API keys encrypted in the database, provenance attestation of the releases.

@@ -666,4 +666,6 @@
   <data name="Msg_Wish_HighLimit" xml:space="preserve"><value>Je hebt al {0} open wensen als „Extra belangrijk” gemarkeerd. Zet er eerst een lager.</value></data>
   <data name="Settings_HighPriorityWishes" xml:space="preserve"><value>Extra belangrijke wensen per persoon</value></data>
   <data name="Settings_HighPriorityHint" xml:space="preserve"><value>Hoeveel open wensen elke persoon tegelijk als „Extra belangrijk” mag markeren. 0 = geen limiet. Admins zijn uitgezonderd.</value></data>
+  <data name="WishList_OpenTmdb" xml:space="preserve"><value>TMDB-pagina openen (nieuw tabblad)</value></data>
+  <data name="WishList_OpenImdb" xml:space="preserve"><value>IMDb-pagina openen (nieuw tabblad)</value></data>
 </root>
