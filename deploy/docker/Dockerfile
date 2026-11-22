@@ -13,7 +13,7 @@ RUN mkdir -p /out/app /out/data \
  && tar -xzf /package.tar.gz -C /out/app \
  && chmod 755 /out/app/Wunschkino
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0@sha256:fabe6d8f15c430642a1f92ba0b8d58ff81370cd34c39a182164ad13ba136d38f
+FROM mcr.microsoft.com/dotnet/runtime-deps:11.0@sha256:6d3e208d8f5ba599ad9e80c615b5c1a2e355fd903f585cb07342dde29441675a
 ARG VERSION=dev
 ARG SOURCE_URL=https://github.com/dahamalp/Wunschkino
 LABEL org.opencontainers.image.title="Wunschkino" \
